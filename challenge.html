@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Strength Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo_UA.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TRES">
+  <link rel="stylesheet" href="variables.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-background);
+      color: var(--color-text-dark);
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 200px;
+      background-image: url('assets/strength-challenge.jpg');
+      background-size: cover;
+      background-position: center 30%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%);
+    }
+
+    .back-button {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--color-text-dark);
+      z-index: 10;
+    }
+
+    .back-button svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Content Section */
+    .content {
+      background: white;
+      border-radius: 24px 24px 0 0;
+      margin-top: -24px;
+      position: relative;
+      padding: 32px 24px;
+      min-height: calc(100vh - 176px);
+    }
+
+    .challenge-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .challenge-meta {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* Avatar Stack */
+    .avatar-stack {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 3px solid white;
+      margin-left: -12px;
+      background: var(--color-border);
+      overflow: hidden;
+    }
+
+    .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Join Button */
+    .join-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-bottom: 32px;
+    }
+
+    .join-btn:hover {
+      background: var(--color-primary-hover);
+    }
+
+    /* Progress Section (Active State) */
+    .progress-section {
+      margin-bottom: 32px;
+      display: none;
+    }
+
+    .progress-section.active {
+      display: block;
+    }
+
+    .progress-label {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-container {
+      height: 8px;
+      background: var(--color-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 4px;
+      width: 37%;
+      transition: width 0.3s ease;
+    }
+
+    /* Step Totals */
+    .step-totals {
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .step-totals.active {
+      display: block;
+    }
+
+    .step-totals-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .team-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+    }
+
+    .team-name {
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .team-badge {
+      width: 20px;
+      height: 20px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .team-badge svg {
+      width: 12px;
+      height: 12px;
+      color: var(--color-on-primary);
+    }
+
+    .flip-counter {
+      display: flex;
+      gap: 4px;
+    }
+
+    .flip-digit {
+      width: 28px;
+      height: 36px;
+      background: var(--color-border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-light);
+    }
+
+    .flip-digit.active {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+
+    .flip-digit.blue {
+      background: var(--color-brand-steel-blue);
+      color: white;
+    }
+
+    .flip-digit.red {
+      background: var(--color-brand-navy);
+      color: white;
+    }
+
+    .flip-digit.lightblue {
+      background: var(--color-brand-green);
+      color: var(--color-brand-black);
+    }
+
+    /* Leaderboard Button */
+    .leaderboard-btn {
+      width: 100%;
+      padding: 14px;
+      background: white;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-bottom: 32px;
+      display: none;
+    }
+
+    .leaderboard-btn.active {
+      display: block;
+    }
+
+    /* Section Divider */
+    .divider {
+      height: 8px;
+      background: var(--color-background);
+      margin: 0 -24px 24px;
+    }
+
+    /* Challenge Details */
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .challenge-description {
+      font-size: 15px;
+      color: var(--color-text);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* Recent Activity */
+    .activity-header {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      background: var(--color-background);
+      margin: 0 -24px;
+      padding: 12px 24px;
+    }
+
+    .activity-post {
+      padding: 16px 0;
+      border-bottom: 1px solid #EEE;
+    }
+
+    .activity-post:last-child {
+      border-bottom: none;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .post-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #E5E5E5;
+      overflow: hidden;
+    }
+
+    .post-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .post-info {
+      flex: 1;
+    }
+
+    .post-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .post-time {
+      font-size: 13px;
+      color: var(--color-text-light);
+    }
+
+    .post-menu {
+      color: var(--color-text-light);
+      cursor: pointer;
+    }
+
+    .post-content {
+      font-size: 15px;
+      color: var(--color-text-dark);
+      line-height: 1.5;
+    }
+
+    .post-more {
+      color: var(--color-primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .post-image {
+      width: calc(100% + 48px);
+      margin: 16px -24px 0;
+      height: 300px;
+      background: #E5E5E5;
+      overflow: hidden;
+    }
+
+    .post-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 24px;
+      margin-top: 12px;
+      padding-top: 12px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
+    /* FAB */
+    .fab {
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .fab svg {
+      width: 24px;
+      height: 24px;
+      color: var(--color-on-primary);
+    }
+
+    /* Hidden state */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero -->
+  <div class="hero">
+    <a href="index.html" class="back-button">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <h1 class="challenge-title">Strength Challenge</h1>
+    <p class="challenge-meta" id="challengeMeta">6 weeks · 748 members</p>
+
+    <!-- Pre-Join State -->
+    <div id="preJoinState">
+      <div class="avatar-stack">
+        <div class="avatar"><div style="background: linear-gradient(135deg, #6B8BA4 0%, #1E3A4C 100%); width: 100%; height: 100%;"></div></div>
+        <div class="avatar"><div style="background: linear-gradient(135deg, #1E3A4C 0%, #5EF55E 100%); width: 100%; height: 100%;"></div></div>
+        <div class="avatar"><div style="background: linear-gradient(135deg, #152D3B 0%, #6B8BA4 100%); width: 100%; height: 100%;"></div></div>
+        <div class="avatar"><div style="background: linear-gradient(135deg, #000000 0%, #6B8BA4 100%); width: 100%; height: 100%;"></div></div>
+        <div class="avatar"><div style="background: linear-gradient(135deg, #5EF55E 0%, #1E3A4C 100%); width: 100%; height: 100%;"></div></div>
+        <div class="avatar"><div style="background: linear-gradient(135deg, #6B8BA4 0%, #152D3B 100%); width: 100%; height: 100%;"></div></div>
+        <div class="avatar"><div style="background: linear-gradient(135deg, #152D3B 0%, #1E3A4C 100%); width: 100%; height: 100%;"></div></div>
+      </div>
+      <button class="join-btn" id="joinBtn">Join Challenge</button>
+    </div>
+
+    <!-- Active State -->
+    <div id="activeState" class="hidden">
+      <div class="progress-section active">
+        <div class="progress-label">37% complete</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <div class="step-totals active">
+        <h2 class="step-totals-title">Workout totals</h2>
+
+        <div class="team-row">
+          <div class="team-name">
+            Team Blue
+            <div class="team-badge">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+            </div>
+          </div>
+          <div class="flip-counter">
+            <div class="flip-digit">0</div>
+            <div class="flip-digit blue">1</div>
+            <div class="flip-digit blue">0</div>
+            <div class="flip-digit blue">3</div>
+            <div class="flip-digit blue">7</div>
+            <div class="flip-digit blue">5</div>
+          </div>
+        </div>
+
+        <div class="team-row">
+          <div class="team-name">Team Red</div>
+          <div class="flip-counter">
+            <div class="flip-digit">0</div>
+            <div class="flip-digit">0</div>
+            <div class="flip-digit red">8</div>
+            <div class="flip-digit red">3</div>
+            <div class="flip-digit red">7</div>
+            <div class="flip-digit red">5</div>
+          </div>
+        </div>
+
+        <div class="team-row">
+          <div class="team-name">Team Light Blue</div>
+          <div class="flip-counter">
+            <div class="flip-digit">0</div>
+            <div class="flip-digit">0</div>
+            <div class="flip-digit lightblue">7</div>
+            <div class="flip-digit lightblue">6</div>
+            <div class="flip-digit lightblue">4</div>
+            <div class="flip-digit lightblue">3</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="leaderboard-btn active">View Leaderboard</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Challenge Details -->
+    <h2 class="section-title">Challenge details</h2>
+    <p class="challenge-description">
+      Get ready to build strength and push your limits in our all-new Team Strength Challenge! From now until June 3, 2025, team up with your coworkers, friends, or fellow app users to complete as many strength workouts as possible. Every rep counts, and the team with the highest total workout minutes by the end of the challenge takes the crown (and bragging rights, of course).
+    </p>
+
+    <!-- Recent Activity -->
+    <div class="activity-header">Recent activity</div>
+
+    <div class="activity-post">
+      <div class="post-header">
+        <div class="post-avatar">
+          <div style="background: linear-gradient(135deg, #6B8BA4 0%, #1E3A4C 100%); width: 100%; height: 100%;"></div>
+        </div>
+        <div class="post-info">
+          <div class="post-name">Taylor Shaw</div>
+          <div class="post-time">5h ago</div>
+        </div>
+        <div class="post-menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="5" r="2"/>
+            <circle cx="12" cy="12" r="2"/>
+            <circle cx="12" cy="19" r="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="post-content">
+        Just finished an intense upper body workout! 💪 Feeling stronger every day. Who else is crushing their strength goals this week? Let's keep pushing each other to <span class="post-more">more</span>
+      </div>
+      <div class="post-image">
+        <div style="background: linear-gradient(135deg, #6B8BA4 0%, #1E3A4C 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">Workout Image</div>
+      </div>
+      <div class="post-actions">
+        <span>21 confetti</span>
+        <span>4 comments</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const joinBtn = document.getElementById('joinBtn');
+    const preJoinState = document.getElementById('preJoinState');
+    const activeState = document.getElementById('activeState');
+    const challengeMeta = document.getElementById('challengeMeta');
+
+    joinBtn.addEventListener('click', function() {
+      // Switch to active state
+      preJoinState.classList.add('hidden');
+      activeState.classList.remove('hidden');
+      challengeMeta.textContent = 'Jun 1 - Jul 12, 2025';
+    });
+  </script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js"></script>
+</body>
+</html>

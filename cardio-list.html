@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cardio Workouts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo_UA.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Lindora">
+  <link rel="stylesheet" href="variables.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body style="background-color: var(--color-background-alt);">
+  <!-- Hero Section -->
+  <div class="hero-wrapper" id="heroWrapper">
+    <div class="hero" id="hero">
+      <video class="hero-video" autoplay loop muted playsinline>
+        <source src="assets/cardio.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+      <a href="index.html" class="back-button">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+      </a>
+      <!-- Minimized header content -->
+      <div class="hero-minimized">
+        <span class="hero-minimized-title">Cardio</span>
+        <div class="hero-minimized-stats">
+          <span class="hero-minimized-percent">45%</span>
+        </div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">Cardio</h1>
+          <div class="hero-time-left">30m left</div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-percent">45%</div>
+          <div class="hero-progress-bars">
+            <div class="bar filled"></div>
+            <div class="bar filled"></div>
+            <div class="bar filled"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2 class="section-title">Made for you</h2>
+
+    <div class="workout-cards-scroll">
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">HIIT Blast</div>
+          <div class="workout-card-instructor">with Marcus Johnson</div>
+          <div class="workout-card-item-meta">
+            <span>20 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>MoveSync</span>
+            <span>Intensity 4</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">Dance Cardio</div>
+          <div class="workout-card-instructor">with Sarah Chen</div>
+          <div class="workout-card-item-meta">
+            <span>30 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>Watch</span>
+            <span>Intensity 2</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">Endurance Run</div>
+          <div class="workout-card-instructor">with Alex Rivera</div>
+          <div class="workout-card-item-meta">
+            <span>45 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>MoveSync</span>
+            <span>Intensity 3</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Popular workouts</h2>
+
+    <div class="workout-cards-scroll">
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">Cycling Sprint</div>
+          <div class="workout-card-instructor">with Emma Williams</div>
+          <div class="workout-card-item-meta">
+            <span>25 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>MoveSync</span>
+            <span>Intensity 4</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">Jump Rope Burn</div>
+          <div class="workout-card-instructor">with James Park</div>
+          <div class="workout-card-item-meta">
+            <span>15 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>Watch</span>
+            <span>Intensity 3</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">Boxing Basics</div>
+          <div class="workout-card-instructor">with Lisa Chen</div>
+          <div class="workout-card-item-meta">
+            <span>35 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>MoveSync</span>
+            <span>Intensity 3</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Because you like "HIIT Blast"</h2>
+
+    <div class="workout-cards-scroll">
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">Tabata Challenge</div>
+          <div class="workout-card-instructor">with Marcus Johnson</div>
+          <div class="workout-card-item-meta">
+            <span>20 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>MoveSync</span>
+            <span>Intensity 5</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="workout-card-item">
+        <div class="workout-card-body">
+          <div class="workout-card-modality cardio">Cardio</div>
+          <div class="workout-card-item-title">Power Intervals</div>
+          <div class="workout-card-instructor">with Alex Rivera</div>
+          <div class="workout-card-item-meta">
+            <span>25 min</span>
+            <span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>Watch</span>
+            <span>Intensity 4</span>
+          </div>
+        </div>
+        <div class="workout-card-actions">
+          <a href="player.html?workout=cardio&video=assets/cardio.mp4" class="btn-start">Start<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></a>
+          <button class="btn-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Initialize video seamless loop
+    initVideoLoop('.hero-video');
+
+    // Save button toggle
+    document.querySelectorAll('.btn-save').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        this.classList.toggle('saved');
+      });
+    });
+
+    // Sticky hero minimize on scroll
+    (function initStickyHero() {
+      const wrapper = document.getElementById('heroWrapper');
+      const hero = document.getElementById('hero');
+      let isSticky = false;
+      let isMinimized = false;
+      let lastScrollY = 0;
+      let scrollUpDistance = 0;
+      let ticking = false;
+      let stateChangeCooldown = false;
+
+      const minimizeThreshold = 30;
+      const expandThreshold = 80;
+
+      function updateHeroState() {
+        const scrollY = window.scrollY;
+        const scrollDelta = scrollY - lastScrollY;
+
+        // Always update lastScrollY to prevent stale delta calculations
+        const currentLastScrollY = lastScrollY;
+        lastScrollY = scrollY;
+
+        if (stateChangeCooldown) {
+          ticking = false;
+          return;
+        }
+
+        const wrapperTop = wrapper.offsetTop;
+
+        // Make sticky when scrolled past wrapper
+        if (scrollY > wrapperTop && !isSticky) {
+          hero.classList.add('sticky');
+          isSticky = true;
+        } else if (scrollY <= wrapperTop && isSticky) {
+          hero.classList.remove('sticky');
+          hero.classList.remove('minimized');
+          wrapper.classList.remove('collapsed');
+          isSticky = false;
+          isMinimized = false;
+          scrollUpDistance = 0;
+        }
+
+        // Only handle minimize/expand when sticky
+        if (isSticky) {
+          // Scrolling down
+          if (scrollDelta > 0) {
+            scrollUpDistance = 0;
+            if (!isMinimized && scrollY > wrapperTop + minimizeThreshold) {
+              hero.classList.add('minimized');
+              wrapper.classList.add('collapsed');
+              isMinimized = true;
+              stateChangeCooldown = true;
+              setTimeout(() => { stateChangeCooldown = false; }, 300);
+            }
+          }
+          // Scrolling up
+          else if (scrollDelta < 0) {
+            scrollUpDistance += Math.abs(scrollDelta);
+            if (isMinimized && scrollUpDistance > expandThreshold) {
+              hero.classList.remove('minimized');
+              wrapper.classList.remove('collapsed');
+              isMinimized = false;
+              scrollUpDistance = 0;
+              stateChangeCooldown = true;
+              setTimeout(() => { stateChangeCooldown = false; }, 300);
+            }
+          }
+        }
+
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', function() {
+        if (!ticking) {
+          requestAnimationFrame(updateHeroState);
+          ticking = true;
+        }
+      }, { passive: true });
+    })();
+  </script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js"></script>
+</body>
+</html>

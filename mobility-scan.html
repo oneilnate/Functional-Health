@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mobility Scan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo_UA.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TRES">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: var(--color-background);
+    }
+
+    /* Header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--color-background);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .page-header-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    .page-header-spacer {
+      width: 40px;
+    }
+    .powered-by {
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(10, 10, 10, 0.4);
+      text-align: center;
+      margin-top: -2px;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Score Card */
+    .score-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+    }
+    .score-ring-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .score-ring {
+      position: relative;
+      width: 140px;
+      height: 140px;
+    }
+    .score-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .score-ring-bg {
+      fill: none;
+      stroke: var(--color-border);
+      stroke-width: 10;
+    }
+    .score-ring-progress {
+      fill: none;
+      stroke: var(--color-primary);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 377;
+      stroke-dashoffset: calc(377 - (377 * 72 / 100));
+      transition: stroke-dashoffset 1s ease;
+    }
+    .score-ring-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .score-value {
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--color-text-dark);
+      line-height: 1;
+    }
+    .score-label {
+      font-size: 12px;
+      color: rgba(10, 10, 10, 0.5);
+      margin-top: 4px;
+    }
+    .score-status {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+    .score-description {
+      font-size: 14px;
+      color: rgba(10, 10, 10, 0.6);
+      line-height: 1.5;
+    }
+
+    /* Start Scan Button */
+    .start-scan-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 18px 24px;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .start-scan-btn:hover {
+      background: var(--color-primary-hover);
+    }
+    .start-scan-btn:active {
+      transform: scale(0.98);
+    }
+    .start-scan-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Body Areas Card */
+    .body-areas-card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .body-areas-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 16px;
+    }
+    .body-area-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .body-area-item:last-child {
+      border-bottom: none;
+    }
+    .body-area-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--color-background-alt);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .body-area-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--color-primary);
+    }
+    .body-area-info {
+      flex: 1;
+    }
+    .body-area-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    .body-area-status {
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.5);
+      margin-top: 2px;
+    }
+    .body-area-score {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-text-dark);
+    }
+    .body-area-score.good { color: #22C55E; }
+    .body-area-score.moderate { color: #F59E0B; }
+    .body-area-score.needs-work { color: #EF4444; }
+
+    /* Recent Scans Section */
+    .recent-scans-section {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .recent-scans-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 16px;
+    }
+    .recent-scans-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .recent-scan-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .recent-scan-card:last-child {
+      border-bottom: none;
+    }
+    .recent-scan-card:active {
+      transform: scale(0.98);
+    }
+    .recent-scan-info {
+      flex: 1;
+    }
+    .recent-scan-date {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    .recent-scan-detail {
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.5);
+      margin-top: 2px;
+    }
+    .recent-scan-change {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .recent-scan-change.positive {
+      background: rgba(122, 219, 212, 0.15);
+      color: var(--color-primary);
+    }
+    .recent-scan-change.negative {
+      background: rgba(255, 54, 0, 0.1);
+      color: var(--color-error);
+    }
+    .recent-scan-change.neutral {
+      background: rgba(0, 0, 0, 0.05);
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Tips Card */
+    .tips-card {
+      background: var(--color-brand-black);
+      border-radius: 14px;
+      padding: 20px;
+      color: white;
+    }
+    .tips-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .tips-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(99, 102, 241, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tips-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--color-primary);
+    }
+    .tips-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .tips-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.5;
+    }
+
+    /* Recording Screen */
+    .recording-screen {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 402px;
+      height: 100%;
+      background: var(--color-brand-black);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .recording-screen.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .recording-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+      z-index: 10;
+    }
+    .recording-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(239, 68, 68, 0.2);
+      padding: 8px 14px;
+      border-radius: 20px;
+    }
+    .recording-badge-dot {
+      width: 10px;
+      height: 10px;
+      background: #EF4444;
+      border-radius: 50%;
+      animation: recording-pulse 1s infinite;
+    }
+    @keyframes recording-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.2); }
+    }
+    .recording-badge-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #EF4444;
+      text-transform: uppercase;
+    }
+    .recording-timer {
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      font-variant-numeric: tabular-nums;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+    .recording-close {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .recording-close:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .recording-close svg {
+      width: 22px;
+      height: 22px;
+      color: white;
+    }
+    .recording-video-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .recording-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .recording-video-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border: 3px solid rgba(99, 102, 241, 0.5);
+      border-radius: 0;
+    }
+    .recording-guide {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      height: 85%;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+    .recording-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 20px;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+      z-index: 10;
+    }
+    .recording-status {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .recording-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 6px;
+    }
+    .recording-subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .recording-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .recording-btn {
+      flex: 1;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .recording-btn:active {
+      transform: scale(0.98);
+    }
+    .recording-btn.primary {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+    .recording-btn.primary:hover {
+      background: var(--color-primary-hover);
+    }
+    .recording-btn.secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+    .recording-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .recording-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="page-header">
+    <a href="index.html" class="back-button">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+    </a>
+    <div style="flex: 1; text-align: center;">
+      <span class="page-header-title">Mobility Scan</span>
+      <div class="powered-by">powered by Physmodo</div>
+    </div>
+    <div class="page-header-spacer"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Start Scan Button -->
+    <button class="start-scan-btn" id="startScanBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+      </svg>
+      Start New Scan
+    </button>
+
+    <!-- Current Score Card -->
+    <div class="score-card">
+      <div class="score-ring-container">
+        <div class="score-ring">
+          <svg viewBox="0 0 140 140">
+            <circle class="score-ring-bg" cx="70" cy="70" r="60"/>
+            <circle class="score-ring-progress" cx="70" cy="70" r="60"/>
+          </svg>
+          <div class="score-ring-text">
+            <div class="score-value">72</div>
+            <div class="score-label">Overall</div>
+          </div>
+        </div>
+      </div>
+      <div class="score-status">Good Mobility</div>
+      <p class="score-description">Your overall mobility is above average. Focus on hip flexibility to improve further.</p>
+    </div>
+
+    <!-- Body Areas Breakdown -->
+    <div class="body-areas-card">
+      <div class="body-areas-title">Body Areas</div>
+
+      <div class="body-area-item">
+        <div class="body-area-info">
+          <div class="body-area-name">Neck & Shoulders</div>
+          <div class="body-area-status">Last scanned 3 days ago</div>
+        </div>
+        <div class="body-area-score good">85%</div>
+      </div>
+
+      <div class="body-area-item">
+        <div class="body-area-info">
+          <div class="body-area-name">Upper Back</div>
+          <div class="body-area-status">Last scanned 3 days ago</div>
+        </div>
+        <div class="body-area-score good">78%</div>
+      </div>
+
+      <div class="body-area-item">
+        <div class="body-area-info">
+          <div class="body-area-name">Lower Back</div>
+          <div class="body-area-status">Last scanned 3 days ago</div>
+        </div>
+        <div class="body-area-score moderate">65%</div>
+      </div>
+
+      <div class="body-area-item">
+        <div class="body-area-info">
+          <div class="body-area-name">Hips</div>
+          <div class="body-area-status">Needs attention</div>
+        </div>
+        <div class="body-area-score needs-work">52%</div>
+      </div>
+
+      <div class="body-area-item">
+        <div class="body-area-info">
+          <div class="body-area-name">Hamstrings</div>
+          <div class="body-area-status">Last scanned 3 days ago</div>
+        </div>
+        <div class="body-area-score moderate">68%</div>
+      </div>
+    </div>
+
+    <!-- Recent Scans -->
+    <div class="recent-scans-section">
+      <h2 class="recent-scans-title">Recent Scans</h2>
+      <div class="recent-scans-list">
+        <a href="#" class="recent-scan-card">
+          <div class="recent-scan-info">
+            <div class="recent-scan-date">February 3, 2026</div>
+            <div class="recent-scan-detail">Full body scan</div>
+          </div>
+          <span class="recent-scan-change positive">+3%</span>
+        </a>
+
+        <a href="#" class="recent-scan-card">
+          <div class="recent-scan-info">
+            <div class="recent-scan-date">January 27, 2026</div>
+            <div class="recent-scan-detail">Full body scan</div>
+          </div>
+          <span class="recent-scan-change positive">+2%</span>
+        </a>
+
+        <a href="#" class="recent-scan-card">
+          <div class="recent-scan-info">
+            <div class="recent-scan-date">January 20, 2026</div>
+            <div class="recent-scan-detail">Full body scan</div>
+          </div>
+          <span class="recent-scan-change negative">-1%</span>
+        </a>
+
+        <a href="#" class="recent-scan-card">
+          <div class="recent-scan-info">
+            <div class="recent-scan-date">January 13, 2026</div>
+            <div class="recent-scan-detail">Full body scan</div>
+          </div>
+          <span class="recent-scan-change neutral">0%</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Tips Card -->
+    <div class="tips-card">
+      <div class="tips-header">
+        <div class="tips-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"/>
+          </svg>
+        </div>
+        <div class="tips-title">Improvement Tip</div>
+      </div>
+      <p class="tips-text">Your hip mobility could use some work. Try adding hip flexor stretches and pigeon pose to your daily routine for better results.</p>
+    </div>
+  </div>
+
+  <!-- Recording Screen -->
+  <div class="recording-screen" id="recordingScreen">
+    <div class="recording-video-container">
+      <video class="recording-video" id="scanVideo" autoplay loop muted playsinline>
+        <source src="/assets/mobility-scan-video.mov" type="video/mp4">
+      </video>
+      <div class="recording-video-overlay"></div>
+      <div class="recording-guide"></div>
+    </div>
+    <div class="recording-header">
+      <div class="recording-badge">
+        <div class="recording-badge-dot"></div>
+        <span class="recording-badge-text">Recording</span>
+      </div>
+      <span class="recording-timer" id="scanTimer">0:00</span>
+      <button class="recording-close" id="closeRecording">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="recording-footer">
+      <div class="recording-status">
+        <div class="recording-title">Analyzing Movement</div>
+        <div class="recording-subtitle">Position yourself within the guide</div>
+      </div>
+      <div class="recording-actions">
+        <button class="recording-btn secondary" id="cancelScan">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+          Cancel
+        </button>
+        <button class="recording-btn primary" id="completeScan">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          Complete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Recording Screen functionality
+    const startScanBtn = document.getElementById('startScanBtn');
+    const recordingScreen = document.getElementById('recordingScreen');
+    const closeRecording = document.getElementById('closeRecording');
+    const cancelScan = document.getElementById('cancelScan');
+    const completeScan = document.getElementById('completeScan');
+    const scanVideo = document.getElementById('scanVideo');
+    const scanTimer = document.getElementById('scanTimer');
+
+    let timerInterval = null;
+    let seconds = 0;
+
+    function formatTime(secs) {
+      const mins = Math.floor(secs / 60);
+      const remainingSecs = secs % 60;
+      return `${mins}:${remainingSecs.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      seconds = 0;
+      scanTimer.textContent = formatTime(seconds);
+      timerInterval = setInterval(() => {
+        seconds++;
+        scanTimer.textContent = formatTime(seconds);
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function openRecordingScreen() {
+      recordingScreen.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      scanVideo.play();
+      startTimer();
+    }
+
+    function closeRecordingScreen() {
+      recordingScreen.classList.remove('active');
+      document.body.style.overflow = '';
+      scanVideo.pause();
+      stopTimer();
+    }
+
+    startScanBtn.addEventListener('click', openRecordingScreen);
+    closeRecording.addEventListener('click', closeRecordingScreen);
+    cancelScan.addEventListener('click', closeRecordingScreen);
+
+    completeScan.addEventListener('click', () => {
+      closeRecordingScreen();
+      alert('Scan completed! Your results have been saved.');
+    });
+  </script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js"></script>
+</body>
+</html>

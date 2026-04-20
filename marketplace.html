@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo_UA.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TRES">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="body--with-padding">
+  <!-- Header -->
+  <div class="header">
+    <a href="index.html" class="back-button">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+    </a>
+    <span class="header-title">Marketplace</span>
+    <div class="header-spacer"></div>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="category-tabs">
+    <div class="category-tab active">Popular</div>
+    <div class="category-tab">Mind</div>
+    <div class="category-tab">Body</div>
+    <div class="category-tab">Tech</div>
+  </div>
+
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <div class="balance-value">$250</div>
+    <div class="balance-label">Marketplace Balance</div>
+  </div>
+
+  <!-- Brand Cards -->
+  <div class="brand-cards">
+    <!-- Sweetgreen -->
+    <div>
+      <div class="brand-card">
+        <img
+          class="brand-card-image"
+          src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=400&fit=crop"
+          alt="Sweetgreen"
+        >
+        <div class="brand-card-actions">
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 22V12h6v10M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            </svg>
+          </div>
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="brand-card-overlay">
+          <div class="brand-card-logo sweetgreen">sweetgreen</div>
+        </div>
+      </div>
+      <div class="points-description">200 Points with Any Entree Purchase</div>
+    </div>
+
+    <!-- Oura -->
+    <div>
+      <div class="brand-card">
+        <img
+          class="brand-card-image"
+          src="assets/oura-ring.png"
+          alt="Oura"
+        >
+        <div class="brand-card-actions">
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 22V12h6v10M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            </svg>
+          </div>
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="brand-card-overlay">
+          <div class="brand-card-logo oura">Oura</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lululemon -->
+    <div>
+      <div class="brand-card">
+        <img
+          class="brand-card-image"
+          src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=400&fit=crop"
+          alt="Lululemon"
+        >
+        <div class="brand-card-actions">
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 22V12h6v10M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            </svg>
+          </div>
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="brand-card-overlay">
+          <div class="brand-card-logo lululemon">lululemon</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barnes & Noble -->
+    <div>
+      <div class="brand-card">
+        <img
+          class="brand-card-image"
+          src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&h=400&fit=crop"
+          alt="Barnes & Noble"
+        >
+        <div class="brand-card-actions">
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 22V12h6v10M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            </svg>
+          </div>
+          <div class="brand-card-action">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="brand-card-overlay">
+          <div class="brand-card-logo barnes">BARNES&amp;NOBLE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Initialize category tabs and heart buttons
+    initCategoryTabs();
+    initHeartButtons();
+  </script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js"></script>
+</body>
+</html>

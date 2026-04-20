@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Functional Feed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo_UA.png">
+  <link rel="apple-touch-icon" href="assets/app-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="UA NEXT">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Home page specific styles */
+    body {
+      padding-bottom: 100px;
+      background: var(--color-background-alt);
+    }
+
+    /* Workout Progress Cards (Home feed) */
+    .workout-cards {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px;
+      margin-top: 16px;
+      margin-bottom: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .workout-cards::-webkit-scrollbar { display: none; }
+
+    .workout-card {
+      display: flex;
+      width: 167.088px;
+      height: 245px;
+      padding: 15.019px 8.448px;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 37.548px;
+      flex-shrink: 0;
+      border-radius: 13.142px;
+      background: var(--color-primary);
+      overflow: hidden;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+    }
+    .workout-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+      border-radius: 13.142px;
+      z-index: 1;
+    }
+    .workout-card-video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 13.142px;
+    }
+    .workout-card-content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      padding: 15px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: white;
+    }
+    .workout-card-title { font-size: 22.5px; font-weight: 600; }
+    .workout-card-time { font-size: 13px; font-weight: 500; opacity: 0.9; margin-top: 4px; }
+    .workout-card-bottom { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; margin-top: auto; }
+    .workout-card-percent { font-size: 50px; font-weight: 700; }
+    .progress-bars { display: flex; flex-direction: column-reverse; gap: 5px; align-items: flex-end; }
+    .progress-bar { width: 6px; height: 20px; background: rgba(255,255,255,0.3); border-radius: 10px; }
+    .progress-bar.filled { background: var(--color-accent); }
+
+    /* Mood Wheel Section - Compact horizontal scroll */
+    .mood-wheel-section {
+      margin: 0 var(--space-lg);
+      padding: var(--space-xl);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      background: var(--color-surface);
+    }
+    .mood-wheel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .mood-wheel-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-dark);
+      letter-spacing: var(--letter-spacing-tight);
+    }
+    .mood-wheel-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+    .mood-scroll {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      padding: var(--space-md) var(--space-xl);
+      margin: 0 calc(var(--space-xl) * -1);
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mood-scroll::-webkit-scrollbar { display: none; }
+    .mood-option {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      padding: var(--space-md) var(--space-sm);
+      cursor: pointer;
+      scroll-snap-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mood-option-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .mood-option.energized .mood-option-circle { background: linear-gradient(135deg, #FF6B35 0%, #FF8F65 100%); }
+    .mood-option.happy     .mood-option-circle { background: linear-gradient(135deg, #FFD23F 0%, #FFE066 100%); }
+    .mood-option.calm      .mood-option-circle { background: linear-gradient(135deg, #3ECFB2 0%, #6EDBC5 100%); }
+    .mood-option.tired     .mood-option-circle { background: linear-gradient(135deg, #9B8FE8 0%, #B8AFF0 100%); }
+    .mood-option.stressed  .mood-option-circle { background: linear-gradient(135deg, #FF6B8A 0%, #FF8FA8 100%); }
+    .mood-option.active .mood-option-circle {
+      transform: scale(1.08);
+      box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px currentColor;
+    }
+    .mood-option.energized.active { color: #FF6B35; }
+    .mood-option.happy.active     { color: #FFD23F; }
+    .mood-option.calm.active      { color: #3ECFB2; }
+    .mood-option.tired.active     { color: #9B8FE8; }
+    .mood-option.stressed.active  { color: #FF6B8A; }
+    .mood-option-label {
+      margin-top: var(--space-xs);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-regular);
+      color: var(--color-text-secondary);
+      text-transform: capitalize;
+      transition: color var(--transition-fast), font-weight var(--transition-fast);
+    }
+    .mood-option.active .mood-option-label {
+      color: var(--color-text-dark);
+      font-weight: var(--font-weight-semibold);
+    }
+    .mood-select-btn {
+      display: block;
+      width: 100%;
+      margin-top: var(--space-md);
+      padding: var(--space-sm) var(--space-xl);
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .mood-select-btn:hover {
+      background: var(--color-primary-hover);
+      transform: scale(1.02);
+    }
+    .mood-select-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Energy Battery Card */
+    .energy-card {
+      margin: 0 var(--space-lg);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: box-shadow var(--transition-fast);
+      animation: energyJiggle 5s ease-in-out 1.5s infinite;
+      transform-origin: center;
+    }
+    .energy-card:hover {
+      animation: none;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .energy-card:active {
+      animation: none;
+      transform: translateY(0);
+    }
+    @keyframes energyJiggle {
+      0%, 88%, 100% { transform: translate3d(0, 0, 0) rotate(0); }
+      89% { transform: translate3d(-1.5px, 0, 0) rotate(-0.7deg); }
+      91% { transform: translate3d(1.5px, 0, 0) rotate(0.6deg); }
+      93% { transform: translate3d(-1px, 0, 0) rotate(-0.4deg); }
+      95% { transform: translate3d(1px, 0, 0) rotate(0.3deg); }
+      97% { transform: translate3d(0, 0, 0) rotate(0); }
+    }
+    .energy-battery {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 56px;
+    }
+    .energy-battery-body {
+      flex: 1;
+      height: 100%;
+      background: var(--color-background-alt);
+      border-radius: 14px;
+      overflow: hidden;
+      padding: 4px;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .energy-battery-body::before,
+    .energy-battery-body::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      height: 30%;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.5;
+      background-repeat: repeat-x;
+      background-image:
+        linear-gradient(90deg, rgba(0,0,0,0.30) 1.5px, transparent 0),
+        linear-gradient(90deg, rgba(0,0,0,0.22) 1px, transparent 0),
+        linear-gradient(90deg, rgba(0,0,0,0.16) 1px, transparent 0);
+      background-size: 10% 100%, 5% 60%, 2.5% 30%;
+      mix-blend-mode: multiply;
+    }
+    .energy-battery-body::before {
+      top: 4px;
+      background-position: -1.5px 0, -1px 0, -1px 0;
+    }
+    .energy-battery-body::after {
+      bottom: 4px;
+      background-position: -1.5px 100%, -1px 100%, -1px 100%;
+    }
+    .energy-battery-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #3ECFB2 0%, #5EF55E 100%);
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease;
+      animation: energyBreath 2.6s ease-in-out infinite;
+      position: relative;
+      z-index: 3;
+    }
+    .energy-battery-fill.medium {
+      background: linear-gradient(90deg, #FFB545 0%, #FFD23F 100%);
+    }
+    .energy-battery-fill.low {
+      background: linear-gradient(90deg, #FF6B8A 0%, #FF8F65 100%);
+    }
+    .energy-battery-cap {
+      width: 6px;
+      height: 26px;
+      background: var(--color-background-alt);
+      border-radius: 0 3px 3px 0;
+    }
+    @keyframes energyBreath {
+      0%, 100% { filter: brightness(0.95) saturate(1); }
+      50%      { filter: brightness(1.18) saturate(1.15); }
+    }
+    .energy-card.draining .energy-battery-fill {
+      animation: energyDrainPulse 0.6s ease, energyBreath 2.6s ease-in-out infinite 0.6s;
+    }
+    @keyframes energyDrainPulse {
+      0%, 100% { filter: brightness(1); }
+      50%      { filter: brightness(1.5); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .energy-battery-fill,
+      .energy-card { animation: none; }
+    }
+
+    /* Health Checklist - Accordion Style */
+    .health-checklist {
+      margin: 0 16px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    .health-checklist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .health-checklist-header:hover {
+      background: var(--color-surface-hover);
+    }
+    .health-checklist-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .health-checklist-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    .health-checklist-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .health-checklist-progress {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+    .health-checklist.all-complete .health-checklist-progress {
+      color: #2D8A2D;
+      font-weight: 600;
+    }
+    .health-checklist-chevron {
+      width: 20px;
+      height: 20px;
+      color: var(--color-text-secondary);
+      transition: transform 0.3s ease;
+    }
+    .health-checklist.expanded .health-checklist-chevron {
+      transform: rotate(180deg);
+    }
+    .health-checklist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 0 20px 0;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    }
+    .health-checklist.expanded .health-checklist-items {
+      max-height: 500px;
+      opacity: 1;
+      padding: 0 20px 20px;
+    }
+    .health-checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--color-background-alt);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-medium);
+      position: relative;
+      overflow: hidden;
+    }
+    .health-checklist-item:hover {
+      background: var(--color-surface-hover);
+    }
+    .health-checklist-item.completed {
+      background: rgba(45, 138, 45, 0.08);
+    }
+    .health-checklist-item.completing {
+      animation: taskComplete 0.5s ease;
+    }
+    @keyframes taskComplete {
+      0% { transform: scale(1); }
+      15% { transform: scale(1.02); }
+      30% { transform: scale(0.98); }
+      100% { transform: scale(1); }
+    }
+    .health-checklist-checkbox {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition-medium);
+    }
+    .health-checklist-item.completed .health-checklist-checkbox {
+      background: #2D8A2D;
+      border-color: #2D8A2D;
+    }
+    .health-checklist-checkbox svg {
+      width: 14px;
+      height: 14px;
+      color: #FFFFFF;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s ease;
+    }
+    .health-checklist-item.completed .health-checklist-checkbox svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .health-checklist-checkbox.pop {
+      animation: checkboxPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    @keyframes checkboxPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .task-confetti {
+      position: absolute;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .task-confetti-particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      animation: taskConfettiPop 0.8s ease-out forwards;
+    }
+    @keyframes taskConfettiPop {
+      0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-40px) scale(0) rotate(180deg); }
+    }
+    .health-checklist-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .health-checklist-item-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-dark);
+      margin-bottom: 2px;
+    }
+    .health-checklist-item.completed .health-checklist-item-title {
+      text-decoration: line-through;
+      color: var(--color-text-secondary);
+    }
+    .health-checklist-item-subtitle {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+    .health-checklist-item.completed .health-checklist-item-subtitle {
+      opacity: 0.7;
+    }
+
+    /* Unified Stats Card */
+    .unified-stats-card {
+      display: block;
+      margin: 0 16px;
+      padding: 20px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .unified-stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .unified-stats-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      letter-spacing: var(--letter-spacing-tight);
+    }
+    .unified-stats-settings {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: var(--color-primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-medium);
+    }
+    .unified-stats-settings:hover {
+      background: var(--color-tivity-light-teal);
+      transform: scale(1.05);
+    }
+    .unified-stats-settings svg {
+      width: 20px;
+      height: 20px;
+      color: var(--color-text-muted);
+    }
+    .unified-stats-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .unified-stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      padding: 8px 4px;
+      border-radius: 12px;
+      transition: background 0.2s ease;
+    }
+    .unified-stat-item:hover {
+      background: var(--color-background);
+    }
+
+    /* Progress Ring */
+    .stat-progress-ring {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      margin-bottom: 8px;
+    }
+    .stat-progress-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .stat-progress-ring .ring-bg {
+      fill: none;
+      stroke: var(--color-border);
+      stroke-width: 6;
+    }
+    .stat-progress-ring .ring-progress {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 213.6;
+      stroke-dashoffset: calc(213.6 - (213.6 * var(--progress) / 100));
+      transition: stroke-dashoffset 0.6s ease;
+    }
+    .stat-progress-ring.steps .ring-progress { stroke: var(--color-primary); }
+    .stat-progress-ring.sleep .ring-progress { stroke: var(--color-accent); }
+    .stat-progress-ring.activity .ring-progress { stroke: var(--color-primary-dark); }
+
+    .stat-ring-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stat-ring-icon svg {
+      width: 22px;
+      height: 22px;
+      transform: rotate(0deg);
+    }
+    .stat-progress-ring.steps .stat-ring-icon { color: var(--color-primary); }
+    .stat-progress-ring.sleep .stat-ring-icon { color: var(--color-accent); }
+    .stat-progress-ring.activity .stat-ring-icon { color: var(--color-primary-dark); }
+
+    .unified-stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-text-dark);
+      margin-bottom: 2px;
+    }
+    .unified-stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-bottom: 2px;
+    }
+    .unified-stat-goal {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--color-text-light);
+    }
+
+    /* MePod Card */
+    .mepod-card { margin: 0 16px; border-radius: var(--radius-lg); overflow: hidden; position: relative; height: 261px; background-color: #3A4859; background-image: url('assets/mepod-bg.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; display: block; text-decoration: none; transition: all var(--transition-medium); color: white; cursor: pointer; box-shadow: var(--shadow-md); }
+    .mepod-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%); }
+    .mepod-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .mepod-card .feature-badge { position: absolute; top: 16px; left: 12px; background: var(--color-accent); color: var(--color-on-accent); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-sm); text-transform: uppercase; z-index: 1; }
+    .mepod-card .feature-content { position: absolute; bottom: 16px; left: 12px; right: 12px; z-index: 1; }
+
+    /* Recommended Card */
+    .recommended-card { margin: 0 16px; border-radius: var(--radius-lg); overflow: hidden; position: relative; height: 200px; background-image: url('assets/recommended.jpg'); background-size: cover; background-position: center; display: block; text-decoration: none; transition: all var(--transition-medium); color: white; cursor: pointer; box-shadow: var(--shadow-md); }
+    .recommended-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%); }
+    .recommended-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .recommended-card .feature-badge { position: absolute; top: 16px; left: 12px; background: var(--color-accent); color: var(--color-on-accent); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-sm); text-transform: uppercase; z-index: 1; }
+    .recommended-card .feature-content { position: absolute; bottom: 20px; left: 16px; right: 16px; z-index: 1; }
+    .recommended-card .feature-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; color: white; line-height: 1.2; }
+    .recommended-card .feature-subtitle { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.4; }
+
+    /* Challenge Card - Tres Health Style */
+    .challenge-card { margin: 0; border-radius: 0; overflow: hidden; position: relative; height: 327px; background-image: url('assets/strength-challenge.jpg'); background-size: cover; background-position: center 30%; display: block; text-decoration: none; transition: all var(--transition-medium); color: inherit; cursor: pointer; }
+    .challenge-card:active { transform: scale(0.98); }
+    .challenge-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%); }
+    .challenge-content { position: absolute; left: 18px; right: 18px; top: 24px; bottom: 24px; display: flex; flex-direction: column; justify-content: space-between; z-index: 1; }
+    .challenge-badge { align-self: flex-start; background: var(--color-accent); color: var(--color-on-accent); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-sm); text-transform: uppercase; }
+    .challenge-bottom { display: flex; justify-content: space-between; align-items: flex-end; color: #FFFFFF; }
+    .challenge-text { flex: 1; }
+    .challenge-bottom .arrow-button { width: 42px; height: 42px; background: var(--color-surface); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .challenge-title { font-size: 20px; font-weight: 600; line-height: 1.2; }
+    .challenge-subtitle { font-size: 14px; font-weight: 400; opacity: 0.8; margin-top: 6px; line-height: 1.5; }
+
+    /* Feature Cards - Tres Health Style */
+    .feature-cards { display: flex; gap: 14px; padding: 0 16px; }
+    .feature-card { flex: 1; height: 261px; border-radius: var(--radius-lg); overflow: hidden; position: relative; background: var(--gradient-primary); display: flex; flex-direction: column; padding: 16px 12px; cursor: pointer; box-shadow: var(--shadow-md); transition: all var(--transition-medium); }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    a.feature-card { text-decoration: none; color: inherit; display: flex; }
+    .feature-card.with-image { background-size: cover; background-position: center; }
+    .feature-card.with-image::before { content: ''; position: absolute; inset: 0; border-radius: 2px; background: rgba(11, 11, 11, 0.70); }
+    .feature-card.with-gradient { color: white; }
+    .feature-card.with-gradient .feature-content { position: relative; color: white; }
+    .feature-badge { position: absolute; top: 12px; left: 12px; background: var(--color-accent); color: var(--color-on-accent); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-sm); text-transform: uppercase; pointer-events: none; }
+    .feature-icon { width: 64px; height: 64px; margin: 24px auto 0; background: rgba(255,255,255,0.95); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: var(--shadow-sm); }
+    .feature-content { margin-top: auto; padding: 16px 8px; text-align: center; display: flex; flex-direction: column; align-items: center; pointer-events: none; color: white; }
+    .feature-card.with-image .feature-content { position: relative; color: white; text-align: center; }
+    .feature-title { font-size: 20px; font-weight: 600; letter-spacing: var(--letter-spacing-tight); }
+    .feature-subtitle { font-size: 12px; font-weight: 400; opacity: 0.85; margin-top: 4px; }
+    .mepod-icon { width: 78px; height: 78px; margin-bottom: 8px; object-fit: contain; }
+    .recommended-icon { width: 78px; height: 78px; margin-bottom: 8px; }
+
+    /* Food Snap Tracker - Compact Design */
+    .food-snap {
+      margin: 0 16px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .food-snap-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+    .food-snap-header-content {
+      flex: 1;
+    }
+    .food-snap-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-dark);
+      letter-spacing: var(--letter-spacing-tight);
+      margin-bottom: var(--space-xs);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .food-snap-logo {
+      height: 28px;
+      width: auto;
+    }
+    .food-snap-description {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-regular);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-normal);
+    }
+    .food-snap-description strong {
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-dark);
+    }
+
+    /* Camera Button */
+    .food-snap-camera {
+      width: 44px;
+      height: 44px;
+      background: var(--color-brand-green);
+      border-radius: var(--radius-round);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-medium);
+      border: none;
+      flex-shrink: 0;
+    }
+    .food-snap-camera:hover {
+      transform: scale(1.05);
+      background: var(--color-brand-green-hover);
+    }
+    .food-snap-camera svg {
+      width: 22px;
+      height: 22px;
+      color: var(--color-on-accent);
+    }
+    .food-snap-camera-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .food-snap-counter {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+    }
+
+    /* Progress Area with Circles - Single Row */
+    .food-snap-body {
+      display: flex;
+    }
+
+    /* Single Row of Circles */
+    .food-snap-circles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+    .food-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-round);
+      background: var(--color-background-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+      flex-shrink: 0;
+    }
+    .food-circle.filled {
+      background: var(--color-brand-green);
+    }
+    .food-circle.current {
+      background: #F5A623;
+    }
+    .food-circle.missed {
+      background: var(--color-error-light);
+      position: relative;
+    }
+    .food-circle.missed::before,
+    .food-circle.missed::after {
+      content: '';
+      position: absolute;
+      width: 40%;
+      height: 2px;
+      background: var(--color-error);
+      border-radius: 1px;
+    }
+    .food-circle.missed::before {
+      transform: rotate(45deg);
+    }
+    .food-circle.missed::after {
+      transform: rotate(-45deg);
+    }
+
+    /* Recent Food Snaps */
+    .food-snap-recent {
+      margin-top: var(--space-lg);
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--color-background-alt);
+    }
+    .food-snap-recent-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+    }
+    .food-snap-recent-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .food-snap-thumbnails {
+      display: flex;
+      gap: var(--space-sm);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .food-snap-thumbnails::-webkit-scrollbar {
+      display: none;
+    }
+    .food-snap-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-md);
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .food-snap-thumb-rating {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-round);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .food-snap-thumb-rating.great {
+      background: var(--color-accent);
+    }
+    .food-snap-thumb-rating.good {
+      background: #2E4536;
+    }
+    .food-snap-thumb-rating.bad {
+      background: #D8E214;
+    }
+    .food-snap-thumb-rating svg {
+      width: 12px;
+      height: 12px;
+      color: white;
+    }
+    .food-snap-thumb-rating.bad svg {
+      color: #1a1a1a;
+    }
+
+    /* Food MePod Unlock Card */
+    .food-mepod-card,
+    #foodMepodCard {
+      margin-top: var(--space-xl);
+      padding: var(--space-lg);
+      background: var(--color-background-alt);
+      border-radius: var(--radius-md);
+      display: none;
+      align-items: center;
+      gap: var(--space-md);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    .food-mepod-card.unlocked,
+    #foodMepodCard.unlocked {
+      display: flex !important;
+    }
+    .food-mepod-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--color-primary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .food-mepod-icon img {
+      width: 20px;
+      height: 20px;
+      filter: brightness(0) invert(1);
+    }
+    .food-mepod-content {
+      flex: 1;
+    }
+    .food-mepod-text-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .food-mepod-text {
+      flex: 1;
+    }
+    .food-mepod-badge {
+      display: inline-block;
+      background: #5EF55E;
+      color: #000000;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .food-mepod-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 2px;
+    }
+    .food-mepod-subtitle {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+    .food-mepod-arrow {
+      width: 28px;
+      height: 28px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .food-mepod-arrow svg {
+      width: 14px;
+      height: 14px;
+      color: #FFFFFF;
+    }
+
+    /* Connect Device */
+    .connect-device { margin: 0 24px; width: 354px; height: 70.5px; background: var(--color-brand-black); color: white; border-radius: 14px; padding: 16px; display: flex; align-items: center; justify-content: center; gap: 16px; cursor: pointer; font-size: 16px; font-weight: 500; }
+    .bluetooth-icon { width: 24px; height: 24px; }
+
+    /* Rewards Card - Tres Health Style */
+    .rewards-card { margin: 0; width: 100%; height: 172px; background: var(--gradient-primary); border-radius: 0; padding: 13px 23px; display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--color-on-primary); }
+    .rewards-value { font-size: 74px; font-weight: 700; line-height: 1; color: var(--color-on-primary); letter-spacing: var(--letter-spacing-tight); }
+    .rewards-label { font-size: 16px; font-weight: 600; margin-top: 8px; color: var(--color-on-primary); }
+    .rewards-subtitle { font-size: 14px; font-weight: 400; opacity: 0.85; margin-top: 4px; color: var(--color-on-primary); }
+
+    /* Marketplace Card - Tres Health Style */
+    .marketplace-card { margin: 0; border-radius: 0; overflow: hidden; position: relative; height: 327px; background-image: url('assets/marketplace.png'); background-size: cover; background-position: center center; }
+    .marketplace-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%); }
+    .marketplace-content { position: absolute; bottom: 16px; left: 16px; right: 16px; color: white; display: flex; justify-content: space-between; align-items: flex-end; z-index: 1; }
+    .marketplace-title { font-size: 18px; font-weight: 600; color: white; }
+    .marketplace-subtitle { font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.85); margin-top: 4px; }
+
+    /* Did You Know - Tres Health Style */
+    .did-you-know { margin: 0 24px; background: var(--color-primary-dark); border-radius: var(--radius-lg); padding: 16px; color: white; box-shadow: var(--shadow-md); }
+    /* Did You Know Card */
+    .dyk-card { margin: 0 16px; background: var(--color-surface); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .dyk-image { width: 100%; height: 120px; background-size: cover; background-position: center; }
+    .dyk-content { padding: 16px 20px 20px; }
+    .dyk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .dyk-title { font-size: 18px; font-weight: 600; color: var(--color-text-dark); letter-spacing: var(--letter-spacing-tight); }
+    .dyk-text { font-size: 14px; font-weight: 500; color: var(--color-text-secondary); line-height: 1.5; }
+
+    /* Commitment Card */
+    .commitment-card {
+      margin: 0 16px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .commitment-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--color-accent);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .commitment-icon svg {
+      width: 24px;
+      height: 24px;
+      color: #FFFFFF;
+    }
+    .commitment-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .commitment-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      letter-spacing: var(--letter-spacing-tight);
+    }
+    .commitment-text {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+    .commitment-btn {
+      background: var(--color-accent);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all var(--transition-medium);
+    }
+    .commitment-btn:hover {
+      transform: scale(1.05);
+      background: var(--color-accent-hover);
+    }
+    .commitment-btn span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-on-accent);
+    }
+    .commitment-btn svg {
+      color: var(--color-on-accent);
+    }
+
+    /* Connect Device Card */
+    .connect-card {
+      margin: 0 16px;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .connect-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--color-primary-light);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .connect-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--color-primary);
+    }
+    .connect-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .connect-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      letter-spacing: var(--letter-spacing-tight);
+    }
+    .connect-text {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+    .connect-btn {
+      background: var(--color-primary);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all var(--transition-medium);
+    }
+    .connect-btn:hover {
+      transform: scale(1.05);
+      background: var(--color-primary-hover);
+    }
+    .connect-btn span {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+    .connect-btn svg {
+      color: white;
+    }
+
+    /* Shield icon */
+    .shield-icon { width: 24px; height: 24px; color: var(--color-accent); }
+
+    /* Notifications Section */
+    .notifications-section {
+      padding: 16px 0 0;
+    }
+    .notifications-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 16px;
+    }
+    .notifications-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .notification-card:last-child {
+      margin-right: 0;
+    }
+    .notifications-scroll::after {
+      content: '';
+      flex: 0 0 4px;
+    }
+    .notification-card {
+      flex: 0 0 300px;
+      scroll-snap-align: start;
+      background: var(--color-primary-dark);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      color: white;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .notification-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .notification-card.dismissed {
+      animation: dismissCard 0.25s ease forwards;
+    }
+    @keyframes dismissCard {
+      to {
+        opacity: 0;
+        transform: scale(0.9);
+        flex-basis: 0;
+        padding: 0;
+        margin-left: -12px;
+      }
+    }
+    .notification-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      opacity: 0;
+    }
+    .notification-card:hover .notification-close {
+      opacity: 1;
+    }
+    .notification-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+    .notification-close svg {
+      width: 12px;
+      height: 12px;
+      color: white;
+    }
+    .notification-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .notification-icon svg {
+      width: 22px;
+      height: 22px;
+      color: white;
+    }
+    .notification-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .notification-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .notification-text {
+      font-size: 13px;
+      opacity: 0.7;
+      line-height: 1.4;
+    }
+
+    /* Promo Card - Similar to Challenge Card */
+    .promo-card {
+      margin: 0 16px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      display: block;
+      text-decoration: none;
+      transition: all var(--transition-medium);
+      color: inherit;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+    }
+    .promo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .promo-card:active {
+      transform: scale(0.98);
+    }
+    .promo-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+    }
+    .promo-content {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 16px;
+      bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 1;
+    }
+    .promo-badge {
+      align-self: flex-start;
+      background: var(--color-accent);
+      color: var(--color-on-accent);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+    }
+    .promo-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      color: #FFFFFF;
+    }
+    .promo-text {
+      flex: 1;
+    }
+    .promo-title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .promo-subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    .promo-bottom .arrow-button {
+      width: 42px;
+      height: 42px;
+      background: var(--color-surface);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Mobility Scan Card - Tres Health Style */
+    .mobility-scan-card {
+      display: block;
+      margin: 0 16px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-medium);
+    }
+    .mobility-scan-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .mobility-scan-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(24, 214, 220, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .mobility-scan-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .mobility-scan-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--color-tivity-light-teal) 0%, var(--color-primary) 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mobility-scan-icon svg {
+      width: 28px;
+      height: 28px;
+      color: white;
+    }
+    .mobility-scan-text {
+      flex: 1;
+    }
+    .mobility-scan-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 2px;
+    }
+    .mobility-scan-powered {
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 4px;
+    }
+    .mobility-scan-subtitle {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.4;
+    }
+    .mobility-scan-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 1;
+    }
+    .mobility-scan-stats {
+      display: flex;
+      gap: 24px;
+    }
+    .mobility-scan-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .mobility-scan-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+    }
+    .mobility-scan-stat-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mobility-scan-btn {
+      background: var(--color-primary);
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .mobility-scan-btn:hover {
+      background: var(--color-primary-hover);
+    }
+    .mobility-scan-btn span {
+      font-size: 14px;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+    .mobility-scan-btn svg {
+      width: 16px;
+      height: 16px;
+      color: #FFFFFF;
+    }
+
+  </style>
+  <script>
+    // Check if user is logged in and onboarded - redirect if not
+    (function checkAuth() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const isGuest = localStorage.getItem('isGuest');
+      const onboardingComplete = localStorage.getItem('onboardingComplete');
+
+      if (!isLoggedIn && !isGuest) {
+        window.location.href = 'welcome.html';
+      } else if (!onboardingComplete) {
+        window.location.href = 'vibeboarding.html';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Top Nav -->
+  <div class="top-nav">
+    <div class="header" style="background: transparent; box-shadow: none; width: 100%;">
+      <div class="menu-icon"><span></span><span></span></div>
+      <div class="header-logo-wrapper">
+        <img src="assets/ua-next-logo.png" alt="UA Next" class="header-logo">
+      </div>
+      <div class="header-spacer"></div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Workout Progress Cards -->
+    <div class="workout-cards">
+      <a href="cardio-list.html" class="workout-card" data-workout="cardio">
+        <video class="workout-card-video" autoplay loop muted playsinline><source src="/assets/cardio.mp4" type="video/mp4"></video>
+        <div class="workout-card-content">
+          <div class="workout-card-header"><div class="workout-card-title">Cardio</div><div class="workout-card-time">30m left</div></div>
+          <div class="workout-card-bottom"><div class="workout-card-percent">45%</div><div class="progress-bars"><div class="progress-bar filled"></div><div class="progress-bar filled"></div><div class="progress-bar filled"></div><div class="progress-bar"></div><div class="progress-bar"></div><div class="progress-bar"></div></div></div>
+        </div>
+      </a>
+      <a href="strength-list.html" class="workout-card" data-workout="strength">
+        <video class="workout-card-video" autoplay loop muted playsinline><source src="/assets/strength-video.mp4" type="video/mp4"></video>
+        <div class="workout-card-content">
+          <div class="workout-card-header"><div class="workout-card-title">Strength</div><div class="workout-card-time">12m left</div></div>
+          <div class="workout-card-bottom"><div class="workout-card-percent">77%</div><div class="progress-bars"><div class="progress-bar filled"></div><div class="progress-bar filled"></div><div class="progress-bar filled"></div><div class="progress-bar filled"></div><div class="progress-bar filled"></div><div class="progress-bar"></div></div></div>
+        </div>
+      </a>
+      <a href="workout-list.html" class="workout-card" data-workout="flexibility">
+        <video class="workout-card-video" autoplay loop muted playsinline><source src="/assets/flexibility-video.mp4" type="video/mp4"></video>
+        <div class="workout-card-content">
+          <div class="workout-card-header"><div class="workout-card-title">Flexibility</div><div class="workout-card-time">23m left</div></div>
+          <div class="workout-card-bottom"><div class="workout-card-percent">24%</div><div class="progress-bars"><div class="progress-bar filled"></div><div class="progress-bar filled"></div><div class="progress-bar"></div><div class="progress-bar"></div><div class="progress-bar"></div><div class="progress-bar"></div></div></div>
+        </div>
+      </a>
+      <a href="breathing-list.html" class="workout-card" data-workout="breathing">
+        <video class="workout-card-video" autoplay loop muted playsinline><source src="/assets/breathing-video.mp4" type="video/mp4"></video>
+        <div class="workout-card-content">
+          <div class="workout-card-header"><div class="workout-card-title">Breathing</div><div class="workout-card-time">40m left</div></div>
+          <div class="workout-card-bottom"><div class="workout-card-percent">10%</div><div class="progress-bars"><div class="progress-bar filled"></div><div class="progress-bar"></div><div class="progress-bar"></div><div class="progress-bar"></div><div class="progress-bar"></div><div class="progress-bar"></div></div></div>
+        </div>
+      </a>
+    </div>
+    <!-- Mood Wheel Section -->
+    <div class="mood-wheel-section">
+      <div class="mood-wheel-header">
+        <div class="mood-wheel-title">How are you feeling?</div>
+        <div class="mood-wheel-subtitle">Tap to choose</div>
+      </div>
+      <div class="mood-scroll" id="moodWheelContainer">
+        <button type="button" class="mood-option energized active" data-mood="energized" data-index="0">
+          <span class="mood-option-circle"></span>
+          <span class="mood-option-label">Energized</span>
+        </button>
+        <button type="button" class="mood-option happy" data-mood="happy" data-index="1">
+          <span class="mood-option-circle"></span>
+          <span class="mood-option-label">Happy</span>
+        </button>
+        <button type="button" class="mood-option calm" data-mood="calm" data-index="2">
+          <span class="mood-option-circle"></span>
+          <span class="mood-option-label">Calm</span>
+        </button>
+        <button type="button" class="mood-option tired" data-mood="tired" data-index="3">
+          <span class="mood-option-circle"></span>
+          <span class="mood-option-label">Tired</span>
+        </button>
+        <button type="button" class="mood-option stressed" data-mood="stressed" data-index="4">
+          <span class="mood-option-circle"></span>
+          <span class="mood-option-label">Stressed</span>
+        </button>
+      </div>
+      <button class="mood-select-btn" id="moodSelectBtn">Select Feeling</button>
+    </div>
+
+    <!-- Energy Battery -->
+    <div class="energy-card" id="energyCard" role="button" tabindex="0" aria-label="Energy">
+      <div class="energy-battery" id="energyBattery">
+        <div class="energy-battery-body">
+          <div class="energy-battery-fill" id="energyFill" style="width: 72%"></div>
+        </div>
+        <div class="energy-battery-cap"></div>
+      </div>
+    </div>
+
+    <!-- Health Checklist -->
+    <div class="health-checklist expanded">
+      <div class="health-checklist-header">
+        <div class="health-checklist-header-left">
+          <div class="health-checklist-title">Health Tasks</div>
+        </div>
+        <div class="health-checklist-header-right">
+          <div class="health-checklist-progress">0 of 2</div>
+          <svg class="health-checklist-chevron" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="health-checklist-items">
+        <div class="health-checklist-item" data-task="pt">
+          <div class="health-checklist-checkbox">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+          </div>
+          <div class="health-checklist-content">
+            <div class="health-checklist-item-title">Schedule PT appointment</div>
+            <div class="health-checklist-item-subtitle">Physical therapy session</div>
+          </div>
+        </div>
+        <div class="health-checklist-item" data-task="probio">
+          <div class="health-checklist-checkbox">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+          </div>
+          <div class="health-checklist-content">
+            <div class="health-checklist-item-title">Take ProBio ProBlend</div>
+            <div class="health-checklist-item-subtitle">Daily supplement</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge Card -->
+    <a href="challenge.html" class="challenge-card">
+      <div class="challenge-content">
+        <div class="challenge-badge">New Challenge</div>
+        <div class="challenge-bottom">
+          <div class="challenge-text">
+            <div class="challenge-title">Strength Challenge</div>
+            <div class="challenge-subtitle">Start the challenge today!</div>
+          </div>
+          <div class="arrow-button"><svg viewBox="0 0 24 24" fill="#0A0A0A"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- MePod Card -->
+    <a href="mepod.html" class="mepod-card">
+      <div class="feature-badge">New</div>
+      <div class="feature-content">
+        <img src="/assets/Subtract.png" alt="MePod" class="mepod-icon">
+        <div class="feature-title">MePod</div>
+        <div class="feature-subtitle">Your weekly MePod drops every Monday!</div>
+      </div>
+    </a>
+
+    <!-- Recommended Card -->
+    <a href="recommended.html" class="recommended-card">
+      <div class="feature-badge">For You</div>
+      <div class="feature-content">
+        <div class="feature-title">Recommended</div>
+        <div class="feature-subtitle">Workouts curated just for you</div>
+      </div>
+    </a>
+
+    <!-- Promo Card - Red Light Therapy -->
+    <a href="red-light-therapy.html" class="promo-card" style="background-color: #8B0000; background-image: url(assets/red1.png);">
+      <img src="assets/Beam_Trademark_white.svg" alt="Beam" style="position: absolute; top: 12px; right: 12px; width: 80px; height: auto;">
+      <div class="promo-content">
+        <div class="promo-badge">Promo</div>
+        <div class="promo-bottom">
+          <div class="promo-text">
+            <div class="promo-title">Red Light Therapy</div>
+            <div class="promo-subtitle">20% off first session</div>
+          </div>
+          <div class="arrow-button">
+            <svg viewBox="0 0 24 24" fill="#0A0A0A"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Mobility Scan Card -->
+    <a href="mobility-scan.html" class="mobility-scan-card">
+      <div class="mobility-scan-header">
+        <div class="mobility-scan-text">
+          <div class="mobility-scan-title">Mobility Scan</div>
+          <div class="mobility-scan-powered">powered by Physmodo</div>
+          <div class="mobility-scan-subtitle">See where you stand with your flexibility and range of motion</div>
+        </div>
+      </div>
+      <div class="mobility-scan-body">
+        <div class="mobility-scan-stats">
+          <div class="mobility-scan-stat">
+            <div class="mobility-scan-stat-value">72%</div>
+            <div class="mobility-scan-stat-label">Score</div>
+          </div>
+          <div class="mobility-scan-stat">
+            <div class="mobility-scan-stat-value">+5%</div>
+            <div class="mobility-scan-stat-label">This week</div>
+          </div>
+        </div>
+        <div class="mobility-scan-btn">
+          <span>View</span>
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- Food Snap -->
+    <div class="food-snap" id="foodSnapCard">
+      <div class="food-snap-header">
+        <div class="food-snap-header-content">
+          <div class="food-snap-title">
+            <img src="assets/foodpod-icon.png" alt="FoodPod" class="food-snap-logo">
+            <span>Food Snap</span>
+          </div>
+          <div class="food-snap-description">
+            Snap 30 meals to unlock your personalized <strong>FoodPod</strong> with nutrition insights and meal ideas.
+          </div>
+        </div>
+        <div class="food-snap-camera-wrapper">
+          <button class="food-snap-camera" id="foodCameraBtn" aria-label="Log food with camera">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </button>
+          <div class="food-snap-counter" id="foodSnapCounter">29/30</div>
+        </div>
+      </div>
+      <div class="food-snap-body">
+        <div class="food-snap-circles" id="foodSnapCircles">
+          <!-- 30 circles will be generated by JS -->
+        </div>
+      </div>
+
+      <!-- Recent Food Snaps -->
+      <div class="food-snap-recent" onclick="window.location.href='food-log.html'" style="cursor: pointer;">
+        <div class="food-snap-recent-header">
+          <div class="food-snap-recent-title">Recent Snaps</div>
+        </div>
+        <div class="food-snap-thumbnails">
+          <div class="food-snap-thumb" style="background-image: url('assets/IMG_3854.WEBP');">
+            <div class="food-snap-thumb-rating great">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+            </div>
+          </div>
+          <div class="food-snap-thumb" style="background-image: url('assets/bar.png');">
+            <div class="food-snap-thumb-rating bad">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+            </div>
+          </div>
+          <div class="food-snap-thumb" style="background-image: url('assets/shake.jpg');">
+            <div class="food-snap-thumb-rating good">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+            </div>
+          </div>
+          <div class="food-snap-thumb" style="background-image: url('assets/breakfastbowl.jpg');">
+            <div class="food-snap-thumb-rating great">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Food MePod Card (unlocked after 7 days) -->
+      <div onclick="window.location.href='foodpod.html'" class="food-mepod-card" id="foodMepodCard">
+        <div class="food-mepod-content">
+          <div class="food-mepod-badge">Unlocked</div>
+          <div class="food-mepod-text-row">
+            <div class="food-mepod-text">
+              <div class="food-mepod-title">Your FoodPod is Ready!</div>
+              <div class="food-mepod-subtitle">View your personalized nutrition insights</div>
+            </div>
+            <div class="food-mepod-arrow">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rewards Card -->
+    <a href="marketplace.html" class="rewards-card"><div><div class="rewards-value">3,122</div><div class="rewards-label">Reward points</div><div class="rewards-subtitle">Earn more to claim amazing prizes</div></div><div class="arrow-button" style="background: white;"><svg viewBox="0 0 24 24" fill="#0A0A0A"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div></a>
+
+    <!-- Did You Know Card -->
+    <div class="dyk-card">
+      <div class="dyk-image" style="background-image: url('assets/IMG_3854.WEBP');"></div>
+      <div class="dyk-content">
+        <div class="dyk-header">
+          <div class="dyk-title">Did you know?</div>
+        </div>
+        <div class="dyk-text">Leafy greens like spinach and kale are packed with vitamins, minerals, and fiber that support healthy digestion and boost your energy levels.</div>
+      </div>
+    </div>
+
+    <!-- Commitment Card -->
+    <div class="commitment-card">
+      <div class="commitment-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+      </div>
+      <div class="commitment-content">
+        <div class="commitment-title">Make a commitment</div>
+        <div class="commitment-text">Set your weekly health goals</div>
+      </div>
+      <button class="commitment-btn">
+        <span>Start</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+      </button>
+    </div>
+
+    <!-- Connect Device Card -->
+    <div class="connect-card">
+      <div class="connect-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"/></svg>
+      </div>
+      <div class="connect-content">
+        <div class="connect-title">Connect a device</div>
+        <div class="connect-text">Sync your fitness tracker</div>
+      </div>
+      <button class="connect-btn">
+        <span>Connect</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+      </button>
+    </div>
+
+    <!-- Marketplace Card -->
+    <a href="marketplace.html" class="marketplace-card"><div class="marketplace-content"><div><div class="marketplace-title">Marketplace</div><div class="marketplace-subtitle">Shop for all your needs</div></div><div class="arrow-button"><svg viewBox="0 0 24 24" fill="#0A0A0A"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></div></div></a>
+
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="nav-button-main" id="aiModalBtn">
+      <svg viewBox="0 0 78 78" fill="currentColor" width="24" height="24">
+        <path d="M22.6162 53.2287C26.3753 51.6336 29.3679 48.6409 30.9631 44.8818L34.8673 36.4003L38.7715 44.8818C40.4068 48.6456 43.3813 51.6681 47.1184 53.3634L55.6 57.2676L47.1184 61.0372C43.4096 62.7528 40.4117 65.7032 38.6369 69.3841L34.7327 78.0003L30.9631 69.3841C29.2799 65.6852 26.3151 62.7204 22.6162 61.0372L14 57.133L22.6162 53.2287Z"/>
+        <path d="M49.0621 20.5033C51.8815 19.3069 54.126 17.0624 55.3223 14.2431L58.2505 7.88196L61.1786 14.2431C62.4051 17.066 64.636 19.3328 67.4388 20.6043L73.8 23.5325L67.4388 26.3596C64.6572 27.6464 62.4088 29.8592 61.0777 32.6198L58.1495 39.082L55.3223 32.6198C54.0599 29.8457 51.8363 27.622 49.0621 26.3596L42.6 23.4315L49.0621 20.5033Z"/>
+        <path d="M11.4317 10.5479C13.778 9.49089 15.6571 7.61562 16.7163 5.27408L19.2 0.000244141L21.6309 5.27408C22.6901 7.61562 24.5691 9.49089 26.9155 10.5479L32.2 13.0266L26.9155 15.4526C24.5488 16.4799 22.6603 18.3645 21.6309 20.7264L19.1472 26.0002L16.7691 20.7264C15.71 18.3849 13.8309 16.5096 11.4846 15.4526L6.20001 12.9739L11.4317 10.5479Z"/>
+      </svg>
+    </div>
+    <div style="flex: 1;"></div>
+    <div class="nav-button-menu" id="miniAppsBtn"><div class="nav-dots"><div class="nav-dot"></div><div class="nav-dot"></div><div class="nav-dot"></div><div class="nav-dot"></div></div></div>
+  </div>
+
+  <!-- Mini Apps Modal -->
+  <div class="modal-overlay" id="miniAppsModal">
+    <div class="mini-apps-menu">
+      <div class="modal-handle modal-handle--dark"></div>
+      <a href="index.html" class="mini-apps-item highlighted"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18m4.9-9.55A2.91 2.91 0 0 1 14 9a2.91 2.91 0 0 1-2.91 2.91A2.91 2.91 0 0 1 8.18 9a2.91 2.91 0 0 1 2.91-2.91m5.74 4.27A3.64 3.64 0 0 1 20.45 14a3.64 3.64 0 0 1-3.64 3.64A3.64 3.64 0 0 1 13.18 14a3.64 3.64 0 0 1 3.64-3.64z"/></svg></div><span class="mini-apps-item-text">My Feed</span></a>
+      <a href="#" class="mini-apps-item"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"/></svg></div><span class="mini-apps-item-text">Devices</span></a>
+      <a href="#" class="mini-apps-item"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div><span class="mini-apps-item-text">Track my workout</span></a>
+      <a href="marketplace.html" class="mini-apps-item"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg></div><span class="mini-apps-item-text">Marketplace</span></a>
+      <a href="#" class="mini-apps-item"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div><span class="mini-apps-item-text">Gym Network</span></a>
+      <a href="#" class="mini-apps-item"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div><span class="mini-apps-item-text">Team</span><span class="mini-apps-item-badge">3</span></a>
+      <a href="stats.html" class="mini-apps-item"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg></div><span class="mini-apps-item-text">Stats</span></a>
+      <a href="#" class="mini-apps-item" id="logoutBtn"><div class="mini-apps-item-icon"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg></div><span class="mini-apps-item-text">Log Out</span></a>
+    </div>
+  </div>
+
+  <!-- AI Companion Modal -->
+  <div class="modal-overlay" id="aiModal">
+    <div class="modal-content ai-modal-content" id="aiModalContent">
+      <div class="modal-handle"></div>
+
+      <!-- Menu View (default) -->
+      <div class="ai-menu-view" id="aiMenuView">
+        <h1 class="ai-modal-greeting">Hello Sienna, I'm your wellness companion</h1>
+        <p class="ai-modal-description">I connect how you move, eat, and feel to help you see patterns and make changes that fit your life.</p>
+        <div class="ai-modal-actions" id="aiActions">
+          <div class="ai-action-card" data-action="about"><div class="ai-action-icon" style="color: var(--color-text-dark);"><svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div><div class="ai-action-content"><div class="ai-action-title">Tell me about you</div><div class="ai-action-subtitle">Let us know what your in to.</div></div></div>
+          <div class="ai-action-card" data-action="feeling"><div class="ai-action-icon" style="color: var(--color-text-dark);"><svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></div><div class="ai-action-content"><div class="ai-action-title">How are you feeling today?</div><div class="ai-action-subtitle">We can tone it down or up when needed.</div></div></div>
+          <div class="ai-action-card" data-action="food"><div class="ai-action-icon" style="color: var(--color-text-dark);"><svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05l-5 2v5.41c0 .89-.73 1.59-1.63 1.47-.79-.11-1.37-.85-1.37-1.65V7.05l-5 2v5.41c0 .89-.73 1.59-1.63 1.47-.79-.11-1.37-.85-1.37-1.65V9.05l-5 2v9.94h18.06z"/></svg></div><div class="ai-action-content"><div class="ai-action-title">Food scan</div><div class="ai-action-subtitle">Keep a diary of your food.</div></div></div>
+          <div class="ai-action-card" data-action="mobility"><div class="ai-action-icon" style="color: var(--color-text-dark);"><svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/></svg></div><div class="ai-action-content"><div class="ai-action-title">Mobility scan</div><div class="ai-action-subtitle">See where you stand with mobility</div></div></div>
+          <div class="ai-action-card" data-action="body"><div class="ai-action-icon" style="color: var(--color-text-dark);"><svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div><div class="ai-action-content"><div class="ai-action-title">Body comp scan</div><div class="ai-action-subtitle">Hard work pays off see your transformation</div></div></div>
+        </div>
+      </div>
+
+      <!-- Chat View (shown after selecting an option) -->
+      <div class="ai-chat-view" id="aiChatView">
+        <div class="chat-header">
+          <button class="chat-back-btn" id="chatBackBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+          </button>
+          <div class="chat-header-title">Wellness Companion</div>
+          <div class="chat-header-spacer"></div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+      </div>
+
+      <!-- Shared Bottom Input Area -->
+      <div class="ai-modal-bottom" id="aiModalBottom">
+        <div class="ai-input-row" id="aiInputRow">
+          <input type="text" class="ai-text-input" id="aiTextInput" placeholder="Type a message...">
+          <button class="ai-send-btn" id="aiSendBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="ai-mic-button" id="aiMicBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food Camera Modal -->
+  <div class="modal-overlay camera-overlay" id="cameraModal">
+    <!-- Camera View -->
+    <div class="camera-view active" id="cameraView">
+      <button class="camera-cancel-link" id="cameraCancelTop">Cancel</button>
+      <div class="camera-viewfinder">
+        <video id="cameraVideo" autoplay playsinline></video>
+        <canvas id="cameraCanvas" style="display: none;"></canvas>
+      </div>
+      <div class="camera-controls">
+        <button class="camera-capture-btn" id="captureBtn">
+          <div class="capture-btn-inner"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Rating View -->
+    <div class="camera-view" id="ratingView">
+      <button class="camera-cancel-link" id="ratingCancelTop">Cancel</button>
+      <div class="camera-photo-preview">
+        <img id="capturedPhoto" src="" alt="Captured food">
+      </div>
+      <div class="rating-buttons">
+        <button class="rating-btn" id="ratingBad" data-rating="bad">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+            <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/>
+          </svg>
+        </button>
+        <button class="rating-btn" id="ratingGood" data-rating="good">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+          </svg>
+        </button>
+      </div>
+      <button class="camera-cancel-btn-bottom" id="ratingCancelBottom">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Celebration Overlay -->
+  <div class="celebration-overlay" id="celebrationOverlay">
+    <div class="celebration-content">
+      <div class="celebration-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+      <div class="celebration-title">Workout Complete!</div>
+      <div class="celebration-subtitle">Flexibility - Core Power</div>
+      <div class="celebration-points">+125 Points</div>
+    </div>
+  </div>
+
+  <!-- Confetti Container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Initialize video seamless loop
+    initVideoLoop('.workout-card-video');
+
+    // Initialize horizontal scroll
+    initHorizontalScroll('.workout-cards');
+
+    // Initialize mood wheel
+    initMoodWheel();
+
+    // Initialize energy battery (must run before checkWorkoutCompletion so drain can hook in)
+    initEnergyBattery();
+
+    // Initialize button hover effects
+    initButtonHoverEffects('.arrow-button, .pledge-button, .connect-device');
+
+    // Initialize modals
+    initModal('miniAppsModal', 'miniAppsBtn');
+    initModal('aiModal', 'aiModalBtn');
+
+    // Initialize drag-to-close for action sheets
+    initDraggableModal('miniAppsModal');
+    initDraggableModal('aiModal');
+
+    // Initialize AI Chat interface
+    initAIChat();
+
+    // Initialize Food Camera
+    initFoodCamera();
+
+    // Check for workout completion and trigger celebration
+    checkWorkoutCompletion();
+
+    // Initialize Notifications Dismiss
+    (function initNotifications() {
+      const closeButtons = document.querySelectorAll('.notification-close');
+
+      closeButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const card = this.closest('.notification-card');
+          card.classList.add('dismissed');
+
+          setTimeout(() => {
+            card.remove();
+            // Check if all notifications are dismissed
+            const remaining = document.querySelectorAll('.notification-card');
+            if (remaining.length === 0) {
+              const section = document.querySelector('.notifications-section');
+              if (section) section.style.display = 'none';
+            }
+          }, 300);
+        });
+      });
+    })();
+
+    // Initialize Logout
+    (function initLogout() {
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('isGuest');
+          localStorage.removeItem('onboardingComplete');
+          window.location.href = 'welcome.html';
+        });
+      }
+    })();
+
+    // Initialize Food Snap Tracker
+    (function initFoodSnap() {
+      const circlesContainer = document.getElementById('foodSnapCircles');
+      const mepodCard = document.getElementById('foodMepodCard');
+      const cameraBtn = document.getElementById('foodCameraBtn');
+
+      // Get or initialize food snap data from localStorage
+      let foodSnapData = JSON.parse(localStorage.getItem('foodSnapData')) || {
+        snaps: [], // Array of { day: number, status: 'filled' | 'missed' }
+        currentDay: 1
+      };
+
+      // Demo data - simulate some progress (remove in production)
+      // Reset for prototype demo - 29 filled, 1 remaining
+      foodSnapData.snaps = [];
+      for (let i = 1; i <= 29; i++) {
+        foodSnapData.snaps.push({ day: i, status: 'filled' });
+      }
+      foodSnapData.currentDay = 30;
+
+      function renderCircles() {
+        circlesContainer.innerHTML = '';
+
+        for (let i = 1; i <= 30; i++) {
+          const circle = document.createElement('div');
+          circle.className = 'food-circle';
+          circle.dataset.day = i;
+
+          const snapRecord = foodSnapData.snaps.find(s => s.day === i);
+          if (snapRecord) {
+            circle.classList.add(snapRecord.status);
+          }
+
+          // Make non-filled circles clickable
+          if (!snapRecord || snapRecord.status !== 'filled') {
+            circle.style.cursor = 'pointer';
+            circle.addEventListener('click', function() {
+              const day = parseInt(this.dataset.day);
+              // Update existing record or add new one
+              const existing = foodSnapData.snaps.findIndex(s => s.day === day);
+              if (existing >= 0) {
+                foodSnapData.snaps[existing].status = 'filled';
+              } else {
+                foodSnapData.snaps.push({ day: day, status: 'filled' });
+              }
+              localStorage.setItem('foodSnapData', JSON.stringify(foodSnapData));
+              renderCircles();
+              checkMepodUnlock();
+            });
+          }
+
+          circlesContainer.appendChild(circle);
+        }
+      }
+
+      function updateCounter() {
+        const counterEl = document.getElementById('foodSnapCounter');
+        const filledCount = foodSnapData.snaps.filter(s => s.status === 'filled').length;
+        const currentCount = foodSnapData.snaps.filter(s => s.status === 'current').length;
+        if (counterEl) {
+          counterEl.textContent = (filledCount + currentCount) + '/30';
+        }
+      }
+
+      function checkMepodUnlock() {
+        const filledCount = foodSnapData.snaps.filter(s => s.status === 'filled').length;
+        updateCounter();
+        if (mepodCard) {
+          if (filledCount >= 30) {
+            mepodCard.classList.add('unlocked');
+            mepodCard.style.display = 'flex';
+          } else {
+            mepodCard.classList.remove('unlocked');
+            mepodCard.style.display = 'none';
+          }
+        }
+      }
+
+      function addSnapFromCamera() {
+        // Find the first current (orange) circle and fill it, or find empty
+        for (let i = 1; i <= 30; i++) {
+          const existing = foodSnapData.snaps.find(s => s.day === i);
+          if (existing && existing.status === 'current') {
+            existing.status = 'filled';
+            localStorage.setItem('foodSnapData', JSON.stringify(foodSnapData));
+            renderCircles();
+            checkMepodUnlock();
+            return;
+          }
+        }
+        // If no current circles, fill next empty
+        addSnap();
+      }
+
+      function addSnap() {
+        // Find the first empty day to fill
+        for (let i = 1; i <= 30; i++) {
+          const existingSnap = foodSnapData.snaps.find(s => s.day === i);
+          if (!existingSnap) {
+            foodSnapData.snaps.push({ day: i, status: 'filled' });
+            localStorage.setItem('foodSnapData', JSON.stringify(foodSnapData));
+            renderCircles();
+            checkMepodUnlock();
+            break;
+          }
+        }
+      }
+
+      // Camera button adds a snap and shows FoodPod when reaching 7
+      if (cameraBtn) {
+        cameraBtn.addEventListener('click', function(e) {
+          addSnapFromCamera();
+        });
+      }
+
+      // Initial render
+      renderCircles();
+      checkMepodUnlock();
+    })();
+
+    // Initialize Health Checklist
+    (function initHealthChecklist() {
+      const items = document.querySelectorAll('.health-checklist-item');
+      const progressEl = document.querySelector('.health-checklist-progress');
+      const checklistCard = document.querySelector('.health-checklist');
+      const checklistHeader = document.querySelector('.health-checklist-header');
+      const confettiColors = ['#14E25A', '#0A0A0A', '#10C94E', '#FFFFFF'];
+
+      // Toggle accordion on header click
+      if (checklistHeader) {
+        checklistHeader.addEventListener('click', function(e) {
+          // Don't toggle if clicking on items inside
+          if (e.target.closest('.health-checklist-items')) return;
+          checklistCard.classList.toggle('expanded');
+        });
+      }
+
+      function createConfetti(element) {
+        const container = document.createElement('div');
+        container.className = 'task-confetti';
+        container.style.left = '30px';
+        container.style.top = '50%';
+        container.style.transform = 'translateY(-50%)';
+        element.appendChild(container);
+
+        for (let i = 0; i < 12; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'task-confetti-particle';
+          particle.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+          particle.style.left = (Math.random() - 0.5) * 80 + 'px';
+          particle.style.top = (Math.random() - 0.5) * 40 + 'px';
+          particle.style.animationDelay = (Math.random() * 0.2) + 's';
+          container.appendChild(particle);
+        }
+
+        setTimeout(() => container.remove(), 1000);
+      }
+
+      function createCardConfetti() {
+        const container = document.createElement('div');
+        container.className = 'task-confetti';
+        container.style.left = '50%';
+        container.style.top = '50%';
+        container.style.transform = 'translate(-50%, -50%)';
+        checklistCard.appendChild(container);
+
+        for (let i = 0; i < 24; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'task-confetti-particle';
+          particle.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+          particle.style.left = (Math.random() - 0.5) * 200 + 'px';
+          particle.style.top = (Math.random() - 0.5) * 100 + 'px';
+          particle.style.animationDelay = (Math.random() * 0.3) + 's';
+          container.appendChild(particle);
+        }
+
+        setTimeout(() => container.remove(), 1200);
+      }
+
+      function updateProgress() {
+        const completed = document.querySelectorAll('.health-checklist-item.completed').length;
+        const total = items.length;
+        if (progressEl) {
+          if (completed === total && total > 0) {
+            progressEl.textContent = 'Complete';
+          } else {
+            progressEl.textContent = `${completed} of ${total}`;
+          }
+        }
+
+        // Check if all tasks are complete
+        if (completed === total && total > 0) {
+          if (!checklistCard.classList.contains('all-complete')) {
+            // First time completing all - celebrate!
+            checklistCard.classList.add('celebrating');
+            createCardConfetti();
+            setTimeout(() => {
+              checklistCard.classList.remove('celebrating');
+              checklistCard.classList.add('all-complete');
+              // Auto-collapse the accordion when all complete
+              checklistCard.classList.remove('expanded');
+            }, 800);
+          }
+        } else {
+          checklistCard.classList.remove('all-complete');
+        }
+      }
+
+      items.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.stopPropagation(); // Prevent header toggle
+          const wasCompleted = this.classList.contains('completed');
+          this.classList.toggle('completed');
+
+          if (!wasCompleted) {
+            // Task is being completed - animate!
+            this.classList.add('completing');
+            createConfetti(this);
+
+            setTimeout(() => {
+              this.classList.remove('completing');
+            }, 500);
+          }
+
+          updateProgress();
+        });
+      });
+    })();
+  </script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js"></script>
+</body>
+</html>

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Recommended For You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo_UA.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Lindora">
+  <link rel="stylesheet" href="variables.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: var(--color-background-alt);
+      padding-bottom: 40px;
+    }
+
+    /* Header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--color-background-alt);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .page-header-title {
+      flex: 1;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    .page-header-spacer {
+      width: 40px;
+    }
+
+    /* Personalization Banner */
+    .personalization-banner {
+      background: #0a0a0a;
+      margin: 16px;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      color: white;
+    }
+    .personalization-banner-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .personalization-banner-text {
+      font-size: 14px;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    /* Filter Pills */
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filter-pills::-webkit-scrollbar { display: none; }
+    .filter-pill {
+      padding: 10px 18px;
+      background: var(--color-surface);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .filter-pill.active {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      border-color: var(--color-primary);
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 16px 12px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    /* Workout Cards - Vertical Stack */
+    .workout-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 16px;
+    }
+
+    .workout-card-vertical {
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .workout-card-vertical:active {
+      transform: scale(0.98);
+    }
+
+    .workout-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .workout-card-badge {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .workout-card-duration {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    .workout-card-body {
+      padding: 16px;
+    }
+    .workout-card-modality {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .workout-card-body > .workout-card-modality {
+      margin-bottom: 6px;
+    }
+    .workout-card-modality.flexibility { color: var(--color-secondary-red); }
+    .workout-card-modality.strength { color: var(--color-secondary-navy); }
+    .workout-card-modality.breathing { color: var(--color-secondary-grey); }
+
+    .workout-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 4px;
+    }
+    .workout-card-instructor {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 10px;
+    }
+    .workout-card-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--color-text-light);
+      margin-bottom: 12px;
+    }
+    .workout-card-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .workout-card-meta svg {
+      width: 14px;
+      height: 14px;
+    }
+    .workout-card-reason {
+      display: none;
+    }
+
+    .workout-card-actions {
+      display: flex;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+    .btn-start {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: var(--color-surface-dark);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+    .btn-start:hover {
+      background: var(--color-background-black);
+    }
+    .btn-start svg {
+      width: 18px;
+      height: 18px;
+    }
+    .btn-save {
+      width: 48px;
+      height: 48px;
+      background: var(--color-background);
+      border: none;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .btn-save svg {
+      width: 22px;
+      height: 22px;
+      color: var(--color-text-secondary);
+    }
+    .btn-save.saved svg {
+      color: var(--color-secondary-red);
+      fill: var(--color-secondary-red);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="page-header">
+    <a href="index.html" class="back-button">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+    </a>
+    <span class="page-header-title">Recommended For You</span>
+    <div class="page-header-spacer"></div>
+  </div>
+
+  <!-- Personalization Banner -->
+  <div class="personalization-banner">
+    <div class="personalization-banner-title">Hi Sienna, here's your plan</div>
+    <div class="personalization-banner-text">Based on your goals, activity history, and recovery needs, we've curated these workouts just for you.</div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div class="filter-pills">
+    <div class="filter-pill active" data-filter="all">All</div>
+    <div class="filter-pill" data-filter="flexibility">Flexibility</div>
+    <div class="filter-pill" data-filter="strength">Strength</div>
+    <div class="filter-pill" data-filter="breathing">Breathing</div>
+  </div>
+
+  <!-- Today's Priority -->
+  <div class="section-header">
+    <div class="section-title">Today's Priority</div>
+  </div>
+
+  <div class="workout-stack">
+    <div class="workout-card-vertical" data-modality="flexibility">
+      <div class="workout-card-body">
+        <div class="workout-card-header">
+          <div class="workout-card-badge">Top Pick</div>
+          <div class="workout-card-duration">15 min</div>
+        </div>
+        <div class="workout-card-modality flexibility">Flexibility</div>
+        <div class="workout-card-title">Hip Opener Flow</div>
+        <div class="workout-card-instructor">with Sarah Chen</div>
+        <div class="workout-card-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            MoveSync
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            Watch
+          </span>
+          <span>Intensity 2</span>
+        </div>
+        <div class="workout-card-reason">You've been sitting more than usual this week. This will help release tension in your hips and lower back.</div>
+      </div>
+      <div class="workout-card-actions">
+        <a href="player.html?workout=flexibility" class="btn-start">
+          Start Workout
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </a>
+        <button class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strength Section -->
+  <div class="section-header">
+    <div class="section-title">Build Your Strength</div>
+  </div>
+
+  <div class="workout-stack">
+    <div class="workout-card-vertical" data-modality="strength">
+      <div class="workout-card-body">
+        <div class="workout-card-header">
+          <div class="workout-card-modality strength">Strength</div>
+          <div class="workout-card-duration">20 min</div>
+        </div>
+        <div class="workout-card-title">Upper Body Sculpt</div>
+        <div class="workout-card-instructor">with Marcus Johnson</div>
+        <div class="workout-card-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            MoveSync
+          </span>
+          <span>Intensity 3</span>
+        </div>
+        <div class="workout-card-reason">Your upper body hasn't been trained in 5 days. This balanced session targets chest, back, and shoulders.</div>
+      </div>
+      <div class="workout-card-actions">
+        <a href="player.html?workout=strength" class="btn-start">
+          Start Workout
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </a>
+        <button class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="workout-card-vertical" data-modality="strength">
+      <div class="workout-card-body">
+        <div class="workout-card-header">
+          <div class="workout-card-modality strength">Strength</div>
+          <div class="workout-card-duration">25 min</div>
+        </div>
+        <div class="workout-card-title">Core Foundation</div>
+        <div class="workout-card-instructor">with Alex Rivera</div>
+        <div class="workout-card-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            Watch
+          </span>
+          <span>Intensity 2</span>
+        </div>
+        <div class="workout-card-reason">A strong core supports everything you do. This pairs well with your flexibility goals.</div>
+      </div>
+      <div class="workout-card-actions">
+        <a href="player.html?workout=strength" class="btn-start">
+          Start Workout
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </a>
+        <button class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flexibility Section -->
+  <div class="section-header">
+    <div class="section-title">Improve Mobility</div>
+  </div>
+
+  <div class="workout-stack">
+    <div class="workout-card-vertical" data-modality="flexibility">
+      <div class="workout-card-body">
+        <div class="workout-card-header">
+          <div class="workout-card-modality flexibility">Flexibility</div>
+          <div class="workout-card-duration">10 min</div>
+        </div>
+        <div class="workout-card-title">Morning Stretch Reset</div>
+        <div class="workout-card-instructor">with Emma Williams</div>
+        <div class="workout-card-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            Watch
+          </span>
+          <span>Intensity 1</span>
+        </div>
+        <div class="workout-card-reason">Perfect for your morning routine. Your sleep data shows you could benefit from gentle movement to start the day.</div>
+      </div>
+      <div class="workout-card-actions">
+        <a href="player.html?workout=flexibility" class="btn-start">
+          Start Workout
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </a>
+        <button class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breathing Section -->
+  <div class="section-header">
+    <div class="section-title">Recovery & Mindfulness</div>
+  </div>
+
+  <div class="workout-stack">
+    <div class="workout-card-vertical" data-modality="breathing">
+      <div class="workout-card-body">
+        <div class="workout-card-header">
+          <div class="workout-card-modality breathing">Breathing</div>
+          <div class="workout-card-duration">8 min</div>
+        </div>
+        <div class="workout-card-title">Stress Relief Breathwork</div>
+        <div class="workout-card-instructor">with Dr. James Park</div>
+        <div class="workout-card-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            MoveSync
+          </span>
+          <span>Intensity 1</span>
+        </div>
+        <div class="workout-card-reason">Your heart rate variability suggests elevated stress. This breathing session will help activate your parasympathetic nervous system.</div>
+      </div>
+      <div class="workout-card-actions">
+        <a href="player.html?workout=breathing" class="btn-start">
+          Start Workout
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </a>
+        <button class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="workout-card-vertical" data-modality="breathing">
+      <div class="workout-card-body">
+        <div class="workout-card-header">
+          <div class="workout-card-modality breathing">Breathing</div>
+          <div class="workout-card-duration">12 min</div>
+        </div>
+        <div class="workout-card-title">Evening Wind Down</div>
+        <div class="workout-card-instructor">with Lisa Chen</div>
+        <div class="workout-card-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            Watch
+          </span>
+          <span>Intensity 1</span>
+        </div>
+        <div class="workout-card-reason">Prepare your body for better sleep. Pairs well with your goal of improving sleep quality.</div>
+      </div>
+      <div class="workout-card-actions">
+        <a href="player.html?workout=breathing" class="btn-start">
+          Start Workout
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </a>
+        <button class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Filter functionality
+    const filterPills = document.querySelectorAll('.filter-pill');
+    const workoutCards = document.querySelectorAll('.workout-card-vertical');
+    const sections = document.querySelectorAll('.section-header');
+
+    filterPills.forEach(pill => {
+      pill.addEventListener('click', function() {
+        // Update active state
+        filterPills.forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+
+        const filter = this.dataset.filter;
+
+        // Show/hide cards based on filter
+        workoutCards.forEach(card => {
+          const modality = card.dataset.modality;
+          if (filter === 'all' || modality === filter) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // Show/hide section headers based on visible cards
+        sections.forEach(section => {
+          const nextStack = section.nextElementSibling;
+          if (nextStack && nextStack.classList.contains('workout-stack')) {
+            const visibleCards = nextStack.querySelectorAll('.workout-card-vertical[style="display: flex;"], .workout-card-vertical:not([style])');
+            let hasVisible = false;
+            visibleCards.forEach(card => {
+              if (card.style.display !== 'none') hasVisible = true;
+            });
+
+            if (filter === 'all') {
+              section.style.display = 'flex';
+            } else {
+              const badge = section.querySelector('.section-badge');
+              if (badge && badge.classList.contains(filter)) {
+                section.style.display = 'flex';
+              } else if (!badge && filter === 'flexibility') {
+                // Today's Priority section (no badge)
+                section.style.display = 'flex';
+              } else {
+                section.style.display = 'none';
+              }
+            }
+          }
+        });
+
+        // Handle Today's Priority section separately
+        if (filter !== 'all' && filter !== 'flexibility') {
+          const prioritySection = document.querySelector('.section-header:first-of-type');
+          if (prioritySection && !prioritySection.querySelector('.section-badge')) {
+            prioritySection.style.display = 'none';
+          }
+        }
+      });
+    });
+
+    // Save button toggle
+    document.querySelectorAll('.btn-save').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        this.classList.toggle('saved');
+      });
+    });
+  </script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js"></script>
+</body>
+</html>
