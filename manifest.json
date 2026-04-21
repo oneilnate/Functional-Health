@@ -1,0 +1,21 @@
+{
+  "name": "UA NEXT Fitness",
+  "short_name": "UA NEXT",
+  "description": "Your personalized fitness and wellness companion",
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "assets/app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
