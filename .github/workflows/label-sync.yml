@@ -1,0 +1,28 @@
+# Sync GitHub labels from .github/labels.yml on every push to the release branch.
+# This ensures escape-hatch labels exist before any PR is opened.
+
+name: Label Sync
+
+on:
+  push:
+    branches:
+      - 'release/**'
+    paths:
+      - '.github/labels.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EndBug/label-sync@v2
+        with:
+          config-file: .github/labels.yml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-other-labels: false

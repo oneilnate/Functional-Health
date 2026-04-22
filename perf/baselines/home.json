@@ -1,0 +1,10 @@
+{
+  "route": "/",
+  "name": "home",
+  "tti": 850,
+  "leaf": 1,
+  "container": 0,
+  "capturedAt": "2026-04-22T00:00:00.000Z",
+  "environment": "ubuntu-latest / Chromium / 4x CPU throttle",
+  "note": "Conservative baseline. Local (no throttle) runs ~95ms. Under 4x CI throttle expect ~300-800ms. Update after 5 stable CI runs."
+}

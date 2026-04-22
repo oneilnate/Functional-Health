@@ -1,0 +1,208 @@
+# PR Scoreboard — screenshots + visual regression + a11y + TTI + render counts + coverage + bot comment
+#
+# Runs on every PR touching source/config paths (not docs-only changes).
+# Posts / updates a SINGLE bot comment keyed on <!-- obvious-mobile-scoreboard:v1 -->.
+# Target total time: ≤ 2 minutes on ubuntu-latest.
+# Estimated per-run cost: ~$0.05–$0.10.
+#
+# Three escape-hatch labels (configured in .github/labels.yml):
+#   perf-budget-change         — bypass bundle/perf budget check
+#   visual-baseline-update     — bypass visual regression fail
+#   perf-regression-acknowledged — one-time perf regression bypass
+
+name: Scoreboard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths:
+      - 'src/**'
+      - 'assets/**'
+      - 'app.json'
+      - 'performance.config.ts'
+      - 'e2e/**'
+      - 'playwright.config.ts'
+
+permissions:
+  contents: read
+  pull-requests: write  # needed to post/update bot comment
+
+jobs:
+  scoreboard:
+    name: Scoreboard (screenshots + a11y + perf + bot comment)
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+
+    env:
+      # Expose PR labels so build-scoreboard.ts can check escape hatches
+      PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # ── 2. Node + pnpm setup ─────────────────────────────────────────────────
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # ── 3. Install dependencies ──────────────────────────────────────────────
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── 4. Install Playwright browsers ───────────────────────────────────────
+      - name: Install Playwright (Chromium only)
+        run: pnpm exec playwright install chromium --with-deps
+
+      # ── 5. Build Expo web bundle ─────────────────────────────────────────────
+      - name: Build web bundle
+        run: pnpm build:web
+
+      # ── 6. Capture bundle size via size-limit ─────────────────────────────────
+      - name: Size-limit (bundle budget gate)
+        run: |
+          pnpm exec size-limit --json > size-limit-results.json || true
+          cat size-limit-results.json
+
+      # ── 7. Run coverage (for scoreboard quality block) ────────────────────────
+      - name: Run tests with coverage
+        run: pnpm test:coverage || true
+        # Note: coverage failures are surfaced in scoreboard, not as hard CI fail here.
+        # The inner ci.yml still enforces coverage thresholds.
+
+      # ── 8. Serve web bundle + run Playwright suite ────────────────────────────
+      - name: Serve dist and run Playwright
+        run: |
+          # Install serve globally (lightweight static server)
+          pnpm add -g serve@14 || npm install -g serve@14
+          # Start serve in background
+          serve dist -l 8080 &
+          SERVE_PID=$!
+          # Wait until the server is ready (max 30s)
+          timeout 30 bash -c 'until curl -sf http://localhost:8080 > /dev/null; do sleep 1; done'
+          echo "serve is up (pid $SERVE_PID)"
+          # Detect missing baselines — run with --update-snapshots to generate them
+          BASELINE_DIR="e2e/screenshots/baselines"
+          MISSING=$(find "$BASELINE_DIR" -name '*.png' 2>/dev/null | wc -l)
+          if [ "$MISSING" -eq "0" ]; then
+            echo "No PNG baselines found — running with --update-snapshots to generate first-run baselines"
+            pnpm exec playwright test e2e/screenshots/screens.spec.ts \
+              --project=chromium-scoreboard \
+              --update-snapshots \
+              --reporter=list,json \
+              --output=e2e/screenshots/__diff__ || true
+            echo "Baselines generated"
+          fi
+          # Run the full Playwright suite (screenshot + a11y + perf)
+          pnpm exec playwright test e2e/screenshots/screens.spec.ts \
+            --project=chromium-scoreboard \
+            --reporter=list,json \
+            --output=e2e/screenshots/__diff__ || PLAYWRIGHT_EXIT=$?
+          # Always kill serve
+          kill $SERVE_PID || true
+          # Exit with Playwright's code (allows scoreboard step to run)
+          exit ${PLAYWRIGHT_EXIT:-0}
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: playwright-results.json
+
+
+      # ── 9. Upload screenshot diffs as artifact ────────────────────────────────
+      - name: Upload screenshot diffs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-diffs-${{ github.run_id }}
+          path: e2e/screenshots/__diff__/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # ── 10. Upload screenshots as artifact for bot comment URLs ───────────────
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ github.run_id }}
+          path: e2e/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # ── 11. Build scoreboard JSON + markdown ──────────────────────────────────
+      - name: Build scoreboard
+        if: always()
+        run: pnpm exec tsx scripts/build-scoreboard.ts
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          PR_LABELS: ${{ env.PR_LABELS }}
+        # Exit code from build-scoreboard drives the HARD_FAIL below
+
+      # ── 12. Post / update bot comment ─────────────────────────────────────────
+      - name: Post scoreboard comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const sentinel = '<!-- obvious-mobile-scoreboard:v1 -->';
+            let body;
+            try {
+              body = fs.readFileSync('scoreboard-comment.md', 'utf8');
+            } catch {
+              body = `${sentinel}\n⚠️ Scoreboard comment generation failed — check CI logs.\n`;
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find(c => c.body && c.body.includes(sentinel));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log(`Updated comment ${existing.id}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              console.log('Created new scoreboard comment');
+            }
+
+      # ── 13. Label sync (escape-hatch labels) ──────────────────────────────────
+      - name: Sync escape-hatch labels
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: .github/labels.yml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-other-labels: false
+
+      # ── 14. Hard fail if scoreboard detected gate breach ──────────────────────
+      - name: Enforce scoreboard gates
+        if: always()
+        run: |
+          # Re-run build-scoreboard in check-only mode; exits non-zero on hard failure
+          pnpm exec tsx scripts/build-scoreboard.ts
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          PR_LABELS: ${{ env.PR_LABELS }}
