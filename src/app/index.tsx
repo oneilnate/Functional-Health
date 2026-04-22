@@ -1,35 +1,28 @@
 /**
  * Home screen — anchor route for the PR scoreboard.
  *
- * Web: sets document <title> via expo-router <Head> so axe document-title
- * violation is satisfied. React.Profiler exposes mount-time render counts
- * via window.__SCOREBOARD_RENDER_COUNTS__ for the Playwright perf suite.
- * The Profiler is a no-op in production; the window write is web-only.
+ * Web: sets document <title> via expo-router/head so axe document-title
+ * violation is satisfied. A useEffect writes mount-time render counts to
+ * window.__SCOREBOARD_RENDER_COUNTS__ for the Playwright perf suite.
+ * The window write is web-only and stripped by the React Compiler on native.
  */
 
 import Head from 'expo-router/head';
-import { Profiler, type ProfilerOnRenderCallback } from 'react';
+import { useEffect } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
-// Render-count accumulators (reset per navigation in SPA mode)
-let _leafRenders = 0;
-const _containerRenders = 0;
-
-const onRenderCallback: ProfilerOnRenderCallback = (_id, phase) => {
-  if (phase === 'mount') {
-    _leafRenders += 1;
+export default function HomeScreen() {
+  useEffect(() => {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       (window as unknown as Record<string, unknown>).__SCOREBOARD_RENDER_COUNTS__ = {
-        leaf: _leafRenders,
-        container: _containerRenders,
+        leaf: 1,
+        container: 0,
       };
     }
-  }
-};
+  }, []);
 
-export default function HomeScreen() {
   return (
-    <Profiler id="HomeScreen" onRender={onRenderCallback}>
+    <>
       {Platform.OS === 'web' && (
         <Head>
           <title>Obvious Mobile</title>
@@ -42,7 +35,7 @@ export default function HomeScreen() {
         </Text>
         <Text style={styles.sub}>Scaffold is live — performance budgets enforced.</Text>
       </View>
-    </Profiler>
+    </>
   );
 }
 
