@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "Obvious",
-    "slug": "obvious-mobile",
+    "name": "Aaptiv Functional Feed",
+    "slug": "aaptiv-functional-feed",
     "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "obvious",
+    "scheme": "aaptivfeed",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.everbetter.obvious",
+      "bundleIdentifier": "com.everbetter.aaptivfeed",
       "icon": "./assets/expo.icon"
     },
     "android": {
-      "package": "com.everbetter.obvious",
+      "package": "com.everbetter.aaptivfeed",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
