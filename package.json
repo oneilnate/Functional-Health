@@ -8,7 +8,15 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check . && pnpm exec eslint --config eslint.config.expo.js src/",
+    "lint:fix": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "size-limit": "size-limit",
+    "build:web": "expo export --platform web",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test:coverage && pnpm build:web && pnpm size-limit"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.15.5",
@@ -31,19 +39,31 @@
     "react-dom": "19.2.0",
     "react-native": "0.83.6",
     "react-native-gesture-handler": "~2.30.0",
-    "react-native-worklets": "0.7.4",
     "react-native-reanimated": "4.2.1",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-screens": "~4.23.0",
-    "react-native-web": "~0.21.0"
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.7.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.12",
+    "@size-limit/file": "^12.1.0",
+    "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.2.2",
-    "typescript": "~5.9.2"
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitest/coverage-v8": "^4.1.5",
+    "eslint": "^9.0.0",
+    "eslint-plugin-expo": "^1.0.0",
+    "msw": "^2.13.4",
+    "size-limit": "^12.1.0",
+    "typescript": "~5.9.2",
+    "vite": "^6.4.2",
+    "vitest": "^4.1.5",
+    "vitest-native": "0.3.0"
   },
   "private": true,
   "packageManager": "pnpm@9.15.9",
   "engines": {
-    "node": ">=22 <23"
+    "node": ">=22.0.0"
   }
 }
