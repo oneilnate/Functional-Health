@@ -1,0 +1,30 @@
+{
+  "_note": "Placeholder baseline — update after first successful CI run with real Flashlight output",
+  "_capturedAt": "2026-04-22T23:00:00.000Z",
+  "_environment": "Android emulator API 34 / ubuntu-latest / Flashlight instrumented",
+  "_warning": "Flashlight instrumentation overhead included in score. Compare ONLY against instrumented runs.",
+  "flow": "onboarding",
+  "bundleId": "com.everbetter.aaptivfeed",
+  "score": 85,
+  "cpu": {
+    "averageUsage": 12.5,
+    "maxUsage": 38.2,
+    "unit": "percent"
+  },
+  "memory": {
+    "averageUsedMb": 145.3,
+    "maxUsedMb": 162.8,
+    "unit": "MB"
+  },
+  "fps": {
+    "average": 58.4,
+    "min": 52.0,
+    "unit": "frames/sec"
+  },
+  "threadContention": {
+    "blockedThreadCount": 0,
+    "maxBlockedMs": 0,
+    "unit": "ms"
+  },
+  "flaggedFrames": []
+}

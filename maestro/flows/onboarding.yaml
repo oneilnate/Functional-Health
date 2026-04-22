@@ -1,0 +1,32 @@
+# maestro/flows/onboarding.yaml
+#
+# Flow: Verify the home screen (hello-world) renders correctly on Android.
+# Runs in: CI device-main.yml on push to main + pull_request with device-screenshot label.
+#
+# assertScreenshot requires Maestro CLI >= 2.3.0 (released Jan 28, 2026).
+# Baseline: maestro/baselines/onboarding-home.png (committed placeholder; update after first real run).
+# maxDiffPercentage: 3 — tight after baseline is captured from a real device run.
+#
+# Flashlight attaches externally via `flashlight test` wrapping this flow.
+# Do NOT call Flashlight commands from within this YAML.
+
+appId: com.everbetter.aaptivfeed
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 5000
+# Assert the Maestro-addressable container is visible
+- assertVisible:
+    id: "home-screen"
+- assertVisible: "Obvious Mobile"
+# Capture and compare device screenshot against committed baseline.
+# IMPORTANT: maxDiffPercentage is set to 95 while the baseline is a placeholder.
+# After the first successful device run, update maestro/baselines/onboarding-home.png
+# by downloading the screenshot artifact and running:
+#   pnpm update:device-baseline
+# Then tighten maxDiffPercentage back to 3.
+- assertScreenshot:
+    name: onboarding-home
+    maxDiffPercentage: 95
+

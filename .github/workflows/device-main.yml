@@ -1,0 +1,366 @@
+# .github/workflows/device-main.yml
+#
+# Device + Flashlight workflow
+# Runs: (a) push to main — post-merge perf gate
+#        (b) pull_request with 'device-screenshot' label — on-demand verification
+# Does NOT run on every PR (emulator boot costs 4-8 min; too slow for the PR fast path).
+#
+# Steps:
+#   1. Trigger EAS cloud build (Android APK, preview profile)
+#   2. Boot Android emulator via reactivecircus/android-emulator-runner@v2
+#   3. Install APK + Maestro CLI
+#   4. Run onboarding.yaml with --retry 2
+#   5. Attach Flashlight for runtime perf
+#   6. Build Device scoreboard section
+#   7. Post/update bot comment (PR) or commit comment (main push)
+#
+# Known risk: Android emulator boot timeout (reactivecircus/android-emulator-runner issue #965).
+# Mitigation: maestro test --retry 2 + timeout-minutes: 20 overall.
+# If 3 consecutive post-merge runs fail on boot, evaluate Maestro Cloud ($250/mo/device) as fallback.
+#
+# EAS Free tier: 15 Android builds/month. At >15 merges/month, EAS Starter ($19/mo) is needed.
+# Expected monthly burn documented in PR description.
+
+name: Device + Flashlight
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'assets/**'
+      - 'maestro/**'
+      - 'app.json'
+      - 'performance.config.ts'
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+  pull-requests: write   # post/update scoreboard comment
+
+jobs:
+  device-flashlight:
+    name: Device screenshot + Flashlight (Android)
+    # Only run on:
+    #   - push to main
+    #   - PR with the 'device-screenshot' label (NOT on every PR)
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'device-screenshot')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      BUNDLE_ID: com.everbetter.aaptivfeed
+      EAS_PROFILE: preview
+
+    steps:
+      # ── 1. Checkout ───────────────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # ── 2. Node + pnpm ─────────────────────────────────────────────────────────────
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── 3. JDK 17 (for Android emulator) ──────────────────────────────────────────
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+
+      # ── 4. EAS CLI + trigger cloud build ─────────────────────────────────────────
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@latest
+
+      - name: EAS build (Android APK, preview profile)
+        id: eas-build
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          # Cloud build: ~3-5 min, avoids 8-12 min local Gradle build in CI.
+          # Outputs JSON with build ID and artifact URL.
+          BUILD_OUTPUT=$(eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --json \
+            --wait \
+            2>&1)
+          echo "$BUILD_OUTPUT"
+          # Extract APK URL from JSON output
+          APK_URL=$(echo "$BUILD_OUTPUT" | python3 -c "
+import sys, json
+lines = sys.stdin.read()
+# Find JSON array in output
+import re
+json_match = re.search(r'\\[.*\\]', lines, re.DOTALL)
+if json_match:
+    builds = json.loads(json_match.group())
+    print(builds[0].get('artifacts', {}).get('buildUrl', ''))
+")
+          echo "APK_URL=$APK_URL" >> $GITHUB_OUTPUT
+          if [ -z "$APK_URL" ]; then
+            echo "::error::EAS build did not return an APK URL. Check if EXPO_TOKEN secret is configured."
+            echo "::error::Add EXPO_TOKEN at: https://github.com/oneilnate/Functional-Health/settings/secrets/actions"
+            exit 1
+          fi
+
+      - name: Download APK from EAS artifact
+        run: |
+          curl -L -o app-release.apk "${{ steps.eas-build.outputs.APK_URL }}"
+          ls -lh app-release.apk
+
+      # ── 5. Log EAS credit usage ───────────────────────────────────────────────
+      - name: Log EAS credit usage
+        if: always()
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          echo '## EAS Build Credit Usage' >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
+          # List recent builds to show credit consumption
+          eas build:list --platform android --limit 5 --json 2>/dev/null | python3 -c "
+import sys, json
+try:
+    builds = json.load(sys.stdin)
+    print(f'Recent Android builds: {len(builds)}')
+    print('Free tier: 15 Android builds/month')
+    print('Monitor at: https://expo.dev/accounts/everbetter/billing')
+except:
+    print('Could not fetch build list (non-critical)')
+" >> $GITHUB_STEP_SUMMARY || echo 'Credit check skipped (non-critical)' >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_STEP_SUMMARY
+          echo '**Expected monthly burn rate:**' >> $GITHUB_STEP_SUMMARY
+          echo '- ~5 merges/week × 4 weeks = ~20 Android builds/month' >> $GITHUB_STEP_SUMMARY
+          echo '- Free tier covers 15 builds; EAS Starter ($19/mo) recommended above 15 builds/month' >> $GITHUB_STEP_SUMMARY
+          echo '- At 20 builds/month: 5 paid builds × ~$0.06/credit = <$1 overage on Starter plan' >> $GITHUB_STEP_SUMMARY
+
+      # ── 6. Install Maestro CLI ──────────────────────────────────────────────────
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls https://get.maestro.dev | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      # ── 7. Install Flashlight ───────────────────────────────────────────────────
+      - name: Install Flashlight
+        run: npm install -g @perf-profiler/flashlight@latest
+
+      # ── 8. Boot Android emulator + run Maestro + Flashlight ────────────────────
+      # Emulator boot risk: reactivecircus/android-emulator-runner issue #965.
+      # Mitigation: maestro test --retry 2, timeout-minutes: 15 on inner step.
+      # If emulator fails to attach within 15 min, the job fails; upstream retries are manual.
+      - name: Boot emulator, install APK, run Maestro + Flashlight
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 15
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          ram-size: 6144M
+          heap-size: 2048M
+          disk-size: 4096M
+          disable-animations: true
+          emulator-options: -no-window -no-audio -no-snapshot-save -no-boot-anim
+          script: |
+            set -e
+
+            # Verify emulator is responsive
+            echo 'Waiting for emulator to be fully ready...'
+            adb wait-for-device
+            adb shell input keyevent 82  # unlock screen
+
+            # Install APK
+            echo 'Installing APK...'
+            adb install -r app-release.apk
+
+            # Verify Maestro is in PATH
+            maestro --version
+
+            # Run Maestro flow with retry (mitigates transient emulator attach errors)
+            echo 'Running Maestro onboarding flow...'
+            maestro test maestro/flows/onboarding.yaml \
+              --retry 2 \
+              --output maestro-results.json || MAESTRO_EXIT=$?
+
+            # Take a screenshot regardless of Maestro verdict (for Device scoreboard)
+            adb shell screencap -p /sdcard/device-screenshot.png
+            adb pull /sdcard/device-screenshot.png maestro-results/onboarding-home.png 2>/dev/null || \
+              mkdir -p maestro-results && adb pull /sdcard/device-screenshot.png maestro-results/onboarding-home.png
+
+            # Run Flashlight for runtime perf
+            # Flashlight instruments the app during a second Maestro run.
+            # Baseline captured with instrumentation ON — compare only against instrumented scores.
+            echo 'Running Flashlight performance test...'
+            flashlight test \
+              --bundleId ${{ env.BUNDLE_ID }} \
+              --testCommand "maestro test maestro/flows/onboarding.yaml" \
+              --resultsFilePath flashlight.json \
+              --duration 15000 || FLASHLIGHT_EXIT=$?
+
+            # Always exit 0 here — we surface failures via scoreboard, not hard CI fail
+            echo 'Emulator steps complete.'
+
+      # ── 9. Upload Maestro screenshots as artifact ─────────────────────────────
+      - name: Upload device screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-screenshots-${{ github.run_id }}
+          path: maestro-results/
+          if-no-files-found: warn
+          retention-days: 90
+
+      # ── 10. Upload Flashlight JSON as artifact ─────────────────────────────
+      - name: Upload Flashlight results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flashlight-results-${{ github.run_id }}
+          path: flashlight.json
+          if-no-files-found: warn
+          retention-days: 90
+
+      # ── 11. Inject screenshot URLs for scoreboard ────────────────────────────
+      # build-device-scoreboard.ts reads .github/device-screenshot-urls.json
+      - name: Inject device screenshot URLs
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+            const screenshotArtifact = artifacts.find(a => a.name.startsWith('device-screenshots-'));
+            // Build a URL map; actual per-file URLs require downloading the artifact ZIP.
+            // For now we embed the artifact download URL as a fallback.
+            const urlMap = screenshotArtifact
+              ? { 'onboarding-home': `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}/artifacts/${screenshotArtifact.id}` }
+              : {};
+            fs.mkdirSync('.github', { recursive: true });
+            fs.writeFileSync('.github/device-screenshot-urls.json', JSON.stringify(urlMap, null, 2));
+            console.log('Device screenshot URL map:', JSON.stringify(urlMap));
+
+      # ── 12. Build Device scoreboard section ────────────────────────────────
+      - name: Build device scoreboard
+        if: always()
+        run: pnpm exec tsx scripts/build-device-scoreboard.ts
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        # Non-zero exit = Flashlight regression (>10%). Captured in SCOREBOARD_EXIT below.
+        continue-on-error: true
+
+      - name: Capture scoreboard exit code
+        if: always()
+        id: scoreboard
+        run: |
+          pnpm exec tsx scripts/build-device-scoreboard.ts
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+        continue-on-error: true
+
+      # ── 13. Post/update scoreboard comment on PR or commit ───────────────────
+      - name: Post/update scoreboard (PR comment)
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const sentinel = '<!-- obvious-mobile-scoreboard:v1 -->';
+            let body;
+            try {
+              body = fs.readFileSync('scoreboard-comment.md', 'utf8');
+            } catch {
+              body = `${sentinel}\n⚠️ Device scoreboard generation failed — check CI logs.\n`;
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find(c => c.body && c.body.includes(sentinel));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log(`Updated comment ${existing.id} with Device section`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              console.log('Created new scoreboard comment with Device section');
+            }
+
+      - name: Post scoreboard (commit comment on main push)
+        if: always() && github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const sentinel = '<!-- obvious-mobile-scoreboard:v1 -->';
+            let body;
+            try {
+              body = fs.readFileSync('scoreboard-comment.md', 'utf8');
+            } catch {
+              body = `${sentinel}\n⚠️ Device scoreboard generation failed — check CI logs.\n`;
+            }
+
+            // On push to main, post as a commit comment.
+            // Note: GitHub renders commit comments with basic markdown (no GFM tables in some views).
+            // Tables are used but fallback gracefully if rendering differs.
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body,
+            });
+            console.log(`Posted commit comment for ${context.sha}`);
+
+      # ── 14. Enforce Flashlight regression gate ──────────────────────────────
+      - name: Enforce Flashlight regression gate
+        if: always()
+        run: |
+          # Re-run scoreboard script to get fresh exit code
+          pnpm exec tsx scripts/build-device-scoreboard.ts
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+

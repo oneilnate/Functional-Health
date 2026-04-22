@@ -29,7 +29,8 @@ export default function HomeScreen() {
           <meta name="description" content="Obvious Mobile scaffold — home screen" />
         </Head>
       )}
-      <View style={styles.container}>
+      {/* accessibilityLabel="home-screen" is the stable Maestro selector — do NOT remove */}
+      <View style={styles.container} accessibilityLabel="home-screen">
         <Text style={styles.heading} accessibilityRole="header">
           Obvious Mobile
         </Text>
