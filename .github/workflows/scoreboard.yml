@@ -24,7 +24,7 @@ on:
       - 'playwright.config.ts'
 
 permissions:
-  contents: read
+  contents: write       # needed to push generated screenshot baselines
   pull-requests: write  # needed to post/update bot comment
 
 jobs:
@@ -91,6 +91,18 @@ jobs:
           # Wait until the server is ready (max 30s)
           timeout 30 bash -c 'until curl -sf http://localhost:8080 > /dev/null; do sleep 1; done'
           echo "serve is up (pid $SERVE_PID)"
+          # Detect missing baselines — run with --update-snapshots to generate them
+          BASELINE_DIR="e2e/screenshots/baselines"
+          MISSING=$(find "$BASELINE_DIR" -name '*.png' 2>/dev/null | wc -l)
+          if [ "$MISSING" -eq "0" ]; then
+            echo "No PNG baselines found — running with --update-snapshots to generate first-run baselines"
+            pnpm exec playwright test e2e/screenshots/screens.spec.ts \
+              --project=chromium-scoreboard \
+              --update-snapshots \
+              --reporter=list,json \
+              --output=e2e/screenshots/__diff__ || true
+            echo "Baselines generated"
+          fi
           # Run the full Playwright suite (screenshot + a11y + perf)
           pnpm exec playwright test e2e/screenshots/screens.spec.ts \
             --project=chromium-scoreboard \
@@ -102,6 +114,21 @@ jobs:
           exit ${PLAYWRIGHT_EXIT:-0}
         env:
           PLAYWRIGHT_JSON_OUTPUT_NAME: playwright-results.json
+
+      # ── 8b. Commit generated baselines back to branch (first run only) ────────
+      - name: Commit generated baselines
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Add any new PNG baselines
+          git add e2e/screenshots/baselines/*.png 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No new baselines to commit"
+          else
+            git commit -m "chore(baselines): update screenshot baselines [skip ci]"
+            git push
+          fi
 
       # ── 9. Upload screenshot diffs as artifact ────────────────────────────────
       - name: Upload screenshot diffs

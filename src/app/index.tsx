@@ -1,12 +1,13 @@
 /**
- * Home screen — "Hello World" anchor for the PR scoreboard route.
+ * Home screen — anchor route for the PR scoreboard.
  *
- * Wraps itself in React.Profiler so the Playwright perf suite can read
- * mount-time render counts via window.__SCOREBOARD_RENDER_COUNTS__.
- *
- * The Profiler is a no-op in production; the window write is guarded
- * behind Platform.OS === 'web' so it never runs on native.
+ * Web: sets document <title> via expo-router <Head> so axe document-title
+ * violation is satisfied. React.Profiler exposes mount-time render counts
+ * via window.__SCOREBOARD_RENDER_COUNTS__ for the Playwright perf suite.
+ * The Profiler is a no-op in production; the window write is web-only.
  */
+
+import Head from 'expo-router/head';
 import { Profiler, type ProfilerOnRenderCallback } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
@@ -29,6 +30,12 @@ const onRenderCallback: ProfilerOnRenderCallback = (_id, phase) => {
 export default function HomeScreen() {
   return (
     <Profiler id="HomeScreen" onRender={onRenderCallback}>
+      {Platform.OS === 'web' && (
+        <Head>
+          <title>Obvious Mobile</title>
+          <meta name="description" content="Obvious Mobile scaffold — home screen" />
+        </Head>
+      )}
       <View style={styles.container}>
         <Text style={styles.heading} accessibilityRole="header">
           Obvious Mobile
