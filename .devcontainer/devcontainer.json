@@ -9,10 +9,7 @@
   "postCreateCommand": "corepack enable && corepack prepare pnpm@9.15.9 --activate && npm install -g eas-cli && pnpm install",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "expo.vscode-expo-tools",
-        "ms-vscode.vscode-typescript-next"
-      ]
+      "extensions": ["expo.vscode-expo-tools", "ms-vscode.vscode-typescript-next"]
     }
   },
   "remoteEnv": {
