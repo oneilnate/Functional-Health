@@ -44,13 +44,13 @@ jobs:
         run: pnpm lint
 
       - name: Test with coverage
-        run: pnpm test --run --coverage
+        run: pnpm test:coverage
+
+      - name: Build web bundle
+        run: pnpm build:web
 
       - name: Size limit (bundle budget gate)
-        run: |
-          # Export web bundle first so size-limit has dist/ to measure
-          pnpm build:web
-          pnpm size-limit
+        run: pnpm size-limit
 
       - name: Upload coverage report
         if: always()
