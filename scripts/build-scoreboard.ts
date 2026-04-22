@@ -55,7 +55,22 @@ const renderCounts = readJSON<Record<string, { leaf: number; container: number }
 const a11yResults = readJSON<Record<string, number>>('e2e/screenshots/a11y-results.json', {});
 const playwrightResults = readJSON<{
   stats?: { expected: number; passed: number; failed: number };
-  suites?: unknown[];
+  suites?: Array<{
+    title: string;
+    suites?: Array<{
+      title: string;
+      specs?: Array<{
+        title: string;
+        tests?: Array<{
+          status: string;
+          results?: Array<{
+            status: string;
+            errors?: Array<{ message?: string }>;
+          }>;
+        }>;
+      }>;
+    }>;
+  }>;
 }>('playwright-results.json', {});
 
 // Coverage summary (vitest --coverage produces json-summary)
@@ -78,6 +93,47 @@ if (fs.existsSync(basDir)) {
     const route = path.basename(f, '.json');
     perfBaselines[route] = readJSON(path.join(basDir, f), {});
   }
+}
+
+// ─── Parse Playwright screenshot diff from JSON reporter ──────────────────────
+//
+// When toHaveScreenshot fails, Playwright's error message includes text like
+// "XX pixels (out of TOTAL) are different" or similar. When it passes, there
+// is no error message — we treat diffPct as 0 (baseline exists, no change).
+// Route spec title pattern: "screenshot: <name>" > "<name> matches baseline".
+function extractDiffPct(routeName: string): number | null {
+  const suites = playwrightResults.suites ?? [];
+  for (const topSuite of suites) {
+    const inner = topSuite.suites ?? [];
+    for (const suite of inner) {
+      if (!suite.title.startsWith(`screenshot: ${routeName}`)) continue;
+      for (const spec of suite.specs ?? []) {
+        for (const test of spec.tests ?? []) {
+          for (const result of test.results ?? []) {
+            for (const err of result.errors ?? []) {
+              const msg = err.message ?? '';
+              // Playwright error format: "X pixels (out of Y) are different"
+              // Also: "Screenshot comparison failed: X pixels differ."
+              const pixelMatch = msg.match(/(\d+)\s*pixels?\s+(?:out of|\(out of)\s*(\d+)/i);
+              if (pixelMatch) {
+                const diff = parseInt(pixelMatch[1] ?? '0', 10);
+                const total = parseInt(pixelMatch[2] ?? '0', 10);
+                if (total > 0) return (diff / total) * 100;
+              }
+              // Fallback: single-number form "X pixels differ"
+              const simpleMatch = msg.match(/(\d+)\s*pixels?\s+differ/i);
+              if (simpleMatch && typeof simpleMatch[1] === 'string') {
+                // Total unknown — report the raw count as-is; cannot compute %
+                // Return a non-null sentinel so visualVerdict can be 'changed'
+                return null;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return null; // no diff errors found (test passed or suite missing)
 }
 
 // Screenshot artifact URLs (injected by CI workflow)
@@ -136,9 +192,21 @@ const routeResults: RouteResult[] = ROUTES.map(({ name, route }) => {
   const containerOver =
     !skipPerfRegression && renders.container > performanceBudgets.renders.container + 1;
 
-  const diffPct = null; // Visual diff % from Playwright — populated by toHaveScreenshot metadata
+  // Compute real diffPct from Playwright JSON reporter.
+  // - If test passed (no error) and baseline exists: diffPct = 0 (unchanged).
+  // - If test failed with a pixel diff error: diffPct = pixels / total * 100.
+  // - If route has no baseline (first run / new route): diffPct = null.
   const hasBaseline = fs.existsSync(`e2e/screenshots/baselines/${name}.png`);
-  const visualVerdict = skipVisualBaseline ? 'skipped' : hasBaseline ? 'unchanged' : 'new';
+  const pwDiffPct = extractDiffPct(name);
+  // pwDiffPct is null when no pixel-diff error was found — treat as 0% if baseline exists.
+  const diffPct: number | null = hasBaseline ? (pwDiffPct ?? 0) : null;
+  const visualVerdict: 'unchanged' | 'changed' | 'new' | 'skipped' = skipVisualBaseline
+    ? 'skipped'
+    : !hasBaseline
+      ? 'new'
+      : diffPct !== null && diffPct > 0
+        ? 'changed'
+        : 'unchanged';
 
   return {
     name,

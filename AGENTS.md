@@ -15,7 +15,8 @@ pnpm test --run                 # vitest-native, CI mode (no watch)
 pnpm test:coverage              # same + v8 coverage report
 pnpm build:web                  # expo export --platform web → dist/
 pnpm size-limit                 # check gzipped bundle vs 5 MB budget
-pnpm verify                     # full gate: typecheck + lint + test:coverage + build:web + size-limit
+pnpm verify:fast                # typecheck + lint + test:coverage + build:web + size-limit
+pnpm verify                     # verify:fast + Playwright e2e/screenshots (full gate)
 ```
 
 Run `pnpm verify` before every push. Green locally = green in CI.
@@ -47,7 +48,8 @@ One command verifies your work end-to-end. Copy-paste and execute:
 pnpm verify
 ```
 
-Steps (in order): typecheck → lint → test:coverage (≥70% on src/modules/**) → build:web → size-limit.
+Steps: typecheck → lint → test:coverage (≥70%) → build:web → size-limit → Playwright e2e/screenshots.
+On headless machines use `pnpm verify:fast` (skips Playwright); CI runs the full gate.
 
 After pushing: read the PR scoreboard bot comment (`<!-- obvious-mobile-scoreboard:v1 -->`).
 If scoreboard shows red, fix before requesting review.
@@ -138,3 +140,7 @@ Reads the relevant service file before adding to it. Adds MSW handler for each n
 ### test-writer
 Writes or updates tests for existing code using vitest-native + RNTL. Reads `spec.md` for the
 module under test first. Never modifies production code.
+
+### perf-investigator
+Investigates render-budget breaches, TTI regressions, and bundle-size hotspots. Reads scoreboard
+data and React.Profiler output; produces a findings doc. Never modifies production code.

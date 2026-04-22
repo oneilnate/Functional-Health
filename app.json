@@ -24,7 +24,7 @@
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "title": "Obvious Mobile"
+      "title": "Aaptiv Functional Feed"
     },
     "plugins": [
       "expo-router",
