@@ -16,7 +16,8 @@
     "test:coverage": "vitest run --coverage",
     "size-limit": "size-limit",
     "build:web": "expo export --platform web",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test:coverage && pnpm build:web && pnpm size-limit"
+    "verify": "pnpm typecheck && pnpm lint && pnpm test:coverage && pnpm build:web && pnpm size-limit",
+    "postinstall": "simple-git-hooks"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.15.5",
@@ -55,6 +56,7 @@
     "eslint": "^9.0.0",
     "eslint-plugin-expo": "^1.0.0",
     "msw": "^2.13.4",
+    "simple-git-hooks": "^2.13.1",
     "size-limit": "^12.1.0",
     "typescript": "~5.9.2",
     "vite": "^6.4.2",
@@ -65,5 +67,8 @@
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=22.0.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "node scripts/spec-drift-check.js"
   }
 }
