@@ -1,98 +1,63 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+/**
+ * Home screen — "Hello World" anchor for the PR scoreboard route.
+ *
+ * Wraps itself in React.Profiler so the Playwright perf suite can read
+ * mount-time render counts via window.__SCOREBOARD_RENDER_COUNTS__.
+ *
+ * The Profiler is a no-op in production; the window write is guarded
+ * behind Platform.OS === 'web' so it never runs on native.
+ */
+import { Profiler, type ProfilerOnRenderCallback } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+// Render-count accumulators (reset per navigation in SPA mode)
+let _leafRenders = 0;
+const _containerRenders = 0;
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
+const onRenderCallback: ProfilerOnRenderCallback = (_id, phase) => {
+  if (phase === 'mount') {
+    _leafRenders += 1;
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      (window as unknown as Record<string, unknown>).__SCOREBOARD_RENDER_COUNTS__ = {
+        leaf: _leafRenders,
+        container: _containerRenders,
+      };
+    }
   }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+};
 
 export default function HomeScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+    <Profiler id="HomeScreen" onRender={onRenderCallback}>
+      <View style={styles.container}>
+        <Text style={styles.heading} accessibilityRole="header">
+          Obvious Mobile
+        </Text>
+        <Text style={styles.sub}>Scaffold is live — performance budgets enforced.</Text>
+      </View>
+    </Profiler>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    backgroundColor: '#FFFFFF',
+    padding: 24,
   },
-  title: {
+  heading: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#111827',
     textAlign: 'center',
+    marginBottom: 12,
   },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  sub: {
+    fontSize: 16,
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });
