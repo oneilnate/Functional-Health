@@ -1,0 +1,863 @@
+[
+  {
+    "card_id": "strength_lower_45min",
+    "domain": "strength",
+    "effort_level": "moderate",
+    "duration_min": 45,
+    "title": "Lower Body Strength",
+    "equipment_required_json": ["dumbbells"],
+    "discomfort_contraindications_json": ["knee", "hip", "ankle"],
+    "rationale_templates_json": {
+      "short": [
+        "You've been steady this week and it's been {days} since your last lower-body lift.",
+        "Your lower body is due — {days} days since you last trained it.",
+        "Four days between lower sessions is the sweet spot — you're right on schedule."
+      ],
+      "expanded": [
+        "You've been steady this week — {sessions_count} sessions in — and your last lower-body lift was {days} days ago. Your sleep and energy both recovered after {dip_day}, so moderate intensity tracks.",
+        "It's been {days} days since your lower-body session. Your sleep has been solid and you've logged {sessions_count} sessions this week, which means your body is ready for moderate load.",
+        "You haven't trained lower body in {days} days and your energy is back up after earlier in the week. This is the right window for it."
+      ]
+    }
+  },
+  {
+    "card_id": "strength_upper_40min",
+    "domain": "strength",
+    "effort_level": "moderate",
+    "duration_min": 40,
+    "title": "Upper Body Strength",
+    "equipment_required_json": ["dumbbells"],
+    "discomfort_contraindications_json": ["shoulder", "wrist", "elbow"],
+    "rationale_templates_json": {
+      "short": [
+        "Upper body hasn't been touched in {days} days — good timing.",
+        "You've been consistent and your upper body session is overdue.",
+        "Your last upper session was {days} days ago and your sleep is solid."
+      ],
+      "expanded": [
+        "You logged {sessions_count} sessions this week and none of them were upper body. {days} days of rest means your shoulders and arms are ready for load.",
+        "It's been {days} days since upper body work and your recent behavior shows you're in a consistent rhythm. Good window for moderate intensity.",
+        "Upper body hasn't been touched in {days} days. With your sleep and energy where they are, this is a well-timed session."
+      ]
+    }
+  },
+  {
+    "card_id": "strength_full_55min",
+    "domain": "strength",
+    "effort_level": "hard",
+    "duration_min": 55,
+    "title": "Full Body Strength",
+    "equipment_required_json": ["dumbbells", "barbell"],
+    "discomfort_contraindications_json": ["knee", "hip", "shoulder", "lower_back"],
+    "rationale_templates_json": {
+      "short": [
+        "You're rested, consistent, and it's been a few days — full session makes sense.",
+        "Your body is primed for a hard effort today.",
+        "Sleep is solid and you're in a consistent groove — full strength is the call."
+      ],
+      "expanded": [
+        "You've logged {sessions_count} sessions this week and your sleep has been solid. Full-body strength at hard intensity is the right progression from where you are.",
+        "Your sleep bounced back and you've been consistent — {sessions_count} sessions this week. A full-body session today continues that momentum.",
+        "Strong sleep, {sessions_count} sessions in the bank, no flags on the body. This is what a hard strength day looks like when everything lines up."
+      ]
+    }
+  },
+  {
+    "card_id": "strength_glute_30min",
+    "domain": "strength",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Glute Activation",
+    "equipment_required_json": ["resistance_band"],
+    "discomfort_contraindications_json": ["hip", "lower_back"],
+    "rationale_templates_json": {
+      "short": [
+        "Light glute activation pairs well with today's priority.",
+        "A gentle glute session supports the work you're doing today.",
+        "This is the supporting piece that makes today's primary session land better."
+      ],
+      "expanded": [
+        "Glute activation at light intensity supports the hip mobility work on your priority card. These two sessions are designed to work together.",
+        "Light glute work now sets up better movement patterns for the rest of the week. It's low-load but high-carry.",
+        "This session pairs with your priority today — done together, they create more than either does alone."
+      ]
+    }
+  },
+  {
+    "card_id": "cardio_easy_30min",
+    "domain": "cardio",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Easy Walk or Light Cardio",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Three misses is a rhythm to reset, not a debt to repay — something light gets you back.",
+        "Light cardio today reestablishes the habit without demanding a full effort.",
+        "You haven't moved in a few days — a walk is the right re-entry."
+      ],
+      "expanded": [
+        "Three missed sessions is a rhythm to reset, not a debt to repay. Something light today gets you back without a hard day you'd probably skip.",
+        "You've been away for a few days. A gentle cardio session re-anchors the habit and keeps the door open for a stronger session tomorrow.",
+        "Easy cardio is the smart re-entry after a gap. It signals your system without demanding a full response."
+      ]
+    }
+  },
+  {
+    "card_id": "cardio_zone2_40min",
+    "domain": "cardio",
+    "effort_level": "moderate",
+    "duration_min": 40,
+    "title": "Zone 2 Cardio",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": ["knee", "hip", "ankle"],
+    "rationale_templates_json": {
+      "short": [
+        "Zone 2 is your aerobic base — steady, sustainable, and worth building.",
+        "A 40-minute moderate cardio session fits your energy today.",
+        "Your sleep and readiness support a sustained cardio effort."
+      ],
+      "expanded": [
+        "Zone 2 work builds your aerobic base without taxing recovery. At {duration} minutes, it's sustainable and leaves room for strength later this week.",
+        "Moderate cardio today supports both your fitness goals and your recovery. It's the kind of session that makes the next hard effort feel easier.",
+        "Your sleep has been solid and your energy is good. Zone 2 for 40 minutes is an efficient use of that window."
+      ]
+    }
+  },
+  {
+    "card_id": "cardio_hiit_25min",
+    "domain": "cardio",
+    "effort_level": "hard",
+    "duration_min": 25,
+    "title": "HIIT Session",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": ["knee", "hip", "ankle", "lower_back"],
+    "rationale_templates_json": {
+      "short": [
+        "Your energy is high and you haven't done a hard cardio effort in a while.",
+        "HIIT today fits your readiness and your goal momentum.",
+        "You're rested and consistent — a hard cardio hit makes sense."
+      ],
+      "expanded": [
+        "You're well-rested and your body signals are clear. HIIT for 25 minutes is a high-return session given where you are this week.",
+        "Your readiness is high and you've been consistent. A short, hard cardio effort today adds variety and intensity without overloading your schedule.",
+        "Sleep is solid, no flags, and your goals include aerobic fitness. HIIT is the efficient path today."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_hip_20min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 20,
+    "title": "Hip Mobility Flow",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Your mobility scan flagged hips — let's meet it while it's fresh.",
+        "Hip mobility flagged an hour ago — moving on it now is the right call.",
+        "Hips got flagged on your scan — today is the day to address it."
+      ],
+      "expanded": [
+        "Your mobility scan an hour ago flagged hips — let's meet it while it's fresh. Moving on it now is easier than catching up next week.",
+        "Your scan flagged hip mobility. Addressing it today while the pattern is fresh builds range faster than waiting.",
+        "Hips got flagged on your recent scan. A focused 20-minute flow now sets up better movement for the rest of the week."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_warmup_10min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Mobility Warm-Up",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "This is your warm-up — it pairs with today's priority.",
+        "The mobility piece below sets up today's strength session.",
+        "Ten minutes of prep makes the main session land better."
+      ],
+      "expanded": [
+        "This 10-minute warm-up is designed to pair with your lower body session. Done first, it reduces injury risk and improves output.",
+        "A focused warm-up before strength work changes how the session feels and what you get out of it. This one is built for today.",
+        "Mobility before strength isn't optional at this intensity — this warm-up is the prep that makes today's priority session work."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_upper_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Upper Body Mobility",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Gentle upper mobility supports recovery without adding load.",
+        "This upper mobility session is knee-friendly and supports today's goals.",
+        "Upper body range of motion — light, useful, and appropriate for today."
+      ],
+      "expanded": [
+        "With your knee flagged, upper body mobility keeps you moving without adding load to the area. Smart recovery choice.",
+        "No knee involvement, no equipment needed. Upper body mobility today supports your recovery posture and keeps your range of motion working.",
+        "Your lower body is on hold today — this upper mobility session keeps you active and supports the recovery plan."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_full_25min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 25,
+    "title": "Full Body Mobility",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Full body mobility today keeps you moving without demanding intensity.",
+        "A longer mobility session fits a lighter-effort day.",
+        "Twenty-five minutes of movement that leaves you better than it found you."
+      ],
+      "expanded": [
+        "Full body mobility for 25 minutes is a recovery-forward session that maintains range without adding load. Right for where you are this week.",
+        "This session covers everything — it's the full-spectrum mobility work that pays forward into next week's strength sessions.",
+        "Twenty-five minutes of full-body mobility work. No intensity, all utility — this is what maintenance looks like."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_spine_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Spinal Mobility",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Spinal mobility is the unsung support for everything else you do.",
+        "A short spinal flow keeps your posture and movement patterns clean.",
+        "Fifteen minutes of spine care — small investment, big carry."
+      ],
+      "expanded": [
+        "Spinal mobility work directly supports the strength sessions you're building. Keeping that range of motion clear makes everything else more effective.",
+        "This 15-minute session targets the areas that tie together your upper and lower body work. It's the connective tissue of your training week.",
+        "Spinal mobility protects your long-term training capacity. This is the kind of session that pays off over months, not just today."
+      ]
+    }
+  },
+  {
+    "card_id": "recovery_breathing_10min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Guided Breathing",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Tonight's about protecting tomorrow — let's end the day quiet.",
+        "Your knee is flagged and sleep has been thin — guided breathing is the right call.",
+        "A quiet end to today sets up a better tomorrow."
+      ],
+      "expanded": [
+        "Your knee is flagged and sleep has been thin — let's end the day quiet. Two minutes of breathing resets the nervous system more reliably than any session would right now.",
+        "Tonight is about protecting tomorrow. Guided breathing now is the highest-return thing you can do for your body tonight.",
+        "Quiet day ahead. Breathing practice resets the nervous system and sets up better sleep — which is what you need most right now."
+      ]
+    }
+  },
+  {
+    "card_id": "recovery_breathing_full_15min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Breathing & Relaxation",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Quiet day — breathing resets the nervous system faster than any session.",
+        "Fifteen minutes of breathing practice sets up better sleep tonight.",
+        "End the day with intention — breathing is the right closing note."
+      ],
+      "expanded": [
+        "Fifteen minutes of structured breathing resets your nervous system and prepares your body for recovery sleep. Tonight's the right time for it.",
+        "Your body is signaling rest — breathing practice is the highest-return response. It's not the dramatic choice, but it's the right one.",
+        "Breathing work at the end of a hard day doesn't feel like training — that's exactly why it works. It de-escalates without demanding."
+      ]
+    }
+  },
+  {
+    "card_id": "recovery_breathing_hip_10min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Breathing for Hip Openers",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Breathing practice pairs with hip openers — they work better together.",
+        "Diaphragmatic breathing unlocks hip mobility — a natural pair today.",
+        "Your hip flow pairs with this breathing practice for better range."
+      ],
+      "expanded": [
+        "Breathing practice for hip openers works together with your mobility session. Diaphragmatic breathing directly improves hip range of motion — they're better as a pair.",
+        "This breathing practice is designed to complement hip mobility work. Together, they create more release than either does alone.",
+        "Diaphragmatic breathing and hip openers share the same tissue. This 10-minute session amplifies the work in your priority card."
+      ]
+    }
+  },
+  {
+    "card_id": "nutrition_hydration_5min",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Hydration Check-In",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Post-workout hydration closes the loop on today's session.",
+        "Water intake after a strength session matters more than it feels like.",
+        "One small move: hydration after your workout."
+      ],
+      "expanded": [
+        "Post-workout hydration is the step most people skip and most feel the next day. One adjustment per day is how patterns actually shift.",
+        "After a strength session, your body's need for water is real. This is a small habit that compounds quickly.",
+        "Hydration after exercise isn't optional at your intensity level — this check-in keeps that pattern consistent."
+      ]
+    }
+  },
+  {
+    "card_id": "nutrition_protein_5min",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Post-Workout Protein",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Protein within 30 minutes of your session makes the work stick.",
+        "Your body rebuilds in the hour after — fuel it.",
+        "One small move: protein after today's session."
+      ],
+      "expanded": [
+        "Your strength session created the stimulus — protein in the next 30 minutes is what the muscle rebuilds from. One adjustment per day is how patterns shift.",
+        "Post-workout protein isn't a detail — it's the mechanism. Your body's repair window is open now.",
+        "The session created the signal. Protein closes the loop. This is the five-minute habit that makes the 45-minute session worth more."
+      ]
+    }
+  },
+  {
+    "card_id": "nutrition_preload_5min",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Pre-Session Fuel",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "A light snack 30 minutes before your session changes how it feels.",
+        "Pre-session fuel is the setup that makes effort feel easier.",
+        "One small move before your session: fuel for performance."
+      ],
+      "expanded": [
+        "Pre-session nutrition affects how your workout feels and what you get from it. A small snack 30 minutes out is the pattern worth building.",
+        "Fueling before your session isn't about eating more — it's about timing what you eat. One adjustment per day is how patterns shift.",
+        "The session lands better with something in the tank. This is the setup that makes the main work more effective."
+      ]
+    }
+  },
+  {
+    "card_id": "nutrition_sleep_food_5min",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Evening Nutrition Wind-Down",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "What you eat in the last hour affects your sleep quality tonight.",
+        "One small move for better sleep: evening nutrition.",
+        "Your sleep recovery starts with tonight's eating pattern."
+      ],
+      "expanded": [
+        "Evening nutrition choices directly affect sleep quality. With sleep already running short, this is the pattern worth adjusting tonight.",
+        "What you eat in the hour before bed shapes your sleep. One adjustment per day is how patterns shift — tonight's a good place to start.",
+        "Sleep recovery starts with what's in your system. This check-in takes five minutes and pays off for the next eight hours."
+      ]
+    }
+  },
+  {
+    "card_id": "nutrition_weekly_pod",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Food Pod Weekly Drop",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Your Food Pod weekly summary is ready — a minute to read it.",
+        "This week's nutrition pattern is in your Pod — worth a look.",
+        "One small move: check your Food Pod drop before the week resets."
+      ],
+      "expanded": [
+        "Your Food Pod dropped this week's pattern. It captures what's shifted and what's consistent — one observation you can take into next week.",
+        "The Food Pod weekly summary surfaces one pattern worth noticing. It's not a report card — it's a data point that changes one thing.",
+        "Your weekly nutrition drop is ready. One adjustment per day is how patterns shift — this is the insight that shapes the next one."
+      ]
+    }
+  },
+  {
+    "card_id": "reflection_log_today_5min",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Log How Today Felt",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Tonight's worth sitting with for a minute — log how it felt.",
+        "A quick reflection closes the loop on a hard day.",
+        "Log what happened today — one sentence is enough."
+      ],
+      "expanded": [
+        "Today had some friction — logging how it felt creates a data point your future self will use. Worth sitting with for a minute.",
+        "Reflection after a hard day isn't just processing — it's pattern recognition. One sentence is enough.",
+        "The days that feel rough are often the ones that teach the most. A minute to log it now means you can reference it later."
+      ]
+    }
+  },
+  {
+    "card_id": "reflection_weekly_mepod",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Weekly MePod Drop",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Your MePod drop captures this week — worth a listen.",
+        "The week's in the Pod — a few minutes to close the loop.",
+        "Weekly MePod is ready — this one's worth your time."
+      ],
+      "expanded": [
+        "Your MePod drop captures the week's signal and surfaces what shifted. It's the kind of insight that lands differently after you've lived the week.",
+        "The Pod below captures this week. Worth sitting with for a minute — the pattern it surfaces changes how next week starts.",
+        "Weekly MePods are designed for the moments between sessions. This one connects the dots on a week that had some texture."
+      ]
+    }
+  },
+  {
+    "card_id": "reflection_check_in_5min",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Check In with AI Coach",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "After a few missed days, a quick check-in re-anchors the plan.",
+        "Your AI coach can help you reset after this week's gap.",
+        "A conversation now saves you from starting cold tomorrow."
+      ],
+      "expanded": [
+        "Three missed sessions creates a pattern worth addressing. A short check-in with your AI coach surfaces what's getting in the way and adjusts the plan.",
+        "After a gap, a conversation is more useful than a session. Your coach can help you understand what happened and set up next week differently.",
+        "The check-in resets the plan without judgment. It's a five-minute conversation that changes how tomorrow feels."
+      ]
+    }
+  },
+  {
+    "card_id": "recovery_sleep_5min",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Sleep Hygiene Prompt",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Your sleep has been thin — tonight's setup matters.",
+        "A few small moves now improve tonight's sleep quality.",
+        "Sleep has been short this week — tonight's the one to protect."
+      ],
+      "expanded": [
+        "Your sleep has been running short — tonight's setup is worth attention. A few small changes now compound into better recovery.",
+        "Sleep under 6 hours for two nights shapes how everything else performs. Tonight's the one to protect.",
+        "Sleep quality directly affects tomorrow's readiness. This prompt gives you three moves that reliably improve it."
+      ]
+    }
+  },
+  {
+    "card_id": "recovery_rest_day",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Active Rest Day",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Today's rest is part of the training — not a skip.",
+        "Active rest today preserves what you built this week.",
+        "Rest with intention — a light walk is enough."
+      ],
+      "expanded": [
+        "Recovery is where adaptation happens. Today's active rest preserves what you built earlier in the week and sets up a stronger session next time.",
+        "Rest days are training days in disguise — the body rebuilds during recovery. An intentional rest today is worth more than a forced session.",
+        "Today's rest is part of the plan. A light walk or complete rest keeps your recovery on track without losing momentum."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_ankle_10min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Ankle Mobility",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": ["ankle"],
+    "rationale_templates_json": {
+      "short": [
+        "Ankle mobility supports your lower body work this week.",
+        "Ten minutes of ankle work improves the sessions around it.",
+        "This ankle session carries forward into your strength training."
+      ],
+      "expanded": [
+        "Ankle mobility directly affects squat depth and lower body mechanics. This short session improves the quality of every lower body session around it.",
+        "Ten minutes of ankle work changes how your strength sessions feel and what you get from them. A small investment with meaningful carry.",
+        "Your lower body goals benefit directly from better ankle range. This is the upstream session that makes the downstream ones more effective."
+      ]
+    }
+  },
+  {
+    "card_id": "strength_core_20min",
+    "domain": "strength",
+    "effort_level": "light",
+    "duration_min": 20,
+    "title": "Core & Stability",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": ["lower_back"],
+    "rationale_templates_json": {
+      "short": [
+        "Core work supports everything else you're building.",
+        "Twenty minutes of stability work pays off in all your other sessions.",
+        "Core and stability today — low intensity, high utility."
+      ],
+      "expanded": [
+        "Core stability is the foundation that makes strength training safer and more effective. This 20-minute session is the support structure for your other work.",
+        "Core work at light intensity is one of the highest-return investments in a training week. It doesn't fatigue you — it makes everything else work better.",
+        "Your strength goals benefit from a strong, stable core. This session builds that foundation without taxing your recovery."
+      ]
+    }
+  },
+  {
+    "card_id": "cardio_swim_30min",
+    "domain": "cardio",
+    "effort_level": "moderate",
+    "duration_min": 30,
+    "title": "Swimming",
+    "equipment_required_json": ["pool"],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Swimming is zero-impact cardio — ideal when your joints need a break.",
+        "A pool session keeps your cardio moving without load on your joints.",
+        "Swimming today supports your goals without the ground-reaction forces."
+      ],
+      "expanded": [
+        "Swimming keeps your cardiovascular system working without impact on your knees or hips. It's the right modality when those areas need rest.",
+        "Zero-impact cardio in the pool lets you maintain fitness while your body recovers from ground-based load. Smart choice for today.",
+        "Your cardiovascular goals don't have to wait for your joints to recover. Swimming bridges that gap."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_shoulder_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Shoulder Mobility",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": ["shoulder"],
+    "rationale_templates_json": {
+      "short": [
+        "Shoulder mobility supports your upper body work.",
+        "Fifteen minutes of shoulder care improves how your sessions feel.",
+        "Your shoulder range of motion is an investment in your training longevity."
+      ],
+      "expanded": [
+        "Shoulder mobility directly affects pressing and pulling patterns. This 15-minute session improves range and reduces injury risk in your upper body sessions.",
+        "Shoulder work now changes how your next upper body session feels. It's the prep that makes strength training more effective and safer.",
+        "Your shoulder range of motion is a long-term asset. This session maintains it — small investment, meaningful carry."
+      ]
+    }
+  },
+  {
+    "card_id": "breathing_morning_5min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Morning Breathing Activation",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Morning breathing primes your system for the day ahead.",
+        "Five minutes of morning activation — small investment, real effect.",
+        "Starting your day with breathing sets a different tone."
+      ],
+      "expanded": [
+        "Morning breathing practice activates your nervous system and improves focus for the day. Five minutes with real physiological effect.",
+        "Starting the day with intentional breathing creates a different baseline. It's the kind of small habit that compounds across weeks.",
+        "Your morning session primes your body for the day's demands. Breathing activation is the setup that changes how everything after it lands."
+      ]
+    }
+  },
+  {
+    "card_id": "recovery_cold_exposure_5min",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Cold Exposure Recovery",
+    "equipment_required_json": ["cold_water"],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Cold exposure accelerates recovery after a hard session.",
+        "Post-session cold exposure reduces inflammation and improves recovery.",
+        "Your recovery window is open — cold exposure makes the most of it."
+      ],
+      "expanded": [
+        "After a hard session, cold exposure reduces inflammation and accelerates tissue recovery. Five minutes has measurable effect.",
+        "Your body's recovery window is most active in the hour after training. Cold exposure in that window changes what you wake up to tomorrow.",
+        "Cold exposure is the recovery tool most people skip and most notice the difference. Five minutes post-session, real effect."
+      ]
+    }
+  },
+  {
+    "card_id": "nutrition_collagen_5min",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Collagen + Joint Support",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Collagen before mobility work amplifies the connective tissue benefit.",
+        "Joint support nutrition pairs with today's mobility focus.",
+        "One small move that supports your mobility work."
+      ],
+      "expanded": [
+        "Collagen supplementation before mobility work has evidence behind it — connective tissue synthesis increases during the session. One adjustment per day is how patterns shift.",
+        "Your hip and joint mobility focus today pairs well with collagen support. The timing matters — take it 30 minutes before the mobility session.",
+        "Joint support nutrition isn't just recovery — it actively improves what you get from today's mobility work. Small move, real carry."
+      ]
+    }
+  },
+  {
+    "card_id": "strength_bodyweight_30min",
+    "domain": "strength",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Bodyweight Strength",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Bodyweight work today keeps you moving without equipment.",
+        "No gear needed — bodyweight strength fits your day.",
+        "Light strength work with no equipment barrier — this is the session."
+      ],
+      "expanded": [
+        "Bodyweight strength at light intensity keeps your muscles engaged without demanding equipment or high intensity. It's the accessible session for a lighter day.",
+        "No equipment, no barrier. Bodyweight strength today maintains your strength baseline while your recovery catches up.",
+        "Light bodyweight work is the right session when intensity isn't on the menu but staying active is. This covers both."
+      ]
+    }
+  },
+  {
+    "card_id": "reflection_journal_5min",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "One-Minute Journal",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "A quick journal entry closes the loop on this week.",
+        "One sentence about today — worth more than it seems.",
+        "Capture the week before it resets."
+      ],
+      "expanded": [
+        "A brief journal entry — one sentence — creates a reference point for your future self. The week's context is clearest right now.",
+        "The week is worth capturing before it resets. One minute, one observation — this is the reflection that pays forward.",
+        "Journaling isn't about processing everything — it's about anchoring one thing. Today's worth one sentence."
+      ]
+    }
+  },
+  {
+    "card_id": "cardio_cycling_35min",
+    "domain": "cardio",
+    "effort_level": "moderate",
+    "duration_min": 35,
+    "title": "Cycling",
+    "equipment_required_json": ["bike"],
+    "discomfort_contraindications_json": ["lower_back"],
+    "rationale_templates_json": {
+      "short": [
+        "Cycling at moderate intensity fits your energy and goals today.",
+        "A 35-minute ride is solid cardio without joint impact.",
+        "Your readiness supports a cycling session today."
+      ],
+      "expanded": [
+        "Moderate cycling keeps your cardiovascular fitness building while staying manageable for your current readiness. It's the sustainable option.",
+        "Cycling at this duration and intensity is a high-value session for your aerobic base. Your sleep and readiness support it.",
+        "Thirty-five minutes of cycling is meaningful cardio work at a sustainable intensity. Good fit for today's signals."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_thoracic_10min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Thoracic Spine Mobility",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Thoracic mobility unlocks better movement everywhere.",
+        "Ten minutes on your thoracic spine — high-carry, low-load.",
+        "This session supports your posture and your strength training."
+      ],
+      "expanded": [
+        "Thoracic spine mobility affects shoulder mechanics, breathing, and power output. Ten minutes now improves everything above and below it.",
+        "Your thoracic range of motion is a bottleneck most people don't address. This session removes that restriction and improves your other sessions.",
+        "Ten minutes on your thoracic spine carries into your pressing patterns, your posture, and your breathing mechanics. High-value, low-load."
+      ]
+    }
+  },
+  {
+    "card_id": "recovery_yoga_20min",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 20,
+    "title": "Recovery Yoga",
+    "equipment_required_json": ["yoga_mat"],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Recovery yoga today keeps you moving without demanding effort.",
+        "Twenty minutes of yoga is active recovery done well.",
+        "This session recovers your body while keeping you present."
+      ],
+      "expanded": [
+        "Recovery yoga at 20 minutes bridges the gap between rest and training. It maintains mobility and reduces soreness without adding load.",
+        "Active recovery through yoga keeps your system moving while it repairs. It's the right choice when your body needs recovery but your mind needs movement.",
+        "Twenty minutes of yoga is high-quality recovery work. It's not just stretching — it's active recovery that improves tomorrow's session."
+      ]
+    }
+  },
+  {
+    "card_id": "nutrition_electrolytes_5min",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Electrolyte Replenishment",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Electrolytes after a sweat session close the recovery loop.",
+        "Replenish what the session took — electrolytes matter here.",
+        "One small move: electrolytes after your workout."
+      ],
+      "expanded": [
+        "After a sweating session, electrolyte replenishment is part of recovery, not an afterthought. One adjustment per day is how patterns shift.",
+        "Your body lost electrolytes during that session. Replenishing them in the recovery window improves how you feel tomorrow.",
+        "Electrolyte replenishment is the detail most people skip and feel the next day. This five-minute habit changes your recovery."
+      ]
+    }
+  },
+  {
+    "card_id": "strength_lower_light_30min",
+    "domain": "strength",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Light Lower Body Work",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": ["knee", "hip", "ankle"],
+    "rationale_templates_json": {
+      "short": [
+        "Light lower body today keeps momentum without overloading.",
+        "A gentle lower session fits your readiness level.",
+        "Low intensity lower body work — maintains the pattern."
+      ],
+      "expanded": [
+        "Light lower body work keeps your muscles engaged without demanding more than your recovery supports right now. Momentum maintenance.",
+        "After a few hard sessions, light lower body work is the sustainable option. It keeps the pattern alive without the cost.",
+        "Your readiness supports movement but not intensity. Light lower body work hits the right point on that curve."
+      ]
+    }
+  },
+  {
+    "card_id": "cardio_rowing_20min",
+    "domain": "cardio",
+    "effort_level": "moderate",
+    "duration_min": 20,
+    "title": "Rowing",
+    "equipment_required_json": ["rowing_machine"],
+    "discomfort_contraindications_json": ["lower_back", "shoulder"],
+    "rationale_templates_json": {
+      "short": [
+        "Rowing hits your whole system efficiently — 20 minutes of real work.",
+        "Full-body cardio in 20 minutes — rowing is the efficient choice today.",
+        "Your readiness supports a rowing session — total body, time-efficient."
+      ],
+      "expanded": [
+        "Rowing is full-body cardio — it works your legs, back, and arms simultaneously. Twenty minutes delivers meaningful cardiovascular work.",
+        "Rowing at moderate intensity covers your whole body while building your aerobic base. Time-efficient and effective for your goals.",
+        "Twenty minutes of rowing is a high-value session. It's cardiovascular, it's strength-adjacent, and it fits your schedule."
+      ]
+    }
+  },
+  {
+    "card_id": "mobility_hip_light_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Gentle Hip Mobility",
+    "equipment_required_json": [],
+    "discomfort_contraindications_json": [],
+    "rationale_templates_json": {
+      "short": [
+        "Gentle hip work keeps you moving while your body recovers.",
+        "Light hip mobility today — no load, just range.",
+        "This session maintains your hip health without demanding effort."
+      ],
+      "expanded": [
+        "Gentle hip mobility keeps your range of motion active while your body recovers from higher-intensity work. Low-load, high-utility.",
+        "Your hips benefit from movement even on recovery days — this gentle session maintains range without adding load.",
+        "Light hip mobility is active recovery at its most effective. Fifteen minutes of range work that your future sessions will thank you for."
+      ]
+    }
+  }
+]
