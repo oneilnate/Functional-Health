@@ -29,17 +29,13 @@ export interface UseFeedResult {
 }
 
 export function useFeed(): UseFeedResult {
-  const [state, setState] = useState<CoachingState | null>(null);
+  // Initialize synchronously to avoid a "Loading..." flash that Playwright captures
+  const [state, setState] = useState<CoachingState | null>(() => fetchFeedToday());
   const [animationPhase, setAnimationPhase] = useState<AnimationPhase>('idle');
   const [whyText, setWhyText] = useState<string | null>(null);
   const [whyCardId, setWhyCardId] = useState<string | null>(null);
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
   const cooldownTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Load feed on mount
-  useEffect(() => {
-    setState(fetchFeedToday());
-  }, []);
 
   // Update cooldown countdown
   useEffect(() => {
