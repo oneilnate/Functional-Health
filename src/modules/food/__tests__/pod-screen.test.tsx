@@ -69,8 +69,18 @@ const mockPodFailed = {
 const mockPodcast = {
   transcript: {
     segments: [
-      { startSec: 0, endSec: 8, text: 'Welcome Sarah, here is your nutrition summary.', emphasisWords: [] },
-      { startSec: 8, endSec: 18, text: 'Your protein intake was strong this week.', emphasisWords: ['protein'] },
+      {
+        startSec: 0,
+        endSec: 8,
+        text: 'Welcome Sarah, here is your nutrition summary.',
+        emphasisWords: [],
+      },
+      {
+        startSec: 8,
+        endSec: 18,
+        text: 'Your protein intake was strong this week.',
+        emphasisWords: ['protein'],
+      },
     ],
     totalDurationSec: 320,
     title: 'Your Weekly Nutrition Podcast',
@@ -83,7 +93,9 @@ const mockPodcast = {
 const server = setupServer(
   http.get(`${BASE_URL}/api/pods/:podId`, () => HttpResponse.json(mockPodReady)),
   http.get(`${BASE_URL}/api/pods/:podId/podcast`, () => HttpResponse.json(mockPodcast)),
-  http.post(`${BASE_URL}/api/pods/:podId/complete`, () => HttpResponse.json(mockPodGenerating, { status: 200 })),
+  http.post(`${BASE_URL}/api/pods/:podId/complete`, () =>
+    HttpResponse.json(mockPodGenerating, { status: 200 }),
+  ),
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
@@ -105,9 +117,7 @@ function createWrapper() {
 
 describe('usePodStatus — generating → ready', () => {
   it('returns generating pod with stageStatus populated', async () => {
-    server.use(
-      http.get(`${BASE_URL}/api/pods/:podId`, () => HttpResponse.json(mockPodGenerating)),
-    );
+    server.use(http.get(`${BASE_URL}/api/pods/:podId`, () => HttpResponse.json(mockPodGenerating)));
     const { result } = renderHook(() => usePodStatus(POD_ID), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.status).toBe('generating');
@@ -166,9 +176,7 @@ describe('useCompletePod — retry flow', () => {
   });
 
   it('handles failed pod status with a retry', async () => {
-    server.use(
-      http.get(`${BASE_URL}/api/pods/:podId`, () => HttpResponse.json(mockPodFailed)),
-    );
+    server.use(http.get(`${BASE_URL}/api/pods/:podId`, () => HttpResponse.json(mockPodFailed)));
     const { result: podResult } = renderHook(() => usePodStatus(POD_ID), {
       wrapper: createWrapper(),
     });
