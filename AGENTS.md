@@ -40,6 +40,12 @@ Numeric source of truth: `performance.config.ts` at repo root. Rationale lives i
 
 ---
 
+## Simulator dogfooding
+
+Every PR gets an iOS simulator URL posted to the scoreboard bot comment (via `device-preview.yml`). Click the `📱 Device preview` link to open the simulator in your browser — no Xcode, no physical device needed. The orchestrator agent also drives this simulator via `scripts/drive-appetize.mjs` pre-review, capturing screenshots and detecting crashes. Appetize free tier = 100 simulator-minutes/month; stays well under cap at ~3 min/PR. If the Appetize upload fails, device-preview.yml posts a warning comment but never blocks CI (soft fail).
+
+---
+
 ## 3. Closed-loop workflow
 
 One command verifies your work end-to-end. Copy-paste and execute:
