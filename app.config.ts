@@ -51,12 +51,26 @@ const config: ExpoConfig = {
         },
       },
     ],
+    [
+      'expo-image-picker',
+      {
+        photosPermission: 'Allow $(PRODUCT_NAME) to access your photos for meal capture.',
+        cameraPermission: 'Allow $(PRODUCT_NAME) to use your camera to photograph meals.',
+      },
+    ],
+    'expo-secure-store',
   ],
   experiments: {
     typedRoutes: true,
     reactCompiler: true,
   },
   owner: 'nateoutsidethebox',
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
+  updates: {
+    url: 'https://u.expo.dev/28a85fb2-e56c-4a53-a398-0080b43414ea',
+  },
   extra: {
     router: {},
     eas: {

@@ -40,9 +40,17 @@ Numeric source of truth: `performance.config.ts` at repo root. Rationale lives i
 
 ---
 
-## Simulator dogfooding
+## Expo Go demo
 
-Every PR gets an iOS simulator URL posted to the scoreboard bot comment (via `device-preview.yml`). Click the `📱 Device preview` link to open the simulator in your browser — no Xcode, no physical device needed. The orchestrator agent also drives this simulator via `scripts/drive-appetize.mjs` pre-review, capturing screenshots and detecting crashes. Appetize free tier = 100 simulator-minutes/month; stays well under cap at ~3 min/PR. If the Appetize upload fails, device-preview.yml posts a warning comment but never blocks CI (soft fail).
+The demo delivery path is **Expo Go on a real iPhone** — prospects scan a QR code, no TestFlight or native build required.
+
+**How it works:**
+- Every push to `main` triggers `.github/workflows/eas-update.yml`, which publishes a fresh OTA update to the `production` channel via `eas update`.
+- The workflow posts a sticky comment with the Expo Go launch URL: `exp://u.expo.dev/28a85fb2-e56c-4a53-a398-0080b43414ea?channel=production`
+- Prospects open Expo Go on their iPhone and scan the QR code from that comment (or tap the deep link).
+
+**Agent testing note:**
+Agents can no longer drive native preview automatically — the device preview pipeline has been removed. Agent testing now runs against the **web build at [aaptiv-functional-feed.expo.app](https://aaptiv-functional-feed.expo.app)** (deployed by `deploy-web.yml`).
 
 ---
 
