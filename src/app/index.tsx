@@ -11,7 +11,7 @@
 
 import type { ScenarioKey } from '@fh/engine';
 import Head from 'expo-router/head';
-import { Profiler, useEffect, useRef, useState } from 'react';
+import { Profiler, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Animated, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   DailyPriorityCard,
@@ -25,6 +25,15 @@ import {
 } from '@/modules/feed';
 
 export default function HomeScreen() {
+  // Set document.title synchronously on web before any async operations.
+  // This ensures axe's document-title check finds a non-empty title even
+  // if react-helmet-async's SSR placeholder hasn't been hydrated yet.
+  useLayoutEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.title = 'Functional Health';
+    }
+  }, []);
+
   const renderCounts = useRef({ leaf: 0, container: 0 });
   const onRender = (id: string): void => {
     if (id === 'leaf') renderCounts.current.leaf += 1;
@@ -79,12 +88,13 @@ export default function HomeScreen() {
 
   return (
     <>
-      {Platform.OS === 'web' && (
-        <Head>
-          <title>Functional Health</title>
-          <meta name="description" content="Feed Decision Engine — coaching feed demo" />
-        </Head>
-      )}
+      {/* Head renders on both SSR and client — provides the title for expo-router's
+          mixHeadComponentsWithStaticResults so the static HTML gets a non-empty
+          <title data-rh="true"> prepended first. */}
+      <Head>
+        <title>Functional Health</title>
+        <meta name="description" content="Feed Decision Engine — coaching feed demo" />
+      </Head>
       {/* Mobile viewport wrapper — constrains to phone width on web, centered */}
       <View style={styles.webViewportOuter}>
         <Profiler id="container" onRender={onRender}>
