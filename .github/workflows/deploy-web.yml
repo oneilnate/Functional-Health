@@ -1,0 +1,165 @@
+# Web Deploy — EAS Hosting (main prod alias + per-PR preview)
+#
+# On push to main:
+#   pnpm build:web → eas deploy --prod --alias aaptiv-feed
+#   Promotes https://aaptiv-functional-feed.expo.app to the latest main build.
+#
+# On pull_request:
+#   pnpm build:web → eas deploy --alias pr-<number>
+#   Gives each PR its own preview at https://aaptiv-functional-feed--pr-<number>.expo.app
+#   Posts/updates a sticky PR comment with the preview URL.
+#
+# Soft-fail: deploy step has continue-on-error: true — a deploy hiccup never blocks CI.
+# Sentinel: <!-- obvious-web-preview:v1 --> (distinct from mobile scoreboard sentinel)
+
+name: Web Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: deploy-web-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: EAS Hosting deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web
+        run: pnpm build:web
+
+      # ── Deploy to EAS Hosting (main) ──────────────────────────────────────────
+      - name: Deploy to EAS Hosting (main)
+        id: eas-deploy-main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          OUTPUT=$(npx eas-cli@latest deploy \
+            --prod \
+            --alias aaptiv-feed \
+            --non-interactive \
+            --json 2>/dev/null)
+          DEPLOY_ID=$(echo "$OUTPUT" | jq -r '.deploymentId // .id // ""' 2>/dev/null || echo '')
+          DEPLOY_URL=$(echo "$OUTPUT" | jq -r '.url // .deploymentUrl // ""' 2>/dev/null || echo '')
+          echo "deploy-id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
+          echo "deploy-url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+          echo "Deployment ID: $DEPLOY_ID"
+          echo "Deployment URL: $DEPLOY_URL"
+        continue-on-error: true
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      # ── Deploy to EAS Hosting (PR preview) ───────────────────────────────────
+      - name: Deploy to EAS Hosting (PR preview)
+        id: eas-deploy-pr
+        if: github.event_name == 'pull_request'
+        run: |
+          PR_NUMBER="${{ github.event.number }}"
+          OUTPUT=$(npx eas-cli@latest deploy \
+            --alias "pr-${PR_NUMBER}" \
+            --non-interactive \
+            --json 2>/dev/null)
+          DEPLOY_ID=$(echo "$OUTPUT" | jq -r '.deploymentId // .id // ""' 2>/dev/null || echo '')
+          DEPLOY_URL=$(echo "$OUTPUT" | jq -r '.url // .deploymentUrl // ""' 2>/dev/null || echo '')
+          # Fallback: construct expected alias URL if JSON parse yields nothing
+          if [ -z "$DEPLOY_URL" ]; then
+            DEPLOY_URL="https://aaptiv-functional-feed--pr-${PR_NUMBER}.expo.app"
+          fi
+          echo "deploy-id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
+          echo "deploy-url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+          echo "Deployment ID: $DEPLOY_ID"
+          echo "Deployment URL: $DEPLOY_URL"
+        continue-on-error: true
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      # ── Post/update sticky PR comment ─────────────────────────────────────────
+      - name: Post web preview comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const sentinel = '<!-- obvious-web-preview:v1 -->';
+
+            const deployUrl = '${{ steps.eas-deploy-pr.outputs.deploy-url }}';
+            const deployId  = '${{ steps.eas-deploy-pr.outputs.deploy-id }}';
+            const runUrl    = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+            const ts        = new Date().toISOString();
+
+            let body;
+            if (!deployUrl || deployUrl === '') {
+              body = [
+                sentinel,
+                '## 🌐 Web preview',
+                '',
+                '> ⚠️ **EAS Hosting deploy failed or timed out** — preview unavailable for this run.',
+                '> CI remains green. Check the [Actions run](' + runUrl + ') for details.',
+                '_Updated: ' + ts + '_',
+              ].join('\n');
+            } else {
+              const idLine = deployId ? '**Deployment ID:** `' + deployId + '`' : '';
+              body = [
+                sentinel,
+                '## 🌐 Web preview',
+                '',
+                '**Preview URL:** [' + deployUrl + '](' + deployUrl + ')',
+                idLine,
+                '**Actions run:** [' + runUrl + '](' + runUrl + ')',
+                '_Updated: ' + ts + '_',
+              ].filter(Boolean).join('\n');
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find(c => c.body && c.body.includes(sentinel));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log('Updated web preview comment', existing.id);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              console.log('Created web preview comment');
+            }
