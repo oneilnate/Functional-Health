@@ -50,3 +50,6 @@ coverage/
 *.apk
 *.aab
 build/
+
+# obvious-install working directory (not committed)
+.obvious-install/
