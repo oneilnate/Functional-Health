@@ -1,0 +1,60 @@
+# Deploy api/ to Railway staging
+#
+# Triggered on push to release/foodpod-prototype-* branches and manually.
+# Uses railway up (direct source upload, not GitHub integration) with a
+# project token stored in RAILWAY_TOKEN secret.
+#
+# Required GitHub secret: RAILWAY_TOKEN (the Railway project token)
+
+name: Deploy API to Railway
+
+on:
+  push:
+    branches:
+      - 'release/foodpod*'
+      - 'obvious/f1-e3-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: deploy-api-railway
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Railway deploy (api/)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ghcr.io/railwayapp/cli:latest
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify Railway auth
+        run: railway whoami
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy api/ to Railway
+        working-directory: api
+        run: |
+          railway up --detach --service api .
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Get deployment URL
+        working-directory: api
+        run: |
+          sleep 10
+          railway status
+          railway domain || true
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
