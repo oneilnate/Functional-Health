@@ -20,7 +20,7 @@ const envSchema = z.object({
     .default('3000')
     .transform((v) => parseInt(v, 10))
     .refine((v) => !Number.isNaN(v) && v > 0 && v < 65536, 'PORT must be a valid port number'),
-  NODE_ENV: z.enum(['development', 'production', 'test']).optional().default('development'),
+  NODE_ENV: z.enum(['development', 'production', 'test', 'staging']).optional().default('development'),
 });
 
 export type Env = z.infer<typeof envSchema>;
