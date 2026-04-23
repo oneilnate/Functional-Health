@@ -84,11 +84,16 @@ export async function updateStageStatus(
   stage: StageName,
   entry: StageEntry,
 ): Promise<void> {
+  // Note: jsonb_set's path parameter is a Postgres text[], which requires the
+  // literal form '{vision}' — NOT a JSON-serialized string like '["vision"]'.
+  // Building the literal as `{stage}` via sql.raw-style interpolation keeps us
+  // away from JSON.stringify, which would produce the wrong shape.
+  const pathLiteral = `{${stage}}`;
   await db.execute(
     sql`UPDATE pods
         SET stage_status = jsonb_set(
           COALESCE(stage_status, '{}'::jsonb),
-          ${JSON.stringify([stage])}::text[],
+          ${pathLiteral}::text[],
           ${JSON.stringify(entry)}::jsonb
         )
         WHERE id = ${podId}::uuid`,
