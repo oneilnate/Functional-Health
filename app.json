@@ -43,6 +43,12 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "owner": "nateoutsidethebox"
+    "owner": "nateoutsidethebox",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "28a85fb2-e56c-4a53-a398-0080b43414ea"
+      }
+    }
   }
 }
