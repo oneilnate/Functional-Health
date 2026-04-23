@@ -30,17 +30,19 @@ declare module 'fastify' {
  * On failure: returns 401 `{ error, code }` per the locked error shape.
  */
 async function _bearerAuthPlugin(fastify: FastifyInstance): Promise<void> {
-  // Decorate every request with a placeholder so TypeScript is happy
-  // before the hook runs. The hook overwrites it for authenticated requests.
-  // Decorate with a getter+setter pair so Fastify v5 creates a writable
-  // property. The hook overwrites it per-request for any /api/* hit.
-  fastify.decorateRequest<AuthUser>('user', {
-    getter() {
-      return { id: '', email: '' };
+  // Per-request user store. Fastify v5 requires decorateRequest to set
+  // the initial value type; a null-initialized value lets us assign later.
+  // We use a plain null as the Fastify-registered default and store the
+  // actual AuthUser in a WeakMap keyed by the request object so that the
+  // getter/setter pair works correctly across all Fastify v5 versions.
+  const userStore = new WeakMap<FastifyRequest, AuthUser>();
+
+  fastify.decorateRequest('user', {
+    getter(this: FastifyRequest) {
+      return userStore.get(this) ?? { id: '', email: '' };
     },
-    setter(value: AuthUser) {
-      // Fastify replaces the per-instance value; this no-op satisfies the type.
-      void value;
+    setter(this: FastifyRequest, value: AuthUser) {
+      userStore.set(this, value);
     },
   });
 
