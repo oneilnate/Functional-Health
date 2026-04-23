@@ -1,0 +1,906 @@
+[
+  {
+    "card_id": "strength_lower_45min",
+    "domain": "strength",
+    "effort_level": "moderate",
+    "duration_min": 45,
+    "title": "Lower Body Strength",
+    "equipment_required": [],
+    "discomfort_contraindications": ["knee", "hip", "lower_back"],
+    "rationale_templates": {
+      "short": [
+        "You've been consistent this week and it's been {days} since your last lower-body lift.",
+        "Your lower body is rested — {days} days since your last session.",
+        "It's been {days} days since you hit legs — good timing for a moderate push."
+      ],
+      "expanded": [
+        "You've been steady this week — {sessions_count} {sessions_label} in — and your last lower-body lift was {days} {days_label} ago. Your sleep and energy both look solid, so moderate intensity tracks.",
+        "You've been consistent and your lower body has had {days} {days_label} to recover. With {sessions_count} {sessions_label} logged this week, a moderate session fits your rhythm right now."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["strength", "muscle", "performance"]
+  },
+  {
+    "card_id": "strength_upper_40min",
+    "domain": "strength",
+    "effort_level": "moderate",
+    "duration_min": 40,
+    "title": "Upper Body Strength",
+    "equipment_required": [],
+    "discomfort_contraindications": ["shoulder", "neck", "wrist"],
+    "rationale_templates": {
+      "short": [
+        "You've been consistent and it's been {days} since your last upper-body session.",
+        "Upper body is rested and ready — {days} {days_label} since your last push."
+      ],
+      "expanded": [
+        "You've been steady this week — {sessions_count} {sessions_label} in — and your upper body has had {days} {days_label} to recover. Moderate intensity is the right call.",
+        "Your consistency this week and {days} {days_label} of upper-body rest put you in a good spot for today's session."
+      ]
+    },
+    "cross_modality_domains": ["mobility", "recovery"],
+    "goal_tags": ["strength", "muscle", "performance"]
+  },
+  {
+    "card_id": "strength_full_55min",
+    "domain": "strength",
+    "effort_level": "hard",
+    "duration_min": 55,
+    "title": "Full Body Strength",
+    "equipment_required": [],
+    "discomfort_contraindications": ["knee", "shoulder", "lower_back"],
+    "rationale_templates": {
+      "short": [
+        "You're rested and your consistency this week earns a harder push today.",
+        "Sleep was solid and you're {days} {days_label} out from your last session — good day for full effort."
+      ],
+      "expanded": [
+        "You've been consistent — {sessions_count} {sessions_label} this week — and sleep has been strong. Today's a day where harder effort will land well.",
+        "With {days} {days_label} of rest and solid sleep, your body is ready for a full push. Don't leave it on the table."
+      ]
+    },
+    "cross_modality_domains": ["mobility", "recovery"],
+    "goal_tags": ["strength", "muscle", "performance"]
+  },
+  {
+    "card_id": "strength_lower_30min",
+    "domain": "strength",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Light Lower Body",
+    "equipment_required": [],
+    "discomfort_contraindications": ["knee", "hip"],
+    "rationale_templates": {
+      "short": [
+        "A lighter lower-body session keeps the streak alive without overdoing it.",
+        "Short and steady today — your body will thank you tomorrow."
+      ],
+      "expanded": [
+        "You've missed a few sessions this week, so something light keeps the rhythm going without digging a hole. Short and effective is the goal.",
+        "A lighter touch today gives you something to build on tomorrow without the risk of pushing too hard after a gap."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["strength", "consistency"]
+  },
+  {
+    "card_id": "strength_upper_30min",
+    "domain": "strength",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Light Upper Body",
+    "equipment_required": [],
+    "discomfort_contraindications": ["shoulder", "wrist"],
+    "rationale_templates": {
+      "short": [
+        "Light upper-body work today — keeps momentum without pushing through fatigue.",
+        "An easy upper-body session to keep the pattern going."
+      ],
+      "expanded": [
+        "Light work today keeps the rhythm alive. You'll feel better for having done something than nothing — and you won't pay for it tomorrow.",
+        "A short, light session is the move when energy is lower. It counts, and it sets tomorrow up better than skipping would."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["strength", "consistency"]
+  },
+  {
+    "card_id": "strength_push_hard",
+    "domain": "strength",
+    "effort_level": "hard",
+    "duration_min": 50,
+    "title": "Push Day — Hard",
+    "equipment_required": [],
+    "discomfort_contraindications": ["shoulder", "wrist", "chest"],
+    "rationale_templates": {
+      "short": [
+        "Sleep and recovery are both solid — good day to push.",
+        "You're rested and ready. Today earns a hard session."
+      ],
+      "expanded": [
+        "Sleep was solid and you've given your push muscles time to recover. This is one of those days where going hard makes sense.",
+        "With good sleep and {days} {days_label} since your last push session, your body is primed. Don't undersell the effort today."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["strength", "performance"]
+  },
+  {
+    "card_id": "cardio_easy_30min",
+    "domain": "cardio",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Easy 30-min Walk",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Three misses is a rhythm to reset, not a debt to repay — something light gets you back.",
+        "An easy walk today resets the rhythm without a hard session you'd probably skip."
+      ],
+      "expanded": [
+        "Three misses is a rhythm to reset, not a debt to repay. Something light today gets you back in without a hard day you'd probably skip.",
+        "You've had a gap this week — easy cardio bridges it without the risk of overdoing it. Tomorrow you can step things up."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["cardio", "consistency", "recovery"]
+  },
+  {
+    "card_id": "cardio_moderate_35min",
+    "domain": "cardio",
+    "effort_level": "moderate",
+    "duration_min": 35,
+    "title": "Moderate Cardio",
+    "equipment_required": [],
+    "discomfort_contraindications": ["knee", "hip"],
+    "rationale_templates": {
+      "short": [
+        "Good day for steady-state cardio — energy and recovery are aligned.",
+        "Your cardio base benefits from consistent moderate sessions."
+      ],
+      "expanded": [
+        "Energy looks good and your recovery markers are solid. Moderate cardio today keeps your base without leaving you flat tomorrow.",
+        "Steady-state cardio today fits where your body is. You'll get the aerobic benefit without the recovery cost of going hard."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["cardio", "endurance"]
+  },
+  {
+    "card_id": "cardio_intervals_25min",
+    "domain": "cardio",
+    "effort_level": "hard",
+    "duration_min": 25,
+    "title": "Interval Cardio",
+    "equipment_required": [],
+    "discomfort_contraindications": ["knee", "hip", "lower_back"],
+    "rationale_templates": {
+      "short": [
+        "You're recovered and rested — a short hard effort today makes sense.",
+        "Intervals today: your energy and recovery support the intensity."
+      ],
+      "expanded": [
+        "Your sleep was solid and you're recovered from your last session. Short, intense intervals give you more aerobic return in less time.",
+        "With good recovery and energy markers, intervals are the efficient choice today. Hard for 25 minutes beats 45 minutes at medium."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["cardio", "performance", "endurance"]
+  },
+  {
+    "card_id": "mobility_hip_20min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 20,
+    "title": "Hip Mobility Flow",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Your mobility scan flagged hips — let's meet it while it's fresh.",
+        "Hips got flagged {time_ago} — moving on it now is easier than catching up later."
+      ],
+      "expanded": [
+        "Your mobility scan {time_ago} flagged hips. Moving on it now is easier than catching up next week.",
+        "Hips were flagged on your scan {time_ago}. A focused mobility session now resets the pattern before it compounds."
+      ]
+    },
+    "cross_modality_domains": ["strength", "recovery"],
+    "goal_tags": ["mobility", "recovery", "injury_prevention"]
+  },
+  {
+    "card_id": "mobility_warmup_10min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Mobility Warm-Up",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "This mobility piece sets up today's strength session — pair them.",
+        "Ten minutes of movement prep makes the strength session work better."
+      ],
+      "expanded": [
+        "This warm-up is designed to pair with today's strength session. Moving through it first means you'll lift better and recover faster.",
+        "Mobility before strength is a habit that pays off quickly. This ten-minute flow primes the muscles you're about to load."
+      ]
+    },
+    "cross_modality_domains": ["strength"],
+    "goal_tags": ["mobility", "injury_prevention"]
+  },
+  {
+    "card_id": "mobility_full_body_25min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 25,
+    "title": "Full Body Mobility",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "A full mobility session today keeps your range of motion where it needs to be.",
+        "Mobility today — your body moves better when you invest in it consistently."
+      ],
+      "expanded": [
+        "Consistent mobility work is what lets everything else stay on track. Today's full-body session is low cost and high return.",
+        "You've been active this week — a full mobility session now protects your joints and keeps the week feeling good through the end of it."
+      ]
+    },
+    "cross_modality_domains": ["strength", "recovery"],
+    "goal_tags": ["mobility", "injury_prevention", "recovery"]
+  },
+  {
+    "card_id": "mobility_upper_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Upper Body Mobility",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Gentle upper-body mobility — no knee load, just range of motion.",
+        "Upper body mobility keeps your shoulders and thoracic spine moving well."
+      ],
+      "expanded": [
+        "With your lower body flagged, upper-body mobility keeps you moving without adding stress to what's already sore. Light and targeted.",
+        "Gentle upper-body work today gives you a productive session while protecting the areas that need rest. Nothing is wasted."
+      ]
+    },
+    "cross_modality_domains": ["strength"],
+    "goal_tags": ["mobility", "injury_prevention"]
+  },
+  {
+    "card_id": "mobility_glute_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Glute Activation",
+    "equipment_required": [],
+    "discomfort_contraindications": ["hip"],
+    "rationale_templates": {
+      "short": [
+        "Gentle glute activation supports your hip mobility work today.",
+        "Glutes wake up after mobility — keeps the chain working right."
+      ],
+      "expanded": [
+        "Hip mobility and glute activation work together — the activation reinforces what the mobility session opens up. Light and targeted.",
+        "After your hip mobility work, gentle glute activation locks in the range of motion gains. This pairing is worth the extra fifteen minutes."
+      ]
+    },
+    "cross_modality_domains": ["mobility", "strength"],
+    "goal_tags": ["mobility", "injury_prevention", "strength"]
+  },
+  {
+    "card_id": "mobility_thoracic_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Thoracic Spine Mobility",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Thoracic mobility is the quiet fix for a lot of shoulder and neck tension.",
+        "Your upper back will thank you for fifteen minutes of thoracic work today."
+      ],
+      "expanded": [
+        "Thoracic mobility is often overlooked but it affects everything above and below it. A short targeted session now prevents a lot of stiffness later.",
+        "You've been active this week and your thoracic spine carries a lot of that load. Fifteen minutes here resets the pattern."
+      ]
+    },
+    "cross_modality_domains": ["strength", "recovery"],
+    "goal_tags": ["mobility", "injury_prevention"]
+  },
+  {
+    "card_id": "recovery_sleep_hygiene",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Sleep & Recovery Protocol",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Tonight's about protecting tomorrow — your sleep has been thin.",
+        "Sleep was short this week. A recovery focus tonight sets up a better morning."
+      ],
+      "expanded": [
+        "Sleep has been thin this week and pushing through usually costs more than it earns. Tonight's about protecting tomorrow.",
+        "Your sleep pattern this week has been disrupted. A short recovery protocol now sets you up better than any session would."
+      ]
+    },
+    "cross_modality_domains": ["breathing"],
+    "goal_tags": ["recovery", "sleep", "stress_management"]
+  },
+  {
+    "card_id": "recovery_foam_roll_20min",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 20,
+    "title": "Foam Roll & Recovery",
+    "equipment_required": ["foam_roller"],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Recovery work today — your body needs time to consolidate this week's gains.",
+        "Foam rolling and recovery: the session that makes next week's sessions better."
+      ],
+      "expanded": [
+        "You've put in good work this week. Recovery today means the gains stick instead of just accumulating soreness.",
+        "Your body consolidates effort during recovery, not during training. Twenty minutes now multiplies the return on everything you've done this week."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["recovery", "injury_prevention"]
+  },
+  {
+    "card_id": "recovery_cold_contrast",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Cold Contrast Recovery",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Cold contrast accelerates recovery when sleep is short — worth ten minutes.",
+        "A quick cold contrast session helps your body recover faster after a hard week."
+      ],
+      "expanded": [
+        "Cold contrast works best when sleep can't do all the recovery work. Ten minutes now gives your nervous system a reset.",
+        "When sleep has been short, cold contrast is one of the fastest ways to shift recovery. Worth doing before bed tonight."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["recovery", "sleep"]
+  },
+  {
+    "card_id": "recovery_stretch_25min",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 25,
+    "title": "Active Stretch Session",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Active stretching today — the session that keeps everything else working.",
+        "Your body has worked hard; stretching now protects what you've built."
+      ],
+      "expanded": [
+        "Consistent stretch sessions are what let you train harder on the days that matter. Today's a good day to invest.",
+        "You've had a productive week. An active stretch session today keeps your range of motion where it needs to be for next week."
+      ]
+    },
+    "cross_modality_domains": ["mobility", "recovery"],
+    "goal_tags": ["recovery", "mobility", "injury_prevention"]
+  },
+  {
+    "card_id": "recovery_nap_protocol",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Nap & Recovery Window",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Sleep was short — a recovery window now is the highest-value thing you can do.",
+        "Tonight's about protecting tomorrow. Your sleep debt is showing."
+      ],
+      "expanded": [
+        "Sleep has been thin and your body is telling you. A recovery window now does more for you than any training session would.",
+        "Three nights of short sleep accumulates faster than it looks on paper. Tonight's recovery focus is the move."
+      ]
+    },
+    "cross_modality_domains": ["breathing"],
+    "goal_tags": ["recovery", "sleep", "stress_management"]
+  },
+  {
+    "card_id": "breathing_guided_10min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Guided Breathing Session",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Tonight's about protecting tomorrow — let's end the day quiet.",
+        "Quiet day — breathing resets your nervous system better than any session would right now."
+      ],
+      "expanded": [
+        "Your knee is flagged and sleep has been thin — let's end the day quiet. Two minutes of breathing resets the nervous system more reliably than any session would right now.",
+        "Tonight is about protecting tomorrow. Breathing practice now shifts your nervous system into recovery mode — which is exactly what your body needs."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["recovery", "stress_management", "sleep"]
+  },
+  {
+    "card_id": "breathing_box_breathing_5min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Box Breathing",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Five minutes of box breathing shifts your nervous system quickly.",
+        "A quick breathing reset — five minutes, real effect."
+      ],
+      "expanded": [
+        "Box breathing is one of the fastest ways to move your nervous system from sympathetic to parasympathetic. Five minutes changes how the rest of the day feels.",
+        "When stress is elevated, five minutes of box breathing resets more than you'd expect. Worth doing before anything else today."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["stress_management", "recovery"]
+  },
+  {
+    "card_id": "breathing_4_7_8",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 8,
+    "title": "4-7-8 Sleep Breathing",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "4-7-8 breathing tonight helps reset after a short-sleep week.",
+        "Sleep has been thin — 4-7-8 breathing is one of the fastest ways to improve sleep quality tonight."
+      ],
+      "expanded": [
+        "4-7-8 breathing activates the parasympathetic nervous system and signals to your body that it's safe to sleep deeply. Eight minutes, real effect.",
+        "After a short-sleep week, 4-7-8 breathing helps your body actually get more out of the hours you do spend asleep. Worth building into tonight."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["sleep", "recovery", "stress_management"]
+  },
+  {
+    "card_id": "breathing_hip_openers_15min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Breathing for Hip Openers",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Breath work pairs naturally with hip mobility — they reinforce each other.",
+        "Breathing practice during hip openers deepens the mobility gains."
+      ],
+      "expanded": [
+        "Combining breath work with hip mobility is more effective than either alone. The breathing relaxes the tissues the mobility is trying to open.",
+        "Hip openers work better when your nervous system isn't braced. The breathing practice here helps you actually access the range of motion you're working toward."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["mobility", "recovery", "injury_prevention"]
+  },
+  {
+    "card_id": "nutrition_hydration_reminder",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Hydration Check-In",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Hydration supports everything else — especially recovery after a hard session.",
+        "Post-workout hydration — one small move that makes tomorrow better."
+      ],
+      "expanded": [
+        "Post-workout hydration is where recovery actually starts. Replacing fluids now means you'll feel better in the morning than if you wait.",
+        "Your body uses water to repair and consolidate what you've trained. One focused hydration window now makes next session's performance noticeably better."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["nutrition", "recovery", "hydration"]
+  },
+  {
+    "card_id": "nutrition_pre_workout_snack",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Pre-Workout Fuel",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "A small fuel window before training makes the session feel better.",
+        "Pre-workout nutrition — a small pattern adjustment that adds up."
+      ],
+      "expanded": [
+        "Carbohydrates before moderate-to-hard sessions noticeably improve performance and reduce perceived effort. A small habit that's worth building in.",
+        "What you eat before training affects how the training feels. A quick fuel window here pays off in the session — one small move per day is how patterns actually shift."
+      ]
+    },
+    "cross_modality_domains": ["strength", "cardio"],
+    "goal_tags": ["nutrition", "performance"]
+  },
+  {
+    "card_id": "nutrition_protein_window",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Post-Workout Protein",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Post-workout protein — the move that makes the session count double.",
+        "Protein after training is where muscle is actually built. One adjustment per day."
+      ],
+      "expanded": [
+        "The anabolic window after training is real. Protein in the 30-60 minutes post-session gives your body what it needs to repair and grow.",
+        "You trained today. Protein now means the session pays off twice — once in the gym and once in the recovery. One small move per day is how patterns shift."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["nutrition", "recovery", "strength"]
+  },
+  {
+    "card_id": "nutrition_food_pod_weekly",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Weekly Food Pod Drop",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Your weekly Food Pod drop is ready — worth ten minutes.",
+        "Food Pod is up — this week's nutrition check-in is available."
+      ],
+      "expanded": [
+        "Your Food Pod captured this week's nutrition patterns. Ten minutes now is worth it — patterns you don't notice until you see them laid out.",
+        "This week's Food Pod drop is ready. It tends to surface one insight that's worth sitting with."
+      ]
+    },
+    "cross_modality_domains": [],
+    "goal_tags": ["nutrition", "reflection"]
+  },
+  {
+    "card_id": "nutrition_evening_snack_pattern",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Evening Nutrition Check",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Evening nutrition pattern — here's one small move before bed.",
+        "What you eat before sleep affects how well you recover during it."
+      ],
+      "expanded": [
+        "Evening nutrition affects sleep quality and overnight recovery. One small adjustment here compounds over time — this is that adjustment.",
+        "Your body does most of its repair work during sleep, and what you eat before bed determines how effective that repair is. One pattern per day."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["nutrition", "sleep", "recovery"]
+  },
+  {
+    "card_id": "nutrition_anti_inflammatory",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Anti-Inflammatory Foods",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Anti-inflammatory foods support recovery when discomfort is flagged.",
+        "Nutrition that helps your body clear inflammation — one move."
+      ],
+      "expanded": [
+        "With discomfort flagged, anti-inflammatory nutrition gives your body more tools to recover. One adjustment per day is how patterns shift.",
+        "Your body is managing some inflammation right now. Foods that support that process make recovery faster and less effortful."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["nutrition", "recovery", "injury_prevention"]
+  },
+  {
+    "card_id": "reflection_log_today",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Log How Today Felt",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Log how today felt — the pattern becomes visible when you track it.",
+        "A quick reflection log closes the loop on today's session."
+      ],
+      "expanded": [
+        "The data from your reflection log is what lets the engine get sharper over time. Five minutes now pays dividends for weeks.",
+        "Logging how today felt — honestly — is what separates short-term training from long-term progress. Worth the five minutes."
+      ]
+    },
+    "cross_modality_domains": [],
+    "goal_tags": ["reflection", "consistency"]
+  },
+  {
+    "card_id": "reflection_weekly_review",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Weekly Check-In",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "This week is worth sitting with for a minute — the trend is clear.",
+        "Weekly review — worth ten minutes to see the pattern you're building."
+      ],
+      "expanded": [
+        "You've had a real week — some consistency, some gaps, some signals worth noting. Taking ten minutes to review it is what makes next week intentional instead of reactive.",
+        "The week's data tells a story. Sitting with it for ten minutes gives you context that makes the next seven days sharper."
+      ]
+    },
+    "cross_modality_domains": [],
+    "goal_tags": ["reflection", "consistency"]
+  },
+  {
+    "card_id": "reflection_mepod_drop",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "MePod Health Drop",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Your MePod is ready — this week's health summary worth catching.",
+        "MePod drop is up — a few minutes to hear what your data says."
+      ],
+      "expanded": [
+        "Your MePod captured this week's health picture. There's usually one signal in there worth sitting with for a minute.",
+        "The MePod synthesis tends to surface connections you wouldn't see just scrolling your data. Worth the listen."
+      ]
+    },
+    "cross_modality_domains": [],
+    "goal_tags": ["reflection", "consistency"]
+  },
+  {
+    "card_id": "reflection_ai_checkin",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 8,
+    "title": "AI Companion Check-In",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Three misses this week — worth a quick check-in with the AI companion.",
+        "A quick check-in prompt — the companion is ready to help reset the pattern."
+      ],
+      "expanded": [
+        "You've had a gap this week and a check-in with the AI companion tends to surface what's actually in the way. Worth eight minutes to talk it through.",
+        "When sessions aren't happening, the AI check-in usually finds the actual friction — not just the symptoms. It's worth doing before the gap turns into a longer one."
+      ]
+    },
+    "cross_modality_domains": [],
+    "goal_tags": ["reflection", "consistency", "stress_management"]
+  },
+  {
+    "card_id": "reflection_scan_review",
+    "domain": "reflection",
+    "effort_level": "light",
+    "duration_min": 8,
+    "title": "Scan Results Review",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Your recent scan results are worth a quick look — they're fresh.",
+        "Scan review — see what changed and what it means for this week."
+      ],
+      "expanded": [
+        "Your scan came in recently. Taking a few minutes to review what it flagged gives you more context for this week's decisions.",
+        "The scan data is most useful right after it comes in, before the details blur. A quick review now shapes the next few sessions."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["reflection", "injury_prevention"]
+  },
+  {
+    "card_id": "mobility_ankle_10min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Ankle Mobility",
+    "equipment_required": [],
+    "discomfort_contraindications": ["ankle"],
+    "rationale_templates": {
+      "short": [
+        "Ankle mobility quietly affects everything from squats to posture.",
+        "Ten minutes on ankle mobility pays off in every lower-body session."
+      ],
+      "expanded": [
+        "Ankle mobility restrictions limit your squat depth and affect your knee tracking. Ten minutes here improves every lower-body session downstream.",
+        "Ankles affect the whole chain. Consistent ankle mobility work is one of the lowest-cost, highest-return habits you can build."
+      ]
+    },
+    "cross_modality_domains": ["strength"],
+    "goal_tags": ["mobility", "injury_prevention"]
+  },
+  {
+    "card_id": "mobility_shoulder_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Shoulder Mobility",
+    "equipment_required": [],
+    "discomfort_contraindications": ["shoulder"],
+    "rationale_templates": {
+      "short": [
+        "Shoulder mobility keeps your overhead work healthy and pain-free.",
+        "Fifteen minutes on shoulder mobility protects your upper body work."
+      ],
+      "expanded": [
+        "Shoulder mobility is the difference between upper body work that compounds and upper body work that gradually breaks you down. Fifteen minutes now protects weeks of training.",
+        "Your shoulders handle a lot of load. Regular mobility work keeps them resilient for the sessions that matter."
+      ]
+    },
+    "cross_modality_domains": ["strength"],
+    "goal_tags": ["mobility", "injury_prevention"]
+  },
+  {
+    "card_id": "cardio_zone2_40min",
+    "domain": "cardio",
+    "effort_level": "light",
+    "duration_min": 40,
+    "title": "Zone 2 Cardio",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Zone 2 today — your aerobic base is built in quiet sessions like this one.",
+        "Low-intensity cardio builds the aerobic foundation that makes everything else work better."
+      ],
+      "expanded": [
+        "Zone 2 cardio is where aerobic base is actually built. It doesn't feel dramatic, but it's what makes every hard session more effective.",
+        "The aerobic adaptations from Zone 2 work accumulate over weeks. Today's session is one of those unsexy investments that pays off visibly over time."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["cardio", "endurance", "recovery"]
+  },
+  {
+    "card_id": "strength_functional_35min",
+    "domain": "strength",
+    "effort_level": "moderate",
+    "duration_min": 35,
+    "title": "Functional Strength",
+    "equipment_required": [],
+    "discomfort_contraindications": ["lower_back"],
+    "rationale_templates": {
+      "short": [
+        "Functional strength today — patterns that transfer to everything else.",
+        "This session builds the kind of strength you actually use."
+      ],
+      "expanded": [
+        "Functional strength work builds the movement patterns that make everyday life and athletic performance more resilient. Today's session transfers beyond the gym.",
+        "These patterns — hip hinge, carry, press, pull — are what everything else builds on. A solid functional session today pays off across the rest of your training."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["strength", "performance", "injury_prevention"]
+  },
+  {
+    "card_id": "recovery_active_recovery_30min",
+    "domain": "recovery",
+    "effort_level": "light",
+    "duration_min": 30,
+    "title": "Active Recovery Session",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Active recovery today — movement that helps, not movement that adds load.",
+        "Light movement today accelerates recovery without adding stress."
+      ],
+      "expanded": [
+        "Active recovery — gentle movement at low intensity — clears metabolic byproducts and reduces next-day soreness better than complete rest does. Thirty minutes is the sweet spot.",
+        "After a hard session, active recovery keeps blood moving without adding load. You'll feel better tomorrow for doing this today."
+      ]
+    },
+    "cross_modality_domains": ["mobility"],
+    "goal_tags": ["recovery", "injury_prevention"]
+  },
+  {
+    "card_id": "breathing_stress_reset_10min",
+    "domain": "breathing",
+    "effort_level": "light",
+    "duration_min": 10,
+    "title": "Stress Reset Breathing",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Stress has been elevated this week — ten minutes of breathing resets faster than you'd expect.",
+        "When stress is up, breathing practice is often the highest-leverage thing you can do."
+      ],
+      "expanded": [
+        "Elevated stress this week has been affecting your recovery. Ten minutes of structured breathing shifts your nervous system and resets the pattern.",
+        "Stress affects recovery as much as training does. A breathing reset now gives your body permission to actually recover overnight."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["stress_management", "recovery", "sleep"]
+  },
+  {
+    "card_id": "nutrition_dinner_timing",
+    "domain": "nutrition",
+    "effort_level": "light",
+    "duration_min": 5,
+    "title": "Dinner Timing & Recovery",
+    "equipment_required": [],
+    "discomfort_contraindications": [],
+    "rationale_templates": {
+      "short": [
+        "Dinner timing tonight affects how well you recover while you sleep.",
+        "A small timing adjustment at dinner makes a real difference to sleep quality."
+      ],
+      "expanded": [
+        "Eating earlier in the evening gives your digestive system time to settle before sleep — which improves sleep quality and overnight recovery. One pattern per day.",
+        "When sleep has been short, dinner timing is one of the levers you can pull tonight. Eating earlier than usual tends to improve deep sleep duration."
+      ]
+    },
+    "cross_modality_domains": ["recovery"],
+    "goal_tags": ["nutrition", "sleep", "recovery"]
+  },
+  {
+    "card_id": "mobility_hamstring_15min",
+    "domain": "mobility",
+    "effort_level": "light",
+    "duration_min": 15,
+    "title": "Hamstring Mobility",
+    "equipment_required": [],
+    "discomfort_contraindications": ["lower_back"],
+    "rationale_templates": {
+      "short": [
+        "Hamstring mobility supports your lower back and hip health.",
+        "Fifteen minutes on hamstrings — the posterior chain thanks you later."
+      ],
+      "expanded": [
+        "Tight hamstrings pull on the lower back and limit hip mobility. Fifteen minutes here removes a common bottleneck from your whole lower-body chain.",
+        "Hamstring mobility is one of the better investments you can make for long-term lower-body health. It's also what lets your strength sessions go deeper."
+      ]
+    },
+    "cross_modality_domains": ["strength", "recovery"],
+    "goal_tags": ["mobility", "injury_prevention"]
+  }
+]

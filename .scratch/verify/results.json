@@ -1,0 +1,31 @@
+{
+  "home": {
+    "title": "Aaptiv Functional Feed",
+    "bodyText": "Aaptiv Functional Feed\nScaffold is live — performance budgets enforced.\nExpo Starter\nHome\nExplore\nDocs",
+    "rootHtmlLen": 1854,
+    "hasHeading": true,
+    "screenshot": "/home/user/work/Functional-Health/.scratch/verify/home.png",
+    "status": 200
+  },
+  "explore_direct": {
+    "title": "",
+    "bodyText": "Explore\nThis starter app includes example\ncode to help you get started.\nExpo documentation\nFile-based routing\nAndroid, iOS, and web support\nImages\nLight and dark mode components\nAnimations\nv54.0.33\nExpo Starter\nHome\nExplore\nDocs",
+    "rootHtmlLen": 5512,
+    "hasHeading": false,
+    "screenshot": "/home/user/work/Functional-Health/.scratch/verify/explore_direct.png",
+    "status": 200
+  },
+  "home_desktop": {
+    "title": "Aaptiv Functional Feed",
+    "bodyText": "Aaptiv Functional Feed\nScaffold is live — performance budgets enforced.\nExpo Starter\nHome\nExplore\nDocs",
+    "rootHtmlLen": 1854,
+    "hasHeading": true,
+    "screenshot": "/home/user/work/Functional-Health/.scratch/verify/home_desktop.png",
+    "status": 200
+  },
+  "explore_via_tab": {
+    "url": "http://localhost:8080/explore",
+    "screenshot": "/home/user/work/Functional-Health/.scratch/verify/explore_via_tab.png"
+  },
+  "tabClickResult": "clicked, now at http://localhost:8080/explore"
+}
