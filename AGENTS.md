@@ -1,6 +1,6 @@
 # Obvious Mobile — Agent Contract
 
-Expo Managed Workflow SDK 55 · expo-router v3 · React 19 · RN 0.83 · TypeScript 5.7 · pnpm 9
+Expo Managed Workflow SDK 54 · expo-router v4 · React 19 · RN 0.81 · TypeScript 5.7 · pnpm 9
 Agent-first repo. Read this file before touching any code. Under 6 KB by policy.
 
 ---
