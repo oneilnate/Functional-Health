@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fh/engine':
+        specifier: workspace:^
+        version: link:packages/engine
       '@react-navigation/bottom-tabs':
         specifier: ^7.15.9
         version: 7.15.9(@react-navigation/native@7.2.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -43,7 +46,7 @@ importers:
         version: 8.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       expo-router:
         specifier: ~6.0.23
-        version: 6.0.23(57v556kvjegxj5xog3vfns3kmi)
+        version: 6.0.23(sfcv3d2xcrxbn4buyosnzksmjq)
       expo-splash-screen:
         specifier: ~31.0.13
         version: 31.0.13(expo@54.0.33)(typescript@5.9.3)
@@ -98,7 +101,7 @@ importers:
         version: 12.1.0(size-limit@12.1.0)
       '@testing-library/react-native':
         specifier: ^13.3.3
-        version: 13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.2.5(react@19.1.0))(react@19.1.0)
+        version: 13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.1.0(react@19.1.0))(react@19.1.0)
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -123,6 +126,9 @@ importers:
       msw:
         specifier: ^2.13.4
         version: 2.13.4(@types/node@25.6.0)(typescript@5.9.3)
+      react-test-renderer:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
       simple-git-hooks:
         specifier: ^2.13.1
         version: 2.13.1
@@ -143,7 +149,19 @@ importers:
         version: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(msw@2.13.4(@types/node@25.6.0)(typescript@5.9.3))(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       vitest-native:
         specifier: 0.3.0
-        version: 0.3.0(@testing-library/react-native@13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.2.5(react@19.1.0))(react@19.1.0))(react@19.1.0)(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5)
+        version: 0.3.0(@testing-library/react-native@13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5)
+
+  packages/engine:
+    devDependencies:
+      '@vitest/coverage-v8':
+        specifier: ^4.1.5
+        version: 4.1.5(vitest@4.1.5)
+      typescript:
+        specifier: ~5.9.2
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.5
+        version: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(msw@2.13.4(@types/node@25.6.0)(typescript@5.9.3))(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
 packages:
 
@@ -3921,10 +3939,10 @@ packages:
       '@types/react':
         optional: true
 
-  react-test-renderer@19.2.5:
-    resolution: {integrity: sha512-kwViRpdISMTpcpy5B6TSewfJzRjnajihRaj57ZmOWKD+SPN6k9LUM13O0pfOuW8ir6B6OOiAXwCRqOoVxRNykA==}
+  react-test-renderer@19.1.0:
+    resolution: {integrity: sha512-jXkSl3CpvPYEF+p/eGDLB4sPoDX8pKkYvRl9+rR8HxLY0X04vW7hCm1/0zHoUSjPZ3bDa+wXWNTDVIw/R8aDVw==}
     peerDependencies:
-      react: ^19.2.5
+      react: ^19.1.0
 
   react@19.1.0:
     resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
@@ -4019,9 +4037,6 @@ packages:
 
   scheduler@0.26.0:
     resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
-
-  scheduler@0.27.0:
-    resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -5609,7 +5624,7 @@ snapshots:
       wrap-ansi: 7.0.0
       ws: 8.20.0
     optionalDependencies:
-      expo-router: 6.0.23(57v556kvjegxj5xog3vfns3kmi)
+      expo-router: 6.0.23(sfcv3d2xcrxbn4buyosnzksmjq)
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0)
     transitivePeerDependencies:
       - bufferutil
@@ -6481,14 +6496,14 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@testing-library/react-native@13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.2.5(react@19.1.0))(react@19.1.0)':
+  '@testing-library/react-native@13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       jest-matcher-utils: 30.3.0
       picocolors: 1.1.1
       pretty-format: 30.3.0
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0)
-      react-test-renderer: 19.2.5(react@19.1.0)
+      react-test-renderer: 19.1.0(react@19.1.0)
       redent: 3.0.0
 
   '@types/babel__core@7.20.5':
@@ -7478,7 +7493,7 @@ snapshots:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0)
 
-  expo-router@6.0.23(57v556kvjegxj5xog3vfns3kmi):
+  expo-router@6.0.23(sfcv3d2xcrxbn4buyosnzksmjq):
     dependencies:
       '@expo/metro-runtime': 4.0.1(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))
       '@expo/schema-utils': 0.1.8
@@ -7511,7 +7526,7 @@ snapshots:
       use-latest-callback: 0.2.6(react@19.1.0)
       vaul: 1.1.2(@types/react@19.1.17)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     optionalDependencies:
-      '@testing-library/react-native': 13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.2.5(react@19.1.0))(react@19.1.0)
+      '@testing-library/react-native': 13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.1.0(react@19.1.0))(react@19.1.0)
       react-dom: 19.1.0(react@19.1.0)
       react-native-gesture-handler: 2.28.0(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       react-native-reanimated: 4.1.7(react-native-worklets@0.5.1(@babel/core@7.29.0)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -8992,11 +9007,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.17
 
-  react-test-renderer@19.2.5(react@19.1.0):
+  react-test-renderer@19.1.0(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-is: 19.2.5
-      scheduler: 0.27.0
+      scheduler: 0.26.0
 
   react@19.1.0: {}
 
@@ -9106,8 +9121,6 @@ snapshots:
   sax@1.6.0: {}
 
   scheduler@0.26.0: {}
-
-  scheduler@0.27.0: {}
 
   semver@6.3.1: {}
 
@@ -9481,14 +9494,14 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.8.3
 
-  vitest-native@0.3.0(@testing-library/react-native@13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.2.5(react@19.1.0))(react@19.1.0))(react@19.1.0)(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5):
+  vitest-native@0.3.0(@testing-library/react-native@13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5):
     dependencies:
       flow-remove-types: 2.311.0
       react: 19.1.0
       vite: 6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
       vitest: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(msw@2.13.4(@types/node@25.6.0)(typescript@5.9.3))(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
-      '@testing-library/react-native': 13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.2.5(react@19.1.0))(react@19.1.0)
+      '@testing-library/react-native': 13.3.3(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react-test-renderer@19.1.0(react@19.1.0))(react@19.1.0)
 
   vitest@4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(msw@2.13.4(@types/node@25.6.0)(typescript@5.9.3))(vite@6.4.2(@types/node@25.6.0)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
