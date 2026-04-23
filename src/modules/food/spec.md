@@ -62,7 +62,7 @@ export type CreateMealResponse = { mealId; uploadUrl; storagePath };
 |---|---|---|
 | `FoodHomeScreen` | `/food` | Start / Continue / View CTAs; reads phase from FoodPodProvider |
 | `CaptureScreen` | `/food/capture?podId=X` | Camera + 3-step upload + thumbnail strip + Generate CTA |
-| `PodScreen` (stub) | `/food/pod/:id` | Wait/playback stub — fleshed out by F4-E3 |
+| `PodScreen` | `/food/pod/:id` | Generating: 5-stage progress UI (polls 2 s). Ready: expo-av player + synced transcript. Failed: retry button. |
 
 Store: `src/store/food-pod.store.tsx` — React context (`FoodPodProvider` / `useFoodPodStore`)
 Holds `currentPodId` and `phase` (`idle | capturing | generating | ready`).
