@@ -16,7 +16,8 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "seed": "tsx src/scripts/seed.ts"
   },
   "dependencies": {
     "@fastify/error": "^3.4.0",

@@ -132,3 +132,54 @@ pnpm db:migrate
 | `meals` | Meal photo uploads | 10 MB |
 | `pods` | Generated podcast MP3s | 50 MB |
 
+
+## Seed Demo User
+
+Seeds the Sarah Chen demo user (`usr_demo_01`) into Supabase. This is required before testing the end-to-end flow.
+
+### Prerequisites
+
+Set the following env vars (in `.env` or shell environment):
+
+| Variable | Value |
+|---|---|
+| `SUPABASE_URL` | Your Supabase project URL (`https://<ref>.supabase.co`) **or** a direct `postgresql://` connection string |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service-role key (bypasses RLS; from Supabase Dashboard → Project Settings → API) |
+
+### Run
+
+```bash
+cd api
+pnpm install
+pnpm seed
+```
+
+The script is idempotent — running it twice is safe (uses `INSERT ... ON CONFLICT (id) DO NOTHING`).
+
+### Verify
+
+```bash
+# Using psql with a direct postgres URI (SUPABASE_DB_URL):
+psql "$SUPABASE_DB_URL" -c "SELECT id, name, age, (daily_targets->>'fiber_g')::numeric AS fiber_g FROM users WHERE id='usr_demo_01';"
+# Expected: usr_demo_01 | Sarah Chen | 34 | 32
+```
+
+### What is seeded
+
+| Field | Value |
+|---|---|
+| `id` | `usr_demo_01` |
+| `email` | `demo@pear.everbetter.com` |
+| `name` | Sarah Chen |
+| `age` | 34 |
+| `height_cm` | 168 |
+| `weight_kg` | 64 |
+| `biological_sex` | female |
+| `activity_level` | moderate |
+| `dietary_prefs.avoid` | `["shellfish"]` |
+| `dietary_prefs.aims` | `["more_fiber","steady_energy","adequate_protein"]` |
+| `daily_targets` | 12 keys — see `drizzle/seed.sql` §2 (2000 kcal, 90g protein, 32g fiber …) |
+
+No pods or meals are seeded — users capture those live via the mobile app.
+
+Source: `art_xJJJTKHN` §1 (user row) + §2 (daily_targets).
