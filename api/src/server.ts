@@ -1,5 +1,7 @@
 import Fastify, { type FastifyError } from 'fastify';
 import { env } from './env.js';
+import { bearerAuthPlugin } from './middleware/auth.js';
+import { meRoutes } from './routes/me.js';
 
 const server = Fastify({
   logger: {
@@ -22,10 +24,15 @@ server.setErrorHandler((error: FastifyError, _request, reply) => {
   });
 });
 
+// ── Auth middleware (global, guards /api/* routes) ──────────────────────────
+await server.register(bearerAuthPlugin);
+
 // ── Routes ───────────────────────────────────────────────────────────────────
 server.get('/health', async (_request, _reply) => {
   return { status: 'ok', uptime: process.uptime() };
 });
+
+await server.register(meRoutes);
 
 // ── Graceful shutdown ────────────────────────────────────────────────────────
 const shutdown = async (signal: string) => {
