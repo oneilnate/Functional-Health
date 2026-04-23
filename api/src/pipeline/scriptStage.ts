@@ -245,7 +245,7 @@ function validateTranscript(
 async function generateWithGemini(prompt: string): Promise<TranscriptJson> {
   const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-pro',
+    model: env.GEMINI_MODEL,
     generationConfig: {
       responseMimeType: 'application/json',
       temperature: 0.7,
@@ -347,7 +347,7 @@ async function updateStageStatus(
   await db.execute(
     sql`
       UPDATE pods
-      SET stage_status = stage_status || ${JSON.stringify(patch)}::jsonb
+      SET stage_status = COALESCE(stage_status, '{}'::jsonb) || ${JSON.stringify({ script: patch })}::jsonb
       WHERE id = ${podId}
     `,
   );

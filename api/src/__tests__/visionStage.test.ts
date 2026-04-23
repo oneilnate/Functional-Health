@@ -22,6 +22,7 @@ const { mockDbExecute, mockDownload, mockGenerateContent, mockGetGenerativeModel
 vi.mock('../env.js', () => ({
   env: {
     GEMINI_API_KEY: 'test-gemini-key',
+    GEMINI_MODEL: 'gemini-2.5-pro',
     SUPABASE_URL: 'https://test.supabase.co',
     SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
     SUPABASE_ANON_KEY: 'test-anon-key',

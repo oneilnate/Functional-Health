@@ -126,7 +126,7 @@ export async function analyseWithGemini(
   imageBase64: string,
   mimeType: string,
 ): Promise<GeminiAnalysis> {
-  const model = gemini.getGenerativeModel({ model: 'gemini-1.5-pro' });
+  const model = gemini.getGenerativeModel({ model: env.GEMINI_MODEL });
 
   let lastError: Error | undefined;
 

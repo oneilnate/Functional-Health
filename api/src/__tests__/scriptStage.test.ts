@@ -147,6 +147,7 @@ const { mockDbExecute, mockGeminiGenerate } = vi.hoisted(() => ({
 vi.mock('../env.js', () => ({
   env: {
     GEMINI_API_KEY: 'test-gemini-key',
+    GEMINI_MODEL: 'gemini-2.5-pro',
     DEMO_USER_BEARER_TOKEN: 'test-token',
     NODE_ENV: 'test',
     PORT: 3000,
