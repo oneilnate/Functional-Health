@@ -6,14 +6,13 @@
  * Layer 3: Goal alignment scorer — ranks by goal weights + readiness + scan context
  * Layer 4: Engagement optimizer — nudges top half with engagement signal (tiebreaker)
  */
-import type { CatalogCard, UserModel } from './types.ts';
+
 import { allCards } from './catalog/loader.ts';
+import type { CatalogCard, UserModel } from './types.ts';
 
 /** Actual body discomfort — excludes scan identifiers */
 function actualDiscomfortAreas(user: UserModel): string[] {
-  return user.constraints_json.discomfort_areas.filter(
-    (a) => !a.includes('scan'),
-  );
+  return user.constraints_json.discomfort_areas.filter((a) => !a.includes('scan'));
 }
 
 /** Compute effective readiness for scoring purposes */
@@ -22,8 +21,7 @@ function effectiveReadiness(user: UserModel): 'high' | 'medium' | 'low' {
   const actualDiscomfort = actualDiscomfortAreas(user);
 
   const hasSevereDiscomfort =
-    actualDiscomfort.length > 0 ||
-    recent_behavior_json.avg_sleep_hours_7d < 5.5;
+    actualDiscomfort.length > 0 || recent_behavior_json.avg_sleep_hours_7d < 5.5;
   const hasMinorChallenges =
     recent_behavior_json.avg_sleep_hours_7d < 6.5 ||
     recent_behavior_json.stress_level === 'high' ||
@@ -106,7 +104,8 @@ function goalScore(card: CatalogCard, user: UserModel): number {
  * Low multiplier (0.5) so it can't override large goal score gaps.
  */
 function engagementScore(card: CatalogCard, user: UserModel): number {
-  const { domains_touched_7d, sessions_completed_7d, sessions_skipped_7d } = user.recent_behavior_json;
+  const { domains_touched_7d, sessions_completed_7d, sessions_skipped_7d } =
+    user.recent_behavior_json;
   let score = 0;
 
   if (domains_touched_7d.includes(card.domain)) score += 1;
@@ -131,8 +130,8 @@ function domainOfLastSession(user: UserModel): string | null {
 function conflictsWithDiscomfort(card: CatalogCard, user: UserModel): boolean {
   const bodyFlags = user.latest_body_state_json.discomfort_flags;
   return bodyFlags.some((flag) =>
-    card.discomfort_contraindications_json.some(
-      (contra) => flag.toLowerCase().includes(contra.toLowerCase()),
+    card.discomfort_contraindications_json.some((contra) =>
+      flag.toLowerCase().includes(contra.toLowerCase()),
     ),
   );
 }
@@ -146,7 +145,11 @@ function hasEquipment(card: CatalogCard, gear: string[]): boolean {
 /** Check if card duration fits the user's time context */
 function fitsTimeContext(card: CatalogCard, user: UserModel): boolean {
   const ctx = user.latest_situation_json.time_context;
-  if ((ctx === 'evening' || ctx === 'night') && card.effort_level === 'hard' && card.duration_min > 40) {
+  if (
+    (ctx === 'evening' || ctx === 'night') &&
+    card.effort_level === 'hard' &&
+    card.duration_min > 40
+  ) {
     return false;
   }
   return true;
@@ -192,11 +195,10 @@ function fallbackComposition(): HierarchyResult {
 
   return {
     priority: fallback,
-    supports: [
-      reflection ?? fallback,
-      nutrition ?? fallback,
-      mobility ?? fallback,
-    ].slice(0, 3) as CatalogCard[],
+    supports: [reflection ?? fallback, nutrition ?? fallback, mobility ?? fallback].slice(
+      0,
+      3,
+    ) as CatalogCard[],
     safetyVetoed: true,
   };
 }

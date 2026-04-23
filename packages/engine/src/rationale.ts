@@ -24,7 +24,7 @@ function buildVars(card: CatalogCard, user: UserModel): TemplateVars {
 
   const lastSessionHours = recent_behavior_json.last_session_hours_ago ?? 72;
   const daysSinceLastSession = Math.round(lastSessionHours / 24);
-  const daysText = daysSinceLastSession === 1 ? "a day" : `${daysSinceLastSession}`;
+  const daysText = daysSinceLastSession === 1 ? 'a day' : `${daysSinceLastSession}`;
 
   const areas = constraints_json.discomfort_areas;
   const areaText = areas.length > 0 ? (areas[0] ?? 'an area').replace('_', ' ') : 'an area';
@@ -51,20 +51,23 @@ function buildVars(card: CatalogCard, user: UserModel): TemplateVars {
     reasonShort = 'sleep thin';
     reasonFull = `Sleep has been running short — averaging ${sleep.toFixed(0)} hours`;
   } else if (skips >= 3) {
-    reason = "Three misses is a rhythm to reset, not a debt to repay";
-    reasonShort = "three misses";
-    reasonFull = "Three missed sessions in a row is a rhythm to reset, not a debt to repay";
+    reason = 'Three misses is a rhythm to reset, not a debt to repay';
+    reasonShort = 'three misses';
+    reasonFull = 'Three missed sessions in a row is a rhythm to reset, not a debt to repay';
   } else {
     reason = 'Today is a good day for a lighter focus';
     reasonShort = 'lighter day';
     reasonFull = 'Your body is signaling rest';
   }
 
-  const muscleGroup = card.domain === 'strength'
-    ? card.card_id.includes('lower') ? 'lower-body'
-    : card.card_id.includes('upper') ? 'upper-body'
-    : 'full-body'
-    : card.domain;
+  const muscleGroup =
+    card.domain === 'strength'
+      ? card.card_id.includes('lower')
+        ? 'lower-body'
+        : card.card_id.includes('upper')
+          ? 'upper-body'
+          : 'full-body'
+      : card.domain;
 
   let weekObs = '';
   const sessions = recent_behavior_json.sessions_completed_7d;
@@ -76,9 +79,10 @@ function buildVars(card: CatalogCard, user: UserModel): TemplateVars {
     weekObs = `You've logged ${sessions} sessions this week`;
   }
 
-  const patternObs = sleep < 6.5
-    ? `Sleep has been shorter than your baseline`
-    : `Your patterns have been fairly consistent this week`;
+  const patternObs =
+    sleep < 6.5
+      ? `Sleep has been shorter than your baseline`
+      : `Your patterns have been fairly consistent this week`;
 
   return {
     days: daysText,
@@ -108,12 +112,21 @@ function fillTemplate(template: string, vars: TemplateVars): string {
     .replace(/\{reason_short\}/g, vars.reason_short)
     .replace(/\{Reason\}/g, vars.reason.charAt(0).toUpperCase() + vars.reason.slice(1))
     .replace(/\{reason_full\}/g, vars.reason_full)
-    .replace(/\{Reason_full\}/g, vars.reason_full.charAt(0).toUpperCase() + vars.reason_full.slice(1))
+    .replace(
+      /\{Reason_full\}/g,
+      vars.reason_full.charAt(0).toUpperCase() + vars.reason_full.slice(1),
+    )
     .replace(/\{muscle_group\}/g, vars.muscle_group)
     .replace(/\{week_observation\}/g, vars.week_observation)
-    .replace(/\{Week_observation\}/g, vars.week_observation.charAt(0).toUpperCase() + vars.week_observation.slice(1))
+    .replace(
+      /\{Week_observation\}/g,
+      vars.week_observation.charAt(0).toUpperCase() + vars.week_observation.slice(1),
+    )
     .replace(/\{pattern_observation\}/g, vars.pattern_observation)
-    .replace(/\{Pattern_observation\}/g, vars.pattern_observation.charAt(0).toUpperCase() + vars.pattern_observation.slice(1))
+    .replace(
+      /\{Pattern_observation\}/g,
+      vars.pattern_observation.charAt(0).toUpperCase() + vars.pattern_observation.slice(1),
+    )
     .replace(/\{duration\}/g, vars.duration);
 }
 

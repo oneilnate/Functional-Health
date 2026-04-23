@@ -18,17 +18,17 @@ const CROSS_MODALITY_PAIRS: Array<{
   {
     priorityDomain: 'strength',
     supportDomain: 'mobility',
-    note: "The mobility piece below is your warm-up — pair them.",
+    note: 'The mobility piece below is your warm-up — pair them.',
   },
   {
     priorityDomain: 'strength',
     supportDomain: 'nutrition',
-    note: "The nutrition card below closes the recovery loop.",
+    note: 'The nutrition card below closes the recovery loop.',
   },
   {
     priorityDomain: 'mobility',
     supportDomain: 'breathing',
-    note: "The breathing session below amplifies your hip work — do them together.",
+    note: 'The breathing session below amplifies your hip work — do them together.',
   },
   {
     priorityDomain: 'mobility',
@@ -38,17 +38,17 @@ const CROSS_MODALITY_PAIRS: Array<{
   {
     priorityDomain: 'cardio',
     supportDomain: 'nutrition',
-    note: "Fuel up after the cardio session — the nutrition card below.",
+    note: 'Fuel up after the cardio session — the nutrition card below.',
   },
   {
     priorityDomain: 'recovery',
     supportDomain: 'breathing',
-    note: "The breathing session pairs naturally with recovery today.",
+    note: 'The breathing session pairs naturally with recovery today.',
   },
   {
     priorityDomain: 'breathing',
     supportDomain: 'mobility',
-    note: "The mobility piece below works with the breathing to open things up.",
+    note: 'The mobility piece below works with the breathing to open things up.',
   },
 ];
 

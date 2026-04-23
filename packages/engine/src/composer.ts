@@ -2,11 +2,12 @@
  * FeedComposer — picks priority + 3 supporting cards, materializes FeedCards.
  * Entry point for the engine's output.
  */
-import type { CoachingState, FeedCard, CatalogCard, UserModel } from './types.ts';
-import { runDecisionHierarchy } from './decision-hierarchy.ts';
-import { computeReadiness } from './readiness.ts';
-import { renderShort, renderExpanded } from './rationale.ts';
+
 import { findCrossModality } from './cross-modality.ts';
+import { runDecisionHierarchy } from './decision-hierarchy.ts';
+import { renderExpanded, renderShort } from './rationale.ts';
+import { computeReadiness } from './readiness.ts';
+import type { CatalogCard, CoachingState, FeedCard, UserModel } from './types.ts';
 
 function materializeCard(
   card: CatalogCard,
@@ -54,11 +55,7 @@ export function compose(
 
   const crossModality = findCrossModality(priority, supports);
 
-  const priorityCard = materializeCard(
-    priority,
-    user,
-    crossModality.priorityLinksTo,
-  );
+  const priorityCard = materializeCard(priority, user, crossModality.priorityLinksTo);
 
   const supportCards = supports.map((s) =>
     materializeCard(s, user, crossModality.supportLinksTo.get(s.card_id) ?? null),
@@ -80,10 +77,7 @@ export function compose(
 }
 
 /** Compose a shuffle: same posture, different card picks */
-export function composeShuffle(
-  user: UserModel,
-  currentPriorityId: string,
-): CoachingState | null {
+export function composeShuffle(user: UserModel, currentPriorityId: string): CoachingState | null {
   // Exclude current priority — forces a different top pick
   const result = runDecisionHierarchy(user, [currentPriorityId]);
 

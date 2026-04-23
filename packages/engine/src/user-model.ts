@@ -2,7 +2,7 @@
  * UserModel management — creates and updates the five-layer user model.
  * The engine reads this on every decision.
  */
-import type { UserModel, SignalEvent } from './types.ts';
+import type { SignalEvent, UserModel } from './types.ts';
 
 /** Default Sienna user model for seeding */
 export const SIENNA_BASE_USER_MODEL: UserModel = {
@@ -46,10 +46,7 @@ export const SIENNA_BASE_USER_MODEL: UserModel = {
 };
 
 /** Apply a set of seed signals to produce a mutated user model */
-export function applySignalToModel(
-  model: UserModel,
-  signal: SignalEvent,
-): UserModel {
+export function applySignalToModel(model: UserModel, signal: SignalEvent): UserModel {
   const updated: UserModel = JSON.parse(JSON.stringify(model)) as UserModel;
   updated.updated_at = new Date().toISOString();
 

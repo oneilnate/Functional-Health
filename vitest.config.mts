@@ -19,8 +19,22 @@ export default defineConfig({
         branches: 65,
         statements: 70,
       },
-      include: ['src/modules/**'],
-      exclude: ['src/app/**', 'src/types/**'],
+      include: ['src/modules/**', 'src/services/**'],
+      exclude: [
+        'src/app/**',
+        'src/types/**',
+        // RN components and hooks require RNTL/Playwright to test fully
+        'src/modules/*/components/**',
+        'src/modules/*/hooks/**',
+        // Empty stub modules (not yet implemented)
+        'src/modules/auth/**',
+        'src/modules/energy/**',
+        'src/modules/food/**',
+        'src/modules/marketplace/**',
+        'src/modules/mepod/**',
+        'src/modules/mood/**',
+        'src/modules/workouts/**',
+      ],
     },
   },
   resolve: {

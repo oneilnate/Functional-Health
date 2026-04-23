@@ -4,24 +4,31 @@
  */
 
 // Core engine functions (HTTP-equivalent API)
-export { getFeedToday, ingestSignal, shuffleFeed, getWhyCard, loadScenario, resetUser, getUserModel } from './engine.ts';
-
-// Types — everything consumers need to render the feed
-export type {
-  CoachingState,
-  FeedCard,
-  Domain,
-  EffortLevel,
-  Readiness,
-  SignalRequest,
-  SignalType,
-  UserModel,
-  ScenarioFixture,
-} from './types.ts';
+export {
+  getFeedToday,
+  getUserModel,
+  getWhyCard,
+  ingestSignal,
+  loadScenario,
+  resetUser,
+  shuffleFeed,
+} from './engine.ts';
+export type { ScenarioKey } from './fixtures/scenarios.ts';
 
 // Scenario fixtures — for tests and scenario switcher
 export { ALL_SCENARIOS, scenarioA, scenarioB, scenarioC, scenarioD } from './fixtures/scenarios.ts';
-export type { ScenarioKey } from './fixtures/scenarios.ts';
+// Types — everything consumers need to render the feed
+export type {
+  CoachingState,
+  Domain,
+  EffortLevel,
+  FeedCard,
+  Readiness,
+  ScenarioFixture,
+  SignalRequest,
+  SignalType,
+  UserModel,
+} from './types.ts';
 
 // Sienna base model — for seeding
-export { SIENNA_BASE_USER_MODEL, buildScenarioModel } from './user-model.ts';
+export { buildScenarioModel, SIENNA_BASE_USER_MODEL } from './user-model.ts';

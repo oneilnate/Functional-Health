@@ -21,8 +21,7 @@ export function computeReadiness(user: UserModel): ReadinessResult {
 
   const actualDiscomfort = actualDiscomfortAreas(user);
   const hasSevereDiscomfort =
-    actualDiscomfort.length > 0 ||
-    recent_behavior_json.avg_sleep_hours_7d < 5.5;
+    actualDiscomfort.length > 0 || recent_behavior_json.avg_sleep_hours_7d < 5.5;
   const hasMinorChallenges =
     recent_behavior_json.avg_sleep_hours_7d < 6.5 ||
     recent_behavior_json.stress_level === 'high' ||

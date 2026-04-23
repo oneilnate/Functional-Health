@@ -63,7 +63,13 @@ export interface CoachingState {
 /** Five-layer user model */
 export interface UserModel {
   user_id: string;
-  segment: 'performance' | 'everyday' | 'tactical' | 'industrial' | 'medical_sensitive' | 'partner_custom';
+  segment:
+    | 'performance'
+    | 'everyday'
+    | 'tactical'
+    | 'industrial'
+    | 'medical_sensitive'
+    | 'partner_custom';
   goals_json: GoalEntry[];
   preferences_json: UserPreferences;
   constraints_json: UserConstraints;

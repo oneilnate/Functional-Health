@@ -4,8 +4,8 @@
  * Each test seeds the user model with the fixture, calls GET /feed/today,
  * and asserts the CoachingState matches the expected output per spec.
  */
-import { describe, it, expect, beforeEach } from 'vitest';
-import { loadScenario, getFeedToday, resetUser } from '../engine.ts';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { getFeedToday, loadScenario, resetUser } from '../engine.ts';
 
 const USER_ID = 'sienna_test';
 

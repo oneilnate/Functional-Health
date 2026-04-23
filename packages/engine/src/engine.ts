@@ -8,12 +8,13 @@
  * Shape is kept identical to the HTTP API spec so a Fastify wrapper can be
  * dropped in later without changes to callers.
  */
-import type { CoachingState, SignalRequest, UserModel } from './types.ts';
-import { compose, composeShuffle } from './composer.ts';
-import { applySignalToModel, SIENNA_BASE_USER_MODEL, buildScenarioModel } from './user-model.ts';
-import { renderExpanded } from './rationale.ts';
+
 import { getCard } from './catalog/loader.ts';
+import { compose, composeShuffle } from './composer.ts';
 import { ALL_SCENARIOS, type ScenarioKey } from './fixtures/scenarios.ts';
+import { renderExpanded } from './rationale.ts';
+import type { CoachingState, SignalRequest, UserModel } from './types.ts';
+import { applySignalToModel, buildScenarioModel, SIENNA_BASE_USER_MODEL } from './user-model.ts';
 
 /**
  * In-memory store for the demo — no persistence in v1.
@@ -75,7 +76,10 @@ export function shuffleFeed(userId: string, currentPriorityId: string): Coaching
  * GET /feed/why/:cardId
  * Returns the expanded rationale for a given card.
  */
-export function getWhyCard(userId: string, cardId: string): {
+export function getWhyCard(
+  userId: string,
+  cardId: string,
+): {
   card_id: string;
   rationale_expanded: string;
   audio_rationale_url: null;
