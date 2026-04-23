@@ -66,12 +66,27 @@ jobs:
           path: build.ipa
           key: ${{ steps.hash.outputs.cache-key }}
 
-      - name: Install EAS CLI
+      # Check EXPO_TOKEN is set — soft-fail with warning if missing
+      - name: Check EXPO_TOKEN secret
         if: steps.cache-ipa.outputs.cache-hit != 'true'
+        id: check-token
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::warning title=EXPO_TOKEN missing::EXPO_TOKEN secret is not set in this repo. "\
+            "Add it at Settings → Secrets → Actions. EAS build will be skipped this run."
+            echo "skip-build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip-build=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install EAS CLI
+        if: steps.cache-ipa.outputs.cache-hit != 'true' && steps.check-token.outputs.skip-build != 'true'
         run: npm install -g eas-cli@latest
 
       - name: EAS local build (iOS simulator)
-        if: steps.cache-ipa.outputs.cache-hit != 'true'
+        if: steps.cache-ipa.outputs.cache-hit != 'true' && steps.check-token.outputs.skip-build != 'true'
         run: |
           # eas build --local outputs the .ipa to the current working directory
           eas build \
