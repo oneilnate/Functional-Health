@@ -7,8 +7,8 @@ import { describe, expect, it } from 'vitest';
 import { applySignal, compose, getWhyRationale, shuffle } from './compose';
 import { scenarioA, siennaUserModel } from './fixtures/scenario-a-rested-tuesday';
 import { scenarioB, scenarioBUserModel } from './fixtures/scenario-b-tired-knee';
-import { scenarioC, scenarioCUserModel } from './fixtures/scenario-c-post-scan-hips';
-import { scenarioD, scenarioDUserModel } from './fixtures/scenario-d-missed-three-days';
+import { scenarioC } from './fixtures/scenario-c-post-scan-hips';
+import { scenarioD } from './fixtures/scenario-d-missed-three-days';
 
 const NOW = '2026-04-22T08:00:00Z';
 
