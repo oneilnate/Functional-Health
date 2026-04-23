@@ -103,3 +103,32 @@ Railway reads `railway.json` and builds using the Dockerfile.
 
 Set all environment variables from `.env.example` in your Railway service settings.
 
+
+## Database Migrations
+
+Schema is managed with Drizzle ORM. Migrations live in `drizzle/migrations/`.
+
+```bash
+# Generate migrations from schema changes
+pnpm db:generate
+
+# Apply migrations (requires SUPABASE_DB_URL env var)
+pnpm db:migrate
+```
+
+### Schema Tables (spec §3)
+
+| Table | Description |
+|---|---|
+| `users` | App user profile (id is text to support `usr_demo_01` IDs) |
+| `pods` | A 10-day food-tracking pod per user |
+| `meals` | Individual meal captures within a pod |
+| `podcasts` | Generated podcast episode for a completed pod |
+
+### Storage Buckets
+
+| Bucket | Purpose | Max size |
+|---|---|---|
+| `meals` | Meal photo uploads | 10 MB |
+| `pods` | Generated podcast MP3s | 50 MB |
+
