@@ -56,9 +56,7 @@ jobs:
       - name: Build web
         run: pnpm build:web
 
-      # ── Deploy to EAS Hosting ─────────────────────────────────────────────────
-      # On main: --prod promotes aaptiv-functional-feed.expo.app
-      # On PR:   --alias pr-<number> gives the PR its own preview URL
+      # ── Deploy to EAS Hosting (main) ──────────────────────────────────────────
       - name: Deploy to EAS Hosting (main)
         id: eas-deploy-main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -69,16 +67,8 @@ jobs:
             --non-interactive \
             --json 2>/dev/null)
           echo "raw-output=$OUTPUT" >> "$GITHUB_OUTPUT"
-          DEPLOY_ID=$(echo "$OUTPUT" | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-print(data.get('deploymentId', data.get('id', '')))
-" 2>/dev/null || echo '')
-          DEPLOY_URL=$(echo "$OUTPUT" | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-print(data.get('url', data.get('deploymentUrl', '')))
-" 2>/dev/null || echo '')
+          DEPLOY_ID=$(echo "$OUTPUT" | jq -r '.deploymentId // .id // ""' 2>/dev/null || echo '')
+          DEPLOY_URL=$(echo "$OUTPUT" | jq -r '.url // .deploymentUrl // ""' 2>/dev/null || echo '')
           echo "deploy-id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
           echo "deploy-url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
           echo "Deployment ID: $DEPLOY_ID"
@@ -87,6 +77,7 @@ print(data.get('url', data.get('deploymentUrl', '')))
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
+      # ── Deploy to EAS Hosting (PR preview) ───────────────────────────────────
       - name: Deploy to EAS Hosting (PR preview)
         id: eas-deploy-pr
         if: github.event_name == 'pull_request'
@@ -97,17 +88,9 @@ print(data.get('url', data.get('deploymentUrl', '')))
             --non-interactive \
             --json 2>/dev/null)
           echo "raw-output=$OUTPUT" >> "$GITHUB_OUTPUT"
-          DEPLOY_ID=$(echo "$OUTPUT" | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-print(data.get('deploymentId', data.get('id', '')))
-" 2>/dev/null || echo '')
-          DEPLOY_URL=$(echo "$OUTPUT" | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-print(data.get('url', data.get('deploymentUrl', '')))
-" 2>/dev/null || echo '')
-          # Fallback: construct expected alias URL if JSON parse fails
+          DEPLOY_ID=$(echo "$OUTPUT" | jq -r '.deploymentId // .id // ""' 2>/dev/null || echo '')
+          DEPLOY_URL=$(echo "$OUTPUT" | jq -r '.url // .deploymentUrl // ""' 2>/dev/null || echo '')
+          # Fallback: construct expected alias URL if JSON parse yields nothing
           if [ -z "$DEPLOY_URL" ]; then
             DEPLOY_URL="https://aaptiv-functional-feed--pr-${PR_NUMBER}.expo.app"
           fi
@@ -182,4 +165,3 @@ print(data.get('url', data.get('deploymentUrl', '')))
               });
               console.log('Created web preview comment');
             }
-
