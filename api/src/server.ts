@@ -3,9 +3,9 @@ import { env } from './env.js';
 
 const server = Fastify({
   logger: {
-    level: env.NODE_ENV === 'production' ? 'info' : 'debug',
+    level: env.NODE_ENV === 'production' || env.NODE_ENV === 'staging' ? 'info' : 'debug',
     transport:
-      env.NODE_ENV !== 'production'
+      env.NODE_ENV !== 'production' && env.NODE_ENV !== 'staging'
         ? { target: 'pino-pretty', options: { colorize: true } }
         : undefined,
   },
