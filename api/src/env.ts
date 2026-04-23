@@ -15,6 +15,9 @@ const envSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
   SUPABASE_ANON_KEY: z.string().min(1, 'SUPABASE_ANON_KEY is required'),
 
+  // Gemini model
+  GEMINI_MODEL: z.string().optional().default('gemini-2.5-pro'),
+
   // Auth
   DEMO_USER_BEARER_TOKEN: z.string().min(1, 'DEMO_USER_BEARER_TOKEN is required'),
 
