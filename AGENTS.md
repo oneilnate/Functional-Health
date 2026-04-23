@@ -44,6 +44,15 @@ Numeric source of truth: `performance.config.ts` at repo root. Rationale lives i
 
 Every PR gets an iOS simulator URL posted to the scoreboard bot comment (via `device-preview.yml`). Click the `📱 Device preview` link to open the simulator in your browser — no Xcode, no physical device needed. The orchestrator agent also drives this simulator via `scripts/drive-appetize.mjs` pre-review, capturing screenshots and detecting crashes. Appetize free tier = 100 simulator-minutes/month; stays well under cap at ~3 min/PR. If the Appetize upload fails, device-preview.yml posts a warning comment but never blocks CI (soft fail).
 
+## Expo Go PR previews
+
+Every non-draft PR also gets an Expo Go OTA preview (via `eas-update.yml` — job `pr-preview`).
+A sticky comment is posted/updated on each push containing a scannable QR code and a
+`exp://u.expo.dev/…?channel=pr-<n>` deep-link. Open Expo Go on iPhone and scan to load the
+exact JS bundle from that PR — no TestFlight, no Xcode, no native build.
+The EAS branch `pr-<n>` is automatically deleted when the PR closes.
+Draft PRs are skipped; the preview job runs only when the PR is marked ready.
+
 ---
 
 ## 3. Closed-loop workflow
