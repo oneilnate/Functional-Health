@@ -1,66 +1,84 @@
-# food
+# food — Food Pod Module
 
 ## Purpose
 
-<!-- TODO: fill in before implementing this module -->
-Manages food logging, nutritional data, and meal history. Exists as a separate module
-because nutrition tracking has its own data complexity (macros, micros, serving sizes,
-food search) that is distinct from other health metrics.
+Owns the client-side types, React Query hooks, and public API surface for the
+Food Pod feature. A user captures ~30 meal images over 10 days, then receives a
+personalised nutrition podcast.
+
+This module does NOT own:
+- Network calls (all fetch() lives in `src/services/food.service.ts`)
+- Screen layout / navigation (lives in `src/app/food/`)
+- Audio playback (expo-av, handled in the playback screen — F4-E3)
+- Supabase storage upload (delegated to `useUploadMealImage` → `food.service.ts`)
 
 ## Responsibilities
 
 Owns:
-- Food entry creation and deletion (meal logging)
-- Nutritional data model (calories, macros, micros)
-- Daily nutrition summary aggregation
-- Food search and lookup (via API or local database)
-
-Does NOT own:
-- Workout-nutrition correlation (cross-module; not yet defined)
-- Barcode scanning UI (belongs in `src/app/` or a shared component)
-- Grocery/marketplace food items (belongs in `marketplace` module)
+- `types.ts` — Pod, Meal, Podcast, GroundedFacts, and supporting status types
+- `hooks.ts` — React Query wrappers (mutations + queries) over food.service
+- `index.ts` — barrel export of types + hooks (no default export)
 
 ## Public API
 
+### Types
+
 ```typescript
-// TODO: fill in before implementing this module
-export {};
-// Expected exports (stub — not implemented yet):
-// export { useFoodLog } from './hooks/useFoodLog'
-// export { useDailyNutrition } from './hooks/useDailyNutrition'
-// export type { FoodEntry, NutritionData, Meal } from './types'
+export type PodStatus = 'draft' | 'generating' | 'ready' | 'failed';
+export type MealStatus = 'pending_upload' | 'uploaded' | 'analyzed';
+export type PipelineStage = 'vision' | 'grounding' | 'script' | 'tts' | 'upload';
+export type StageState = 'pending' | 'running' | 'complete' | 'failed';
+export type StageStatus = Partial<Record<PipelineStage, { status: StageState; ... }>>;
+export type Meal = { id; podId; status; imageUrl?; capturedAt? };
+export type Pod = { id; userId; status; timespanDays; mealsCount; mealsList; stageStatus; createdAt; completedAt?; groundedFacts? };
+export type TranscriptSegment = { startSec; endSec; text; emphasisWords };
+export type Podcast = { transcript: { segments; totalDurationSec; title }; audioUrl };
+export type GroundedFacts = { aggregate; targets; gaps; patterns };
+export type CreateMealResponse = { mealId; uploadUrl; storagePath };
 ```
+
+### Hooks
+
+| Hook | Type | Description |
+|---|---|---|
+| `useCreatePod()` | mutation | POST /api/pods — create a new pod |
+| `useCreateMeal(podId)` | mutation | POST /api/pods/:podId/meals — register meal + get upload URL |
+| `useUploadMealImage()` | mutation | PUT presigned URL — upload bytes to Supabase (no bearer) |
+| `usePatchMeal()` | mutation | PATCH /api/meals/:id — mark meal as uploaded |
+| `useCompletePod()` | mutation | POST /api/pods/:id/complete — trigger generation |
+| `usePodStatus(podId)` | query | GET /api/pods/:podId — polls every 2s while 'generating' |
+| `usePodcast(podId, podStatus)` | query | GET /api/pods/:podId/podcast — enabled only when pod.status === 'ready' |
 
 ## Performance budget
 
-<!-- TODO: confirm values against performance.config.ts before implementing -->
-- Renders on mount: ≤ 3 (leaf screen for food entry)
-- Food search: debounce at 300 ms; show results within 500 ms of debounce firing
-- Nutrition summary: memoized; recomputes only when food log changes
+- Capture screen: ≤ 3 renders on mount (leaf screen budget)
+- Pod status screen: ≤ 6 renders on mount (container screen budget)
+- Polling: 2 s interval while pod.status === 'generating'; disabled otherwise
+- Numbers are enforced by `performance.config.ts` and React.Profiler screenshot tests
 
 ## Closed-loop check
 
 ```bash
 # Run before every commit that touches src/modules/food/
 pnpm test --run src/modules/food
+pnpm test --run src/services
 pnpm typecheck
 pnpm lint
 ```
 
-All three must exit 0 before committing changes to this module.
+All four must exit 0 before committing changes to this module.
 
 ## Key decisions
 
-<!-- TODO: fill in before implementing this module -->
-- Decision: food database source (USDA, Open Food Facts, or proprietary API)
-- Decision: serving size unit system (metric vs imperial vs both)
-- Decision: offline food log storage strategy
+- All `fetch()` calls in `src/services/food.service.ts` only — never in this module
+- Bearer token from `EXPO_PUBLIC_DEMO_BEARER_TOKEN` env var (MVP demo token)
+  → Phase 2: replace with expo-secure-store + magic link
+- React Query for all server state (no Zustand for remote data)
+- Presigned URL upload bypasses the API server; no Authorization header on that request
+- Pod polling uses `refetchInterval` callback to stop automatically when terminal
 
-## Agent instructions
+## Forbidden
 
-- Read this file before making any changes to this module.
-- Run the Closed-loop check above; all must pass before commit.
-- Forbidden: calling fetch directly — use `src/services/food.service.ts`.
-- Forbidden: accessing marketplace product data directly.
-- Debounce all food search inputs to avoid excess API calls.
-- Update this spec.md if changes alter responsibilities, public API, or performance budget.
+- Calling `fetch()` directly anywhere in this module
+- Importing from `src/services/` in screen files — screens use hooks from this module
+- Accessing `src/app/food/` from this module (screens own their own route logic)
