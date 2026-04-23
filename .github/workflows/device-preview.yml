@@ -1,0 +1,277 @@
+# Device Preview — EAS iOS simulator build + Appetize upload + PR comment
+#
+# Architecture:
+#   Job 1 (build) — macos-14: EAS local build → .ipa (iOS simulator requires macOS + Xcode)
+#   Job 2 (upload-and-comment) — ubuntu-latest: Appetize upload + PR comment (cheaper runner)
+#
+# Cache strategy: hash of native-affecting files so JS-only PRs skip the 12-min macOS build.
+# Cache key = sha256(app.json + package.json + pnpm-lock.yaml + eas.json)
+#
+# Soft-fail on Appetize: upload errors post a warning comment but never block CI.
+
+name: Device Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ── Job 1: EAS build on macOS (required for iOS simulator .ipa) ─────────────
+  build:
+    name: EAS iOS simulator build
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    outputs:
+      cache-hit: ${{ steps.cache-ipa.outputs.cache-hit }}
+      cache-key: ${{ steps.hash.outputs.cache-key }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Compute a hash of native-affecting files to decide whether to rebuild
+      - name: Compute native deps hash
+        id: hash
+        run: |
+          HASH=$(cat app.json package.json pnpm-lock.yaml eas.json | sha256sum | awk '{print $1}')
+          echo "cache-key=ipa-$HASH" >> "$GITHUB_OUTPUT"
+          echo "Native deps hash: $HASH"
+
+      - name: Restore .ipa from cache
+        id: cache-ipa
+        uses: actions/cache@v4
+        with:
+          path: build.ipa
+          key: ${{ steps.hash.outputs.cache-key }}
+
+      # Check EXPO_TOKEN is set — soft-fail with warning if missing
+      - name: Check EXPO_TOKEN secret
+        if: steps.cache-ipa.outputs.cache-hit != 'true'
+        id: check-token
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::warning title=EXPO_TOKEN missing::EXPO_TOKEN secret is not set in this repo. "\
+            "Add it at Settings → Secrets → Actions. EAS build will be skipped this run."
+            echo "skip-build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip-build=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install EAS CLI
+        if: steps.cache-ipa.outputs.cache-hit != 'true' && steps.check-token.outputs.skip-build != 'true'
+        run: npm install -g eas-cli@latest
+
+      - name: EAS local build (iOS simulator)
+        if: steps.cache-ipa.outputs.cache-hit != 'true' && steps.check-token.outputs.skip-build != 'true'
+        run: |
+          # eas build --local outputs the .ipa to the current working directory
+          eas build \
+            --profile development-simulator \
+            --platform ios \
+            --non-interactive \
+            --local \
+            --output build.ipa
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Upload .ipa as artifact (archival)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-ipa-${{ github.run_id }}
+          path: build.ipa
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # ── Job 2: Upload to Appetize + post PR comment ──────────────────────────────
+  upload-and-comment:
+    name: Appetize upload + PR comment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Download the .ipa produced by the build job
+      - name: Download .ipa artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: simulator-ipa-${{ github.run_id }}
+          path: .
+        continue-on-error: true
+
+      # Upload to Appetize and capture publicKey — soft-fail on error
+      - name: Upload to Appetize
+        id: appetize
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          SHA="${{ github.event.pull_request.head.sha }}"
+          NOTE="PR${PR_NUMBER}-${SHA:0:7}"
+
+          if [ ! -f build.ipa ]; then
+            echo "appetize-error=true" >> "$GITHUB_OUTPUT"
+            echo "appetize-error-msg=.ipa file not found (build may have failed or been skipped)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Uploading build.ipa to Appetize (note: $NOTE)..."
+          RESPONSE=$(curl -sf -X POST \
+            --user "$APPETIZE_API_TOKEN:" \
+            -F "file=@build.ipa" \
+            -F "platform=ios" \
+            -F "note=$NOTE" \
+            https://api.appetize.io/v1/apps) || CURL_EXIT=$?
+
+          if [ "${CURL_EXIT:-0}" -ne 0 ]; then
+            echo "appetize-error=true" >> "$GITHUB_OUTPUT"
+            echo "appetize-error-msg=Appetize API request failed (curl exit ${CURL_EXIT:-0})" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Appetize response: $RESPONSE"
+          PUBLIC_KEY=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('publicKey',''))")
+
+          if [ -z "$PUBLIC_KEY" ]; then
+            echo "appetize-error=true" >> "$GITHUB_OUTPUT"
+            echo "appetize-error-msg=Appetize returned no publicKey. Response: $RESPONSE" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "appetize-public-key=$PUBLIC_KEY" >> "$GITHUB_OUTPUT"
+          echo "appetize-error=false" >> "$GITHUB_OUTPUT"
+          echo "Appetize public key: $PUBLIC_KEY"
+        env:
+          APPETIZE_API_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
+
+      # Post or update the device-preview block in the PR comment
+      - name: Post device preview comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const beginSentinel = '<!-- device-preview:begin -->';
+            const endSentinel = '<!-- device-preview:end -->';
+            const scoreSentinel = '<!-- obvious-mobile-scoreboard:v1 -->';
+
+            const appetizeError = '${{ steps.appetize.outputs.appetize-error }}' === 'true';
+            const appetizeErrorMsg = '${{ steps.appetize.outputs.appetize-error-msg }}';
+            const publicKey = '${{ steps.appetize.outputs.appetize-public-key }}';
+
+            let previewBlock;
+            if (appetizeError) {
+              previewBlock = [
+                beginSentinel,
+                '## 📱 Device preview',
+                '',
+                '> ⚠️ **Appetize upload failed** — simulator preview unavailable for this PR.',
+                `> ${appetizeErrorMsg}`,
+                '',
+                '_CI remains green. Fix the upload issue to restore previews._',
+                endSentinel,
+              ].join('\n');
+            } else {
+              previewBlock = [
+                beginSentinel,
+                '## 📱 Device preview',
+                '',
+                `**iOS Simulator:** [Open in browser](https://appetize.io/embed/${publicKey})`,
+                '',
+                '_Expires after 24h of inactivity (Appetize free tier)_',
+                endSentinel,
+              ].join('\n');
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            // Look for an existing device-preview standalone comment
+            const existingPreview = comments.find(c =>
+              c.body && c.body.includes(beginSentinel)
+            );
+
+            if (existingPreview) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingPreview.id,
+                body: previewBlock,
+              });
+              console.log(`Updated device-preview comment ${existingPreview.id}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: previewBlock,
+              });
+              console.log('Created new device-preview comment');
+            }
+
+      # Run Playwright agent driver against the live Appetize URL (optional evidence capture)
+      - name: Setup pnpm (for drive-appetize)
+        if: steps.appetize.outputs.appetize-error == 'false'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22 (for drive-appetize)
+        if: steps.appetize.outputs.appetize-error == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies (for drive-appetize)
+        if: steps.appetize.outputs.appetize-error == 'false'
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium
+        if: steps.appetize.outputs.appetize-error == 'false'
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Drive Appetize simulator (capture screenshot)
+        if: steps.appetize.outputs.appetize-error == 'false'
+        run: node scripts/drive-appetize.mjs
+        continue-on-error: true
+        env:
+          APPETIZE_PUBLIC_KEY: ${{ steps.appetize.outputs.appetize-public-key }}
+
+      - name: Upload Appetize screenshot
+        if: steps.appetize.outputs.appetize-error == 'false' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appetize-screenshot-${{ github.run_id }}
+          path: /tmp/appetize-home.png
+          if-no-files-found: ignore
+          retention-days: 14
