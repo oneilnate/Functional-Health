@@ -8,8 +8,7 @@
     "scheme": "aaptivfeed",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.everbetter.aaptivfeed",
-      "icon": "./assets/expo.icon"
+      "bundleIdentifier": "com.everbetter.aaptivfeed"
     },
     "android": {
       "package": "com.everbetter.aaptivfeed",
