@@ -2,6 +2,7 @@ import Fastify, { type FastifyError } from 'fastify';
 import { env } from './env.js';
 import { bearerAuthPlugin } from './middleware/auth.js';
 import { meRoutes } from './routes/me.js';
+import { podRoutes } from './routes/pods.js';
 
 const server = Fastify({
   logger: {
@@ -33,6 +34,7 @@ server.get('/health', async (_request, _reply) => {
 });
 
 await server.register(meRoutes);
+await server.register(podRoutes);
 
 // ── Graceful shutdown ────────────────────────────────────────────────────────
 const shutdown = async (signal: string) => {
