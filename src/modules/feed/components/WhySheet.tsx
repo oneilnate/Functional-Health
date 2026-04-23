@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   crossModalityNote: {
     fontSize: 13,
-    color: '#9ca3af',
+    color: '#6b7280',
     fontStyle: 'italic',
     lineHeight: 20,
   },

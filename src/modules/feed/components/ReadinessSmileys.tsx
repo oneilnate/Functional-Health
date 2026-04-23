@@ -25,7 +25,7 @@ export function ReadinessSmileys({ current, onTap }: ReadinessSmileysProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>How are you feeling?</Text>
-      <View style={styles.row}>
+      <View style={styles.row} accessibilityRole="radiogroup" accessibilityLabel="Readiness">
         {SMILEYS.map(({ value, emoji, label }) => (
           <Pressable
             key={value}
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    color: '#9ca3af',
+    color: '#6b7280',
     marginBottom: 10,
     fontWeight: '500',
   },

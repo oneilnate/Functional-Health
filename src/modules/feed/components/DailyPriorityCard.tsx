@@ -48,12 +48,7 @@ export function DailyPriorityCard({
   const domainColor = DOMAIN_COLORS[card.domain] ?? '#6b7280';
 
   return (
-    <Pressable
-      style={[styles.card, { borderLeftColor: domainColor, borderLeftWidth: 4 }]}
-      onPress={() => onOpen(card.card_id)}
-      accessibilityRole="button"
-      accessibilityLabel={`${card.title}. ${card.effort_level} effort. ${card.duration_min} minutes. Tap to start.`}
-    >
+    <View style={[styles.card, { borderLeftColor: domainColor, borderLeftWidth: 4 }]}>
       {/* Header row */}
       <View style={styles.header}>
         <View style={styles.domainTag}>
@@ -111,7 +106,15 @@ export function DailyPriorityCard({
       >
         <Text style={styles.whyText}>?</Text>
       </Pressable>
-    </Pressable>
+
+      {/* Full-card tap area — below buttons in z-order; hidden from a11y tree */}
+      <Pressable
+        style={StyleSheet.absoluteFillObject}
+        onPress={() => onOpen(card.card_id)}
+        accessible={false}
+        importantForAccessibility="no"
+      />
+    </View>
   );
 }
 
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
     color: '#374151',
   },
   shuffleTextDisabled: {
-    color: '#9ca3af',
+    color: '#6b7280',
   },
   title: {
     fontSize: 22,
@@ -186,12 +189,12 @@ const styles = StyleSheet.create({
   },
   duration: {
     fontSize: 13,
-    color: '#6b7280',
+    color: '#4b5563',
     fontWeight: '500',
   },
   rationale: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#4b5563',
     lineHeight: 20,
     marginBottom: 8,
   },
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
   },
   crossModalityNote: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: '#6b7280',
     fontStyle: 'italic',
     lineHeight: 18,
   },

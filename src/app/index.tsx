@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#9ca3af',
+    color: '#6b7280',
     letterSpacing: 0.8,
     marginBottom: 8,
     paddingLeft: 4,
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 15,
-    color: '#9ca3af',
+    color: '#6b7280',
   },
   rationaleOverlay: {
     ...StyleSheet.absoluteFillObject,

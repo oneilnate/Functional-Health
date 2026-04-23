@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 15,
-    color: '#9ca3af',
+    color: '#6b7280',
   },
   header: {
     flexDirection: 'row',
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#9ca3af',
+    color: '#6b7280',
     letterSpacing: 0.6,
     textTransform: 'uppercase',
     marginBottom: 10,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
   rationaleDismiss: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: '#6b7280',
     textAlign: 'center',
   },
 });

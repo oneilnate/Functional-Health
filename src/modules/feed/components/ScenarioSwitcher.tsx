@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 11,
-    color: '#9ca3af',
+    color: '#6b7280',
     fontWeight: '600',
     letterSpacing: 0.5,
     paddingHorizontal: 16,
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   chipDesc: {
     fontSize: 10,
-    color: '#9ca3af',
+    color: '#6b7280',
     lineHeight: 14,
   },
   chipDescActive: {

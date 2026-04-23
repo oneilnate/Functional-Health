@@ -138,16 +138,16 @@ const styles = StyleSheet.create({
   },
   duration: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: '#6b7280',
   },
   domain: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: '#6b7280',
     textTransform: 'capitalize',
   },
   rationale: {
     fontSize: 13,
-    color: '#9ca3af',
+    color: '#4b5563',
     lineHeight: 18,
   },
 });
