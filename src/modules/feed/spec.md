@@ -1,66 +1,60 @@
-# feed
+# Feed Module — Feed Decision Engine
 
 ## Purpose
 
-<!-- TODO: fill in before implementing this module -->
-Renders the user's activity feed: posts, updates, and social interactions from
-their network. Exists as a separate module because feed data has its own fetching
-cadence, pagination, and optimistic-update logic distinct from other features.
+Implements the coaching feed that composes a personalized daily activity recommendation
+from a four-layer decision engine (safety → feasibility → goal alignment → engagement).
+This module owns all feed UI components, the `useFeed` hook, and re-exports the
+`FeedScreen` that replaces the static home screen.
 
 ## Responsibilities
 
 Owns:
-- Feed item data fetching and pagination
-- Feed item types and state shape
-- Optimistic updates for reactions/comments
+- `FeedScreen` — main coaching feed with readiness header, priority card, supporting cards, and signal plumbing
+- `ReadinessBattery` — three-state battery (high/medium/low) per spec §12.1
+- `DailyPriorityCard` — dominant priority card with "why" button per spec §12.2
+- `SupportingCard` — supporting activity cards with pairing affordance per spec §12.3
+- `WhyBottomSheet` — expanded rationale bottom sheet; audio stub for v1.1
+- `ReadinessSmileys` — three-smiley readiness input, fires /signals/ingest per spec §12.6
+- `ScenarioSwitcher` — dev-mode tool to cycle through all 4 Sienna scenarios
+- `useFeed` hook — wraps feed service calls, manages recomposition state
 
 Does NOT own:
-- Individual post detail views (belongs in a future `posts` module or screen)
-- User profile data (belongs in a future `profile` module)
-- Navigation to detail screens (belongs in `src/app/(tabs)/feed.tsx`)
+- Engine logic (lives in `src/engine/`)
+- API calls (lives in `src/services/feed.service.ts`)
+- App navigation (lives in `src/app/index.tsx`)
 
 ## Public API
 
 ```typescript
-// TODO: fill in before implementing this module
-export {};
-// Expected exports (stub — not implemented yet):
-// export { useFeed } from './hooks/useFeed'
-// export { FeedList } from './components/FeedList'
-// export type { FeedItem, FeedState } from './types'
+export { FeedScreen } from './components/feed-screen';
+export { ReadinessBattery } from './components/readiness-battery';
+export { DailyPriorityCard } from './components/daily-priority-card';
+export { SupportingCard } from './components/supporting-card';
+export { WhyBottomSheet } from './components/why-bottom-sheet';
+export { ReadinessSmileys } from './components/readiness-smileys';
+export { ScenarioSwitcher } from './components/scenario-switcher';
+export { useFeed } from './hooks/use-feed';
 ```
 
 ## Performance budget
 
-<!-- TODO: confirm values against performance.config.ts before implementing -->
-- Renders on mount: ≤ 6 (container screen budget — feed is a scroll container)
-- First item visible: < 500 ms after mount (perceived performance target)
-- List items: use FlatList with `getItemLayout` to avoid layout thrash
-- No re-renders on scroll position change (memoize list items)
-
-## Closed-loop check
-
-```bash
-# Run before every commit that touches src/modules/feed/
-pnpm test --run src/modules/feed
-pnpm typecheck
-pnpm lint
-```
-
-All three must exit 0 before committing changes to this module.
+- Renders on mount: ≤ 6 (container screen budget)
+- First priority card visible: < 500ms after mount
+- Recomposition animation: ~800ms total (300ms blur + 500ms settle) per spec §12.4
 
 ## Key decisions
 
-<!-- TODO: fill in before implementing this module -->
-- Decision: pagination strategy (cursor vs offset)
-- Decision: React Query stale time for feed data
-- Decision: optimistic update rollback strategy
+- Engine runs in-process (no HTTP server in Expo scaffold)
+- Shuffle cooldown: 3 minutes, session-only per spec §12.5
+- Supporting cards: no "why" button (v1) — density kept low
+- Audio rationale: null in v1, stub visible in WhyBottomSheet (v1.1)
+- Safety vetoes: silent in v1, no UI surfacing per spec §16.1
 
 ## Agent instructions
 
 - Read this file before making any changes to this module.
-- Run the Closed-loop check above; all must pass before commit.
+- Run `pnpm exec vitest run src/engine/engine.test.ts` to verify engine tests.
+- Run `pnpm typecheck && pnpm lint` before committing.
 - Forbidden: calling fetch directly — use `src/services/feed.service.ts`.
-- Forbidden: putting feed logic in the screen file `src/app/(tabs)/feed.tsx`.
-- Use FlatList, not ScrollView + map, for feed rendering.
 - Update this spec.md if changes alter responsibilities, public API, or performance budget.
