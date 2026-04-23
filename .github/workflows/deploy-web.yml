@@ -66,7 +66,6 @@ jobs:
             --alias aaptiv-feed \
             --non-interactive \
             --json 2>/dev/null)
-          echo "raw-output=$OUTPUT" >> "$GITHUB_OUTPUT"
           DEPLOY_ID=$(echo "$OUTPUT" | jq -r '.deploymentId // .id // ""' 2>/dev/null || echo '')
           DEPLOY_URL=$(echo "$OUTPUT" | jq -r '.url // .deploymentUrl // ""' 2>/dev/null || echo '')
           echo "deploy-id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
@@ -87,7 +86,6 @@ jobs:
             --alias "pr-${PR_NUMBER}" \
             --non-interactive \
             --json 2>/dev/null)
-          echo "raw-output=$OUTPUT" >> "$GITHUB_OUTPUT"
           DEPLOY_ID=$(echo "$OUTPUT" | jq -r '.deploymentId // .id // ""' 2>/dev/null || echo '')
           DEPLOY_URL=$(echo "$OUTPUT" | jq -r '.url // .deploymentUrl // ""' 2>/dev/null || echo '')
           # Fallback: construct expected alias URL if JSON parse yields nothing
