@@ -22,7 +22,7 @@ import {
   groundMeal,
   computeGroundedFacts,
 } from '../pipeline/groundingStage.js';
-import usdaCorpus from '../pipeline/usda-corpus.json' assert { type: 'json' };
+import usdaCorpus from '../pipeline/usda-corpus.json' with { type: 'json' };
 
 // ── USDA corpus ────────────────────────────────────────────────────────────────
 

@@ -16,7 +16,7 @@
  */
 
 import { sql } from 'drizzle-orm';
-import usdaCorpus from './usda-corpus.json' assert { type: 'json' };
+import usdaCorpus from './usda-corpus.json' with { type: 'json' };
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
