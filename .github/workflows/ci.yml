@@ -1,0 +1,61 @@
+# CI inner loop — typecheck + lint + test + size-limit + expo export
+# Target: under 90 seconds on cold ubuntu-latest runner.
+#
+# Steps mirror `pnpm verify` exactly so green locally = green in CI.
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - 'release/**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check (typecheck + lint + test + size-limit + build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint (Biome + eslint-plugin-expo)
+        run: pnpm lint
+
+      - name: Test with coverage
+        run: pnpm test:coverage
+
+      - name: Build web bundle
+        run: pnpm build:web
+
+      - name: Size limit (bundle budget gate)
+        run: pnpm size-limit
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7

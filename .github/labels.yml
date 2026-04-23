@@ -1,0 +1,15 @@
+# Escape-hatch labels for PR scoreboard budget gates.
+# Managed by .github/workflows/label-sync.yml (EndBug/label-sync@v2).
+# Adding any of these to a PR bypasses the corresponding check — requires human approval.
+
+- name: perf-budget-change
+  color: "e4e669"
+  description: "Intentionally updates a performance budget upward. Must include rationale comment."
+
+- name: visual-baseline-update
+  color: "0075ca"
+  description: "Intentionally updates screenshot baselines. Must include commit message justification."
+
+- name: perf-regression-acknowledged
+  color: "d93f0b"
+  description: "One-time bypass for perf regression. Must include issue link for follow-up."
