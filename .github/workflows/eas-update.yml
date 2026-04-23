@@ -1,0 +1,291 @@
+# Expo Go OTA update — three independent jobs:
+#   1. eas-update (push to main / tags)   — publishes to `production` channel
+#   2. pr-preview (pull_request events)   — publishes to `pr-<number>` channel,
+#                                            posts/updates a sticky QR comment
+#   3. pr-cleanup (pull_request: closed)  — deletes the ephemeral EAS branch
+#
+# Sentinel: <!-- obvious-expo-go-pr-preview:v1 --> (distinct from prod commit-comment)
+# QR image:  https://api.qrserver.com/v1/create-qr-code/ (zero-install, free)
+# Launch URL: exp://u.expo.dev/<projectId>?channel=pr-<n>
+
+name: Expo Go OTA Update
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 1 — Production publish (push to main / version tags)
+  # Added in PR #34. DO NOT MODIFY this job — it publishes to the `production`
+  # channel which is what live Expo Go users are pointed at.
+  # ─────────────────────────────────────────────────────────────────────────────
+  eas-update:
+    name: Publish OTA update
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@latest
+
+      - name: Publish OTA update to Expo Go (production channel)
+        id: eas-update
+        continue-on-error: true
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          eas update \
+            --branch production \
+            --message "${COMMIT_MSG}" \
+            --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Post Expo Go launch URL as sticky commit comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const sentinel = '<!-- obvious-expo-go-update:v1 -->';
+            const projectId = '28a85fb2-e56c-4a53-a398-0080b43414ea';
+            const expoGoUrl = `exp://u.expo.dev/${projectId}?channel=production`;
+            const updateFailed = '${{ steps.eas-update.outcome }}' === 'failure';
+
+            let body;
+            if (updateFailed) {
+              body = [
+                sentinel,
+                '## 📱 Expo Go — OTA Update',
+                '',
+                '> ⚠️ **OTA publish failed** — the previous build is still live in Expo Go.',
+                '> Check the [Actions log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.',
+                '',
+                `**Expo Go URL (last good build):** [${expoGoUrl}](${expoGoUrl})`,
+              ].join('\n');
+            } else {
+              body = [
+                sentinel,
+                '## 📱 Expo Go — OTA Update',
+                '',
+                `**Scan to launch in Expo Go:** [${expoGoUrl}](${expoGoUrl})`,
+                '',
+                '```',
+                expoGoUrl,
+                '```',
+                '',
+                `_Published from commit \`${{ github.sha }}\` · [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})_`,
+              ].join('\n');
+            }
+
+            // Post as a commit comment (sticky to the SHA)
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body,
+            });
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 2 — PR preview publish
+  # Triggered on every pull_request (opened / synchronize / reopened).
+  # Publishes to channel `pr-<number>` so contributors can scan the QR code
+  # in Expo Go on iPhone to test the exact JS bundle on this PR.
+  # Concurrency block cancels any in-flight publish for the same PR on rapid
+  # pushes (force-push or quick sequential commits).
+  # Skips draft PRs to avoid burning EAS quota on work-in-progress.
+  # ─────────────────────────────────────────────────────────────────────────────
+  pr-preview:
+    name: Publish Expo Go PR preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action != 'closed' &&
+      github.event.pull_request.draft == false
+
+    concurrency:
+      group: eas-update-pr-${{ github.event.number }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@latest
+
+      - name: Publish OTA update to Expo Go (pr-${{ github.event.number }} channel)
+        id: eas-update-pr
+        continue-on-error: true
+        run: |
+          PR_NUMBER="${{ github.event.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          eas update \
+            --branch "pr-${PR_NUMBER}" \
+            --message "PR #${PR_NUMBER}: ${PR_TITLE}" \
+            --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Post / update sticky PR comment with Expo Go QR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const sentinel  = '<!-- obvious-expo-go-pr-preview:v1 -->';
+            const projectId = '28a85fb2-e56c-4a53-a398-0080b43414ea';
+            const prNumber  = context.issue.number;
+            const channel   = `pr-${prNumber}`;
+
+            // exp:// deep-link — opens directly in Expo Go on iPhone
+            const expoGoUrl = `exp://u.expo.dev/${projectId}?channel=${channel}`;
+
+            // QR image served by qrserver.com (zero-install, free, reliable)
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(expoGoUrl)}&size=300x300`;
+
+            const runUrl  = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
+            const ts      = new Date().toISOString();
+            const outcome = '${{ steps.eas-update-pr.outcome }}';
+
+            let body;
+            if (outcome === 'failure') {
+              body = [
+                sentinel,
+                '## 📱 Expo Go — PR Preview',
+                '',
+                '> ⚠️ **OTA publish failed** — preview unavailable for this push.',
+                `> Check the [Actions run](${runUrl}) for details.`,
+                '',
+                `_Updated: ${ts}_`,
+              ].join('\n');
+            } else {
+              body = [
+                sentinel,
+                '## 📱 Expo Go — PR Preview',
+                '',
+                `Scan the QR code below with the **Expo Go** app on your iPhone to load this PR's JS bundle:`,
+                '',
+                `![Expo Go QR — PR #${prNumber}](${qrUrl})`,
+                '',
+                `**Or tap / paste the launch URL:**`,
+                `\`\`\``,
+                expoGoUrl,
+                `\`\`\``,
+                '',
+                `> 🧹 This branch is automatically deleted when the PR closes.`,
+                '',
+                `_Published to channel \`${channel}\` · [Actions run](${runUrl}) · ${ts}_`,
+              ].join('\n');
+            }
+
+            // Find-by-sentinel: update if found, otherwise create
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+
+            const existing = comments.find(c => c.body && c.body.includes(sentinel));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log('Updated Expo Go PR preview comment', existing.id);
+            } else {
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+              console.log('Created Expo Go PR preview comment');
+            }
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 3 — PR cleanup
+  # Deletes the ephemeral EAS OTA branch when the PR closes (merged or manually
+  # closed). Soft-fail: branch-delete errors never block the close event.
+  # ─────────────────────────────────────────────────────────────────────────────
+  pr-cleanup:
+    name: Delete Expo Go PR branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@latest
+
+      - name: Delete EAS branch pr-${{ github.event.number }}
+        continue-on-error: true
+        run: |
+          PR_NUMBER="${{ github.event.number }}"
+          echo "Deleting EAS branch pr-${PR_NUMBER}..."
+          eas branch:delete "pr-${PR_NUMBER}" --non-interactive || true
+          echo "Done."
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
