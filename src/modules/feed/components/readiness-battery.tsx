@@ -20,10 +20,18 @@ const LABEL: Record<Readiness, string> = {
   low: 'Light today',
 };
 
+// Stroke/fill colors for the battery icon (spec §12.1)
 const COLOR: Record<Readiness, string> = {
   high: '#22C55E',
   medium: '#22C55E',
   low: '#F59E0B',
+};
+
+// Text colors for labels — darker variants that pass WCAG AA on light backgrounds
+const TEXT_COLOR: Record<Readiness, string> = {
+  high: '#15803D', // green-700, 7.7:1 on white
+  medium: '#15803D',
+  low: '#92400E', // amber-800, 8.8:1 on white
 };
 
 export function ReadinessBattery({
@@ -62,6 +70,7 @@ export function ReadinessBattery({
 
   const fillPercent = readiness === 'low' ? 0.4 : 1;
   const color = COLOR[readiness];
+  const textColor = TEXT_COLOR[readiness];
 
   return (
     <Pressable
@@ -84,7 +93,7 @@ export function ReadinessBattery({
           />
         </View>
       </Animated.View>
-      <Text style={[styles.label, { color }]}>{LABEL[readiness]}</Text>
+      <Text style={[styles.label, { color: textColor }]}>{LABEL[readiness]}</Text>
     </Pressable>
   );
 }

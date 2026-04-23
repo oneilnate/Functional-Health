@@ -263,12 +263,12 @@ const styles = StyleSheet.create({
   },
   headerSub: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: '#6B7280',
   },
   sectionLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#9CA3AF',
+    color: '#6B7280',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginBottom: 10,
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 15,
-    color: '#9CA3AF',
+    color: '#6B7280',
   },
   errorContainer: {
     flex: 1,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   },
   rationaleOverlayDismiss: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: '#6B7280',
     marginTop: 8,
     textAlign: 'right',
   },

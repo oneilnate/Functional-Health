@@ -14,11 +14,12 @@ interface ScenarioSwitcherProps {
   onScenarioChange: () => void;
 }
 
-const SCENARIOS: Array<{ label: string; model: UserModel; color: string }> = [
-  { label: 'A: Rested Tue', model: siennaUserModel, color: '#22C55E' },
-  { label: 'B: Tired+Knee', model: scenarioBUserModel, color: '#F59E0B' },
-  { label: 'C: Post-Scan', model: scenarioCUserModel, color: '#7C3AED' },
-  { label: 'D: Missed 3d', model: scenarioDUserModel, color: '#6B7280' },
+const SCENARIOS: Array<{ label: string; model: UserModel; color: string; textColor: string }> = [
+  // color = border accent; textColor = WCAG AA-safe text on white/F8FAFC
+  { label: 'A: Rested Tue', model: siennaUserModel, color: '#22C55E', textColor: '#15803D' },
+  { label: 'B: Tired+Knee', model: scenarioBUserModel, color: '#F59E0B', textColor: '#92400E' },
+  { label: 'C: Post-Scan', model: scenarioCUserModel, color: '#7C3AED', textColor: '#5B21B6' },
+  { label: 'D: Missed 3d', model: scenarioDUserModel, color: '#6B7280', textColor: '#374151' },
 ];
 
 export function ScenarioSwitcher({ onScenarioChange }: ScenarioSwitcherProps) {
@@ -37,7 +38,7 @@ export function ScenarioSwitcher({ onScenarioChange }: ScenarioSwitcherProps) {
             accessibilityRole="button"
             accessibilityLabel={`Switch to scenario ${s.label}`}
           >
-            <Text style={[styles.buttonText, { color: s.color }]}>{s.label}</Text>
+            <Text style={[styles.buttonText, { color: s.textColor }]}>{s.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 11,
-    color: '#9CA3AF',
+    color: '#6B7280',
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,

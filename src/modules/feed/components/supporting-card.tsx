@@ -17,9 +17,9 @@ const DOMAIN_ACCENT: Record<string, string> = {
   strength: '#1D4ED8',
   cardio: '#DC2626',
   mobility: '#7C3AED',
-  recovery: '#0891B2',
-  breathing: '#059669',
-  nutrition: '#D97706',
+  recovery: '#0E7490',
+  breathing: '#065F46',
+  nutrition: '#B45309',
   reflection: '#6B7280',
 };
 
@@ -85,12 +85,12 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     marginBottom: 8,
-    opacity: 0.85,
+    // No opacity — opacity on a view blends the background with white, reducing contrast
   },
   pairingBadgeText: {
     fontSize: 10,
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '700',
     letterSpacing: 0.3,
   },
   row: {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   rationaleShort: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: '#6B7280',
     lineHeight: 17,
     fontStyle: 'italic',
   },
@@ -129,6 +129,6 @@ const styles = StyleSheet.create({
   },
   durationText: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: '#6B7280',
   },
 });

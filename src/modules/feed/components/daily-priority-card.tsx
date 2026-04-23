@@ -24,9 +24,9 @@ const DOMAIN_ACCENT: Record<string, string> = {
   strength: '#1D4ED8',
   cardio: '#DC2626',
   mobility: '#7C3AED',
-  recovery: '#0891B2',
-  breathing: '#059669',
-  nutrition: '#D97706',
+  recovery: '#0E7490',
+  breathing: '#065F46',
+  nutrition: '#B45309',
   reflection: '#6B7280',
 };
 
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   updatingText: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: '#6B7280',
     fontStyle: 'italic',
   },
   domainBadge: {
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   shuffleTextDisabled: {
-    color: '#9CA3AF',
+    color: '#6B7280',
   },
   whyButton: {
     position: 'absolute',

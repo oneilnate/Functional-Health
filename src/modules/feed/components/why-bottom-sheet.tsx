@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#9CA3AF',
+    color: '#6B7280',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginBottom: 12,
