@@ -129,7 +129,7 @@ export function runPipeline(podId: string): Promise<void> {
 
 async function _executePipeline(podId: string): Promise<void> {
   // ── Stage 1: Vision ──────────────────────────────────────────────────────────
-  // visionStage manages its own stage_status writes (running → complete/failed).
+  // visionStage calls updateStageStatus (shared helper below) for running → complete/failed.
   // The orchestrator wraps in retry; on exhaustion marks pod failed.
   try {
     await withRetry(() => visionStage(podId));
@@ -139,7 +139,7 @@ async function _executePipeline(podId: string): Promise<void> {
   }
 
   // ── Stage 2: Grounding ───────────────────────────────────────────────────────
-  // runGroundingStage manages its own stage_status writes.
+  // runGroundingStage calls updateStageStatus (shared helper below) for running → complete.
   try {
     await withRetry(() => runGroundingStage(podId));
   } catch (err) {
@@ -148,7 +148,7 @@ async function _executePipeline(podId: string): Promise<void> {
   }
 
   // ── Stage 3: Script ──────────────────────────────────────────────────────────
-  // scriptStage manages its own stage_status and returns TranscriptJson.
+  // scriptStage calls updateStageStatus (shared helper below) for running → complete.
   // We pass the transcript segments directly to ttsStage (avoid re-reading DB).
   let transcriptText: string;
   try {
