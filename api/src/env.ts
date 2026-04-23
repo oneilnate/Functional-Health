@@ -4,6 +4,7 @@ const envSchema = z.object({
   // Required API keys
   GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY is required'),
   ELEVENLABS_API_KEY: z.string().min(1, 'ELEVENLABS_API_KEY is required'),
+  ELEVENLABS_VOICE_ID: z.string().optional().default('EXAVITQu4vr4xnSDxMaL'),
 
   // Supabase credentials
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
