@@ -5,6 +5,20 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": { "simulator": true }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://placeholder-railway-url.railway.app",
+        "EXPO_PUBLIC_DEMO_BEARER_TOKEN": "placeholder-bearer-token"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://placeholder-railway-url.railway.app",
+        "EXPO_PUBLIC_DEMO_BEARER_TOKEN": "placeholder-bearer-token"
+      }
     }
   }
 }
