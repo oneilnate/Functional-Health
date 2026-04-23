@@ -1,7 +1,7 @@
 # Device Preview — EAS iOS simulator build + Appetize upload + PR comment
 #
 # Architecture:
-#   Job 1 (build) — macos-14: EAS local build → .ipa (iOS simulator requires macOS + Xcode)
+#   Job 1 (build) — macos-15: EAS local build → .ipa (iOS simulator requires macOS + Xcode)
 #   Job 2 (upload-and-comment) — ubuntu-latest: Appetize upload + PR comment (cheaper runner)
 #
 # Cache strategy: hash of native-affecting files so JS-only PRs skip the 12-min macOS build.
@@ -26,7 +26,7 @@ jobs:
   # ── Job 1: EAS build on macOS (required for iOS simulator .ipa) ─────────────
   build:
     name: EAS iOS simulator build
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
 
     outputs:
