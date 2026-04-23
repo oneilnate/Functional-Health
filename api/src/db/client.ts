@@ -1,29 +1,30 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { env } from '../env.js';
+import * as schema from './schema.js';
 
 /**
- * Creates a Drizzle ORM client backed by postgres.js.
+ * Creates a typed Drizzle ORM client backed by postgres.js.
  *
- * The schema will be imported from the shared schema file once F1-E1
- * (Supabase schema migration) is merged. For now this returns an
- * untyped db instance that still works for raw queries.
+ * Uses SUPABASE_DB_URL — the Supabase session pooler Postgres connection string
+ * (postgresql://postgres.<project>:<pw>@aws-1-us-west-2.pooler.supabase.com:5432/postgres).
+ *
+ * prepare:false is mandatory for Supabase pooler compatibility (transaction mode
+ * rejects prepared statements; session mode has edge cases too). Always false.
  *
  * Usage:
  *   import { db } from './client.js';
- *   const rows = await db.execute(sql`SELECT 1`);
+ *   const rows = await db.select().from(schema.users).where(...);
  */
 function createDbClient() {
-  const sql = postgres(env.SUPABASE_URL, {
-    // Supabase connection string includes credentials;
-    // service-role key is injected via SUPABASE_SERVICE_ROLE_KEY env var at runtime.
+  const sql = postgres(env.SUPABASE_DB_URL, {
     max: 10,
     idle_timeout: 30,
     connect_timeout: 10,
+    prepare: false, // Supabase pooler compatibility — do not remove
   });
 
-  // Schema types will be added in F1-E1; using untyped client for scaffold.
-  return drizzle(sql) as ReturnType<typeof drizzle<Record<string, unknown>>>;
+  return drizzle(sql, { schema });
 }
 
 export const db = createDbClient();
