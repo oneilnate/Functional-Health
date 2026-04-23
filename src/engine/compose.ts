@@ -22,7 +22,6 @@ import type {
   ReadinessTapPayload,
   ScanUpdatedPayload,
   SessionCompletedPayload,
-  SessionSkippedPayload,
   SignalEvent,
   UserModel,
 } from './types';

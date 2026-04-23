@@ -36,6 +36,13 @@
             "imageWidth": 76
           }
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos for meal capture.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to use your camera to photograph meals."
+        }
       ]
     ],
     "experiments": {

@@ -274,8 +274,8 @@ describe('ReadinessBattery labels (spec §12.1)', () => {
       medium: 'Steady',
       low: 'Light today',
     };
-    expect(LABEL['high']).toBe('Ready');
-    expect(LABEL['medium']).toBe('Steady');
-    expect(LABEL['low']).toBe('Light today');
+    expect(LABEL.high).toBe('Ready');
+    expect(LABEL.medium).toBe('Steady');
+    expect(LABEL.low).toBe('Light today');
   });
 });
