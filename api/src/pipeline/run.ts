@@ -94,7 +94,7 @@ export async function updateStageStatus(
         SET stage_status = jsonb_set(
           COALESCE(stage_status, '{}'::jsonb),
           ${pathLiteral}::text[],
-          ${JSON.stringify(entry)}::jsonb
+          ${entry}::jsonb
         )
         WHERE id = ${podId}::uuid`,
   );

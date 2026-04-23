@@ -40,6 +40,7 @@ RUN pnpm install --frozen-lockfile --prod
 
 # Copy compiled output from builder
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/pipeline/prompts /app/dist/pipeline/prompts
 
 # Switch to non-root user
 USER appuser
