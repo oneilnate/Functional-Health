@@ -14,6 +14,7 @@ Required secrets (set in Railway project via Railway dashboard or `railway varia
 - `GEMINI_API_KEY` ✅
 - `ELEVENLABS_API_KEY` ✅
 - `SUPABASE_URL` ✅
+- `SUPABASE_DB_URL` — Supabase session pooler Postgres URL (`postgresql://postgres.<project>:<pw>@aws-1-us-west-2.pooler.supabase.com:5432/postgres`). Get from: Supabase Dashboard → Project Settings → Database → Connection pooling (Session mode, port 5432) ✅
 - `SUPABASE_SERVICE_ROLE_KEY` ✅
 - `SUPABASE_ANON_KEY` ✅
 - `DEMO_USER_BEARER_TOKEN` ✅

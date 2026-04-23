@@ -75,7 +75,8 @@ See `.env.example` for the full list. All are required unless marked optional.
 |---|---|
 | `GEMINI_API_KEY` | Google Gemini API key |
 | `ELEVENLABS_API_KEY` | ElevenLabs TTS API key |
-| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_URL` | Supabase project URL (`https://<ref>.supabase.co`) — used by Supabase JS client for Storage |
+| `SUPABASE_DB_URL` | Supabase session pooler Postgres URL (`postgresql://postgres.<project>:<pw>@aws-1-us-west-2.pooler.supabase.com:5432/postgres`). Get from: Supabase Dashboard → Project Settings → Database → Connection pooling (Session mode, port 5432) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side) |
 | `SUPABASE_ANON_KEY` | Supabase anon key |
 | `DEMO_USER_BEARER_TOKEN` | Shared bearer token for demo auth |

@@ -5,7 +5,7 @@ if (!process.env.SUPABASE_DB_URL) {
 }
 
 export default {
-  schema: "./drizzle/schema.ts",
+  schema: "./src/db/schema.ts",
   out: "./drizzle/migrations",
   dialect: "postgresql",
   dbCredentials: {

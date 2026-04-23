@@ -8,6 +8,10 @@ const envSchema = z.object({
 
   // Supabase credentials
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
+  SUPABASE_DB_URL: z
+    .string()
+    .url('SUPABASE_DB_URL must be a valid URL (postgres://…)')
+    .startsWith('postgres', 'SUPABASE_DB_URL must be a postgres:// or postgresql:// URL'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
   SUPABASE_ANON_KEY: z.string().min(1, 'SUPABASE_ANON_KEY is required'),
 
