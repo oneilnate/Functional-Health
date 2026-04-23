@@ -56,6 +56,17 @@ export type CreateMealResponse = { mealId; uploadUrl; storagePath };
 - Polling: 2 s interval while pod.status === 'generating'; disabled otherwise
 - Numbers are enforced by `performance.config.ts` and React.Profiler screenshot tests
 
+## Screens (F4-E2 — in src/app/food/)
+
+| Screen | Route | Description |
+|---|---|---|
+| `FoodHomeScreen` | `/food` | Start / Continue / View CTAs; reads phase from FoodPodProvider |
+| `CaptureScreen` | `/food/capture?podId=X` | Camera + 3-step upload + thumbnail strip + Generate CTA |
+| `PodScreen` (stub) | `/food/pod/:id` | Wait/playback stub — fleshed out by F4-E3 |
+
+Store: `src/store/food-pod.store.tsx` — React context (`FoodPodProvider` / `useFoodPodStore`)
+Holds `currentPodId` and `phase` (`idle | capturing | generating | ready`).
+
 ## Closed-loop check
 
 ```bash
