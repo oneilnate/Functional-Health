@@ -17,6 +17,7 @@ import { sql } from 'drizzle-orm';
 import { db } from '../../db/client.js';
 import { supabase } from '../../lib/supabase.js';
 import { env } from '../../env.js';
+import { updateStageStatus } from '../run.js';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -188,30 +189,7 @@ export async function saveMealAnalysis(
   );
 }
 
-/**
- * Update the pod's stage_status for the vision stage.
- */
-export async function updatePodVisionStatus(
-  podId: string,
-  status: 'running' | 'complete' | 'failed',
-  error?: string,
-): Promise<void> {
-  const patch: Record<string, unknown> = {
-    stage: 'vision',
-    status,
-    ...(status === 'running' && { startedAt: new Date().toISOString() }),
-    ...(status !== 'running' && { completedAt: new Date().toISOString() }),
-    ...(error !== undefined && { error }),
-  };
 
-  await db.execute(
-    sql`UPDATE pods
-        SET stage_status = stage_status || ${
-          JSON.stringify({ vision: patch })
-        }::jsonb
-        WHERE id = ${podId}`,
-  );
-}
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
@@ -239,7 +217,10 @@ export async function visionStage(podId: string): Promise<void> {
   }
 
   // 2. Mark vision stage as running
-  await updatePodVisionStatus(podId, 'running');
+  await updateStageStatus(podId, 'vision', {
+    status: 'running',
+    startedAt: new Date().toISOString(),
+  });
 
   const gemini = new GoogleGenerativeAI(env.GEMINI_API_KEY);
   const queue = new PQueue({ concurrency: CONCURRENCY });
@@ -268,7 +249,11 @@ export async function visionStage(podId: string): Promise<void> {
   // 4. Handle outcomes
   if (successCount === 0) {
     const errorSummary = errors.slice(0, 3).join('; ');
-    await updatePodVisionStatus(podId, 'failed', errorSummary);
+    await updateStageStatus(podId, 'vision', {
+      status: 'failed',
+      error: errorSummary,
+      completedAt: new Date().toISOString(),
+    });
     throw new Error(
       `visionStage: all ${meals.length} meals failed. Errors: ${errorSummary}`,
     );
@@ -281,6 +266,9 @@ export async function visionStage(podId: string): Promise<void> {
     );
   }
 
-  await updatePodVisionStatus(podId, 'complete');
+  await updateStageStatus(podId, 'vision', {
+    status: 'complete',
+    completedAt: new Date().toISOString(),
+  });
 }
 

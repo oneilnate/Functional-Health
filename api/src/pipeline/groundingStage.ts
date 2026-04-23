@@ -415,15 +415,11 @@ export async function runGroundingStage(podId: string): Promise<void> {
   const { db } = await import('../db/client.js');
 
   // 1. Mark grounding stage as running
-  await db.execute(
-    sql`UPDATE pods
-        SET stage_status = jsonb_set(
-              COALESCE(stage_status, '{}'::jsonb),
-              '{grounding}',
-              ${JSON.stringify({ status: 'running', startedAt: new Date().toISOString() })}::jsonb
-            )
-        WHERE id = ${podId}::uuid`,
-  );
+  const { updateStageStatus } = await import('./run.js');
+  await updateStageStatus(podId, 'grounding', {
+    status: 'running',
+    startedAt: new Date().toISOString(),
+  });
 
   // 2. Load pod metadata
   const podRows = await db.execute<PodStageRow>(
@@ -477,12 +473,11 @@ export async function runGroundingStage(podId: string): Promise<void> {
 
   await db.execute(
     sql`UPDATE pods
-        SET grounded_facts = ${JSON.stringify(groundedFacts)}::jsonb,
-            stage_status   = jsonb_set(
-              COALESCE(stage_status, '{}'::jsonb),
-              '{grounding}',
-              ${JSON.stringify({ status: 'complete', completedAt: new Date().toISOString() })}::jsonb
-            )
+        SET grounded_facts = ${JSON.stringify(groundedFacts)}::jsonb
         WHERE id = ${podId}::uuid`,
   );
+  await updateStageStatus(podId, 'grounding', {
+    status: 'complete',
+    completedAt: new Date().toISOString(),
+  });
 }

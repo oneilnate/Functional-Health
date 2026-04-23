@@ -192,10 +192,12 @@ export async function podRoutes(fastify: FastifyInstance): Promise<void> {
       }
 
       // 3. Transition pod to 'generating' + initialise stage_status
+      // IMPORTANT: pass the object directly (not JSON.stringify'd) so Drizzle
+      // serialises it as a JSONB object, not a JSONB string scalar.
       await db.execute(
         sql`UPDATE pods
             SET status        = 'generating',
-                stage_status  = ${JSON.stringify(STAGE_STATUS_INITIAL)}::jsonb,
+                stage_status  = ${STAGE_STATUS_INITIAL}::jsonb,
                 completed_at  = now()
             WHERE id = ${podId}`,
       );

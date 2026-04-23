@@ -16,6 +16,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { sql } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { env } from '../env.js';
+import { updateStageStatus } from './run.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -331,27 +332,7 @@ async function upsertPodcastTranscript(
   );
 }
 
-async function updateStageStatus(
-  podId: string,
-  status: 'running' | 'complete' | 'failed',
-  error?: string,
-): Promise<void> {
-  const now = new Date().toISOString();
-  const patch =
-    status === 'running'
-      ? { stage: 'script', status: 'running', startedAt: now }
-      : status === 'complete'
-        ? { stage: 'script', status: 'complete', completedAt: now }
-        : { stage: 'script', status: 'failed', error, completedAt: now };
 
-  await db.execute(
-    sql`
-      UPDATE pods
-      SET stage_status = COALESCE(stage_status, '{}'::jsonb) || ${JSON.stringify({ script: patch })}::jsonb
-      WHERE id = ${podId}
-    `,
-  );
-}
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
@@ -364,7 +345,10 @@ async function updateStageStatus(
 export async function scriptStage(podId: string): Promise<TranscriptJson> {
   const template = readFileSync(PROMPT_PATH, 'utf-8');
 
-  await updateStageStatus(podId, 'running');
+  await updateStageStatus(podId, 'script', {
+    status: 'running',
+    startedAt: new Date().toISOString(),
+  });
 
   const { pod, user } = await fetchPodAndUser(podId);
 
@@ -394,7 +378,10 @@ export async function scriptStage(podId: string): Promise<TranscriptJson> {
   }
 
   await upsertPodcastTranscript(podId, transcript);
-  await updateStageStatus(podId, 'complete');
+  await updateStageStatus(podId, 'script', {
+    status: 'complete',
+    completedAt: new Date().toISOString(),
+  });
 
   return transcript;
 }
