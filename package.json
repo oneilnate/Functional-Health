@@ -21,6 +21,7 @@
     "postinstall": "simple-git-hooks"
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.15.9",
     "@react-navigation/elements": "^2.9.10",
     "@react-navigation/native": "^7.2.2",
