@@ -1,12 +1,13 @@
 # Expo Go OTA update — three independent jobs:
 #   1. eas-update (push to main / tags)   — publishes to `production` channel
 #   2. pr-preview (pull_request events)   — publishes to `pr-<number>` channel,
-#                                            posts/updates a sticky QR comment
+#                                            posts/updates a sticky dashboard comment
 #   3. pr-cleanup (pull_request: closed)  — deletes the ephemeral EAS branch
 #
 # Sentinel: <!-- obvious-expo-go-pr-preview:v1 --> (distinct from prod commit-comment)
-# QR image:  https://api.qrserver.com/v1/create-qr-code/ (zero-install, free)
-# Launch URL: exp://u.expo.dev/<projectId>?channel=pr-<n>
+# Launch:   EAS dashboard → "Open with Orbit" (custom scheme `aaptivfeed` requires this)
+# Raw URL format (reference only):
+#   exp://u.expo.dev/<projectId>?channel-name=<ch>&runtime-version=<rtv>&platform=ios
 
 name: Expo Go OTA Update
 
@@ -65,41 +66,65 @@ jobs:
           eas update \
             --branch production \
             --message "${COMMIT_MSG}" \
-            --non-interactive
+            --non-interactive \
+            --json 2>/dev/null > /tmp/eas-prod-update.json || true
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Parse EAS production update output
+        id: parse-prod-update
+        run: |
+          if jq -e '.[0].group' /tmp/eas-prod-update.json > /dev/null 2>&1; then
+            UPDATE_GROUP=$(jq -r '.[0].group' /tmp/eas-prod-update.json)
+            UPDATE_RTV=$(jq -r '.[0].runtimeVersion' /tmp/eas-prod-update.json)
+          else
+            UPDATE_GROUP=""
+            UPDATE_RTV=""
+          fi
+          echo "update_group=${UPDATE_GROUP}" >> $GITHUB_OUTPUT
+          echo "update_rtv=${UPDATE_RTV}" >> $GITHUB_OUTPUT
 
       - name: Post Expo Go launch URL as sticky commit comment
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const sentinel = '<!-- obvious-expo-go-update:v1 -->';
-            const projectId = '28a85fb2-e56c-4a53-a398-0080b43414ea';
-            const expoGoUrl = `exp://u.expo.dev/${projectId}?channel=production`;
+            const sentinel    = '<!-- obvious-expo-go-update:v1 -->';
+            const projectId   = '28a85fb2-e56c-4a53-a398-0080b43414ea';
+            const account     = 'nateoutsidethebox';
+            const projectSlug = 'aaptiv-functional-feed';
+            const updateGroup = '${{ steps.parse-prod-update.outputs.update_group }}';
+            const rtv         = '${{ steps.parse-prod-update.outputs.update_rtv }}';
             const updateFailed = '${{ steps.eas-update.outcome }}' === 'failure';
 
             let body;
-            if (updateFailed) {
+            if (updateFailed || !updateGroup) {
               body = [
                 sentinel,
                 '## 📱 Expo Go — OTA Update',
                 '',
                 '> ⚠️ **OTA publish failed** — the previous build is still live in Expo Go.',
                 '> Check the [Actions log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.',
-                '',
-                `**Expo Go URL (last good build):** [${expoGoUrl}](${expoGoUrl})`,
               ].join('\n');
             } else {
+              const dashboardUrl = `https://expo.dev/accounts/${account}/projects/${projectSlug}/updates/${updateGroup}`;
+              const rawUrl = `exp://u.expo.dev/${projectId}?channel-name=production&runtime-version=${rtv}&platform=ios`;
               body = [
                 sentinel,
                 '## 📱 Expo Go — OTA Update',
                 '',
-                `**Scan to launch in Expo Go:** [${expoGoUrl}](${expoGoUrl})`,
+                `**Open on iPhone:** [View in EAS dashboard → tap 'Open with Orbit'](${dashboardUrl})`,
+                '',
+                `> This app uses a custom scheme (\`aaptivfeed\`), so Expo Go requires launch via the EAS dashboard.`,
+                '',
+                '<details>',
+                '<summary>Raw Expo URL (corrected format, for reference)</summary>',
                 '',
                 '```',
-                expoGoUrl,
+                rawUrl,
                 '```',
+                '',
+                '</details>',
                 '',
                 `_Published from commit \`${{ github.sha }}\` · [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})_`,
               ].join('\n');
@@ -116,8 +141,8 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   # Job 2 — PR preview publish
   # Triggered on every pull_request (opened / synchronize / reopened).
-  # Publishes to channel `pr-<number>` so contributors can scan the QR code
-  # in Expo Go on iPhone to test the exact JS bundle on this PR.
+  # Publishes to channel `pr-<number>` so contributors can test on this PR.
+  # Posts the EAS dashboard link (Orbit flow) — required for custom-scheme apps.
   # Concurrency block cancels any in-flight publish for the same PR on rapid
   # pushes (force-push or quick sequential commits).
   # Skips draft PRs to avoid burning EAS quota on work-in-progress.
@@ -165,32 +190,44 @@ jobs:
           eas update \
             --branch "pr-${PR_NUMBER}" \
             --message "PR #${PR_NUMBER}: ${PR_TITLE}" \
-            --non-interactive
+            --non-interactive \
+            --json 2>/dev/null > /tmp/eas-pr-update.json || true
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Post / update sticky PR comment with Expo Go QR
+      - name: Parse EAS PR update output
+        id: parse-pr-update
+        run: |
+          if jq -e '.[0].group' /tmp/eas-pr-update.json > /dev/null 2>&1; then
+            UPDATE_GROUP=$(jq -r '.[0].group' /tmp/eas-pr-update.json)
+            UPDATE_RTV=$(jq -r '.[0].runtimeVersion' /tmp/eas-pr-update.json)
+          else
+            UPDATE_GROUP=""
+            UPDATE_RTV=""
+          fi
+          echo "update_group=${UPDATE_GROUP}" >> $GITHUB_OUTPUT
+          echo "update_rtv=${UPDATE_RTV}" >> $GITHUB_OUTPUT
+
+      - name: Post / update sticky PR comment with EAS dashboard link
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const sentinel  = '<!-- obvious-expo-go-pr-preview:v1 -->';
-            const projectId = '28a85fb2-e56c-4a53-a398-0080b43414ea';
-            const prNumber  = context.issue.number;
-            const channel   = `pr-${prNumber}`;
-
-            // exp:// deep-link — opens directly in Expo Go on iPhone
-            const expoGoUrl = `exp://u.expo.dev/${projectId}?channel=${channel}`;
-
-            // QR image served by qrserver.com (zero-install, free, reliable)
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(expoGoUrl)}&size=300x300`;
+            const sentinel    = '<!-- obvious-expo-go-pr-preview:v1 -->';
+            const projectId   = '28a85fb2-e56c-4a53-a398-0080b43414ea';
+            const account     = 'nateoutsidethebox';
+            const projectSlug = 'aaptiv-functional-feed';
+            const prNumber    = context.issue.number;
+            const channel     = `pr-${prNumber}`;
+            const updateGroup = '${{ steps.parse-pr-update.outputs.update_group }}';
+            const rtv         = '${{ steps.parse-pr-update.outputs.update_rtv }}';
 
             const runUrl  = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`;
             const ts      = new Date().toISOString();
             const outcome = '${{ steps.eas-update-pr.outcome }}';
 
             let body;
-            if (outcome === 'failure') {
+            if (outcome === 'failure' || !updateGroup) {
               body = [
                 sentinel,
                 '## 📱 Expo Go — PR Preview',
@@ -201,18 +238,24 @@ jobs:
                 `_Updated: ${ts}_`,
               ].join('\n');
             } else {
+              const dashboardUrl = `https://expo.dev/accounts/${account}/projects/${projectSlug}/updates/${updateGroup}`;
+              const rawUrl = `exp://u.expo.dev/${projectId}?channel-name=${channel}&runtime-version=${rtv}&platform=ios`;
               body = [
                 sentinel,
                 '## 📱 Expo Go — PR Preview',
                 '',
-                `Scan the QR code below with the **Expo Go** app on your iPhone to load this PR's JS bundle:`,
+                `**Open on iPhone:** [View in EAS dashboard → tap 'Open with Orbit'](${dashboardUrl})`,
                 '',
-                `![Expo Go QR — PR #${prNumber}](${qrUrl})`,
+                `> This app uses a custom scheme (\`aaptivfeed\`), so Expo Go requires launch via the EAS dashboard.`,
                 '',
-                `**Or tap / paste the launch URL:**`,
-                `\`\`\``,
-                expoGoUrl,
-                `\`\`\``,
+                '<details>',
+                '<summary>Raw Expo URL (corrected format, for reference)</summary>',
+                '',
+                '```',
+                rawUrl,
+                '```',
+                '',
+                '</details>',
                 '',
                 `> 🧹 This branch is automatically deleted when the PR closes.`,
                 '',
