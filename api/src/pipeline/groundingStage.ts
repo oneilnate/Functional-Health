@@ -459,7 +459,7 @@ export async function runGroundingStage(podId: string): Promise<void> {
 
     await db.execute(
       sql`UPDATE meals
-          SET usda_matched_foods = ${matched}::jsonb
+          SET usda_matched_foods = ${JSON.stringify(matched)}::json
           WHERE id = ${meal.id}::uuid`,
     );
   }
@@ -473,7 +473,7 @@ export async function runGroundingStage(podId: string): Promise<void> {
 
   await db.execute(
     sql`UPDATE pods
-        SET grounded_facts = ${groundedFacts}::jsonb
+        SET grounded_facts = ${JSON.stringify(groundedFacts)}::json
         WHERE id = ${podId}::uuid`,
   );
   await updateStageStatus(podId, 'grounding', {
