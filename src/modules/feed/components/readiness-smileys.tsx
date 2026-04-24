@@ -2,6 +2,7 @@
  * ReadinessSmileys — three smiley inputs that fire /signals/ingest.
  * Spec §12.6: readiness smileys post to signals/ingest on tap.
  */
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { ReadinessTapPayload } from '@/engine/types';
 
@@ -12,26 +13,30 @@ interface ReadinessSmileysProps {
   onTap: (readiness: ReadinessValue) => void;
 }
 
-const SMILEYS: Array<{ value: ReadinessValue; emoji: string; label: string }> = [
-  { value: 'happy', emoji: '😊', label: 'Feeling good' },
-  { value: 'neutral', emoji: '😐', label: 'Feeling okay' },
-  { value: 'sad', emoji: '😔', label: 'Feeling tired' },
+const SMILEYS: Array<{
+  value: ReadinessValue;
+  icon: 'emoticon-happy-outline' | 'emoticon-neutral-outline' | 'emoticon-sad-outline';
+  label: string;
+}> = [
+  { value: 'happy', icon: 'emoticon-happy-outline', label: 'Feeling good' },
+  { value: 'neutral', icon: 'emoticon-neutral-outline', label: 'Feeling okay' },
+  { value: 'sad', icon: 'emoticon-sad-outline', label: 'Feeling tired' },
 ];
 
 export function ReadinessSmileys({ currentReadiness, onTap }: ReadinessSmileysProps) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>How are you feeling?</Text>
+    <View style={styles.card}>
+      <Text style={styles.title}>How are you feeling today</Text>
       <View style={styles.row}>
         {SMILEYS.map((s) => (
           <Pressable
             key={s.value}
-            style={[styles.smiley, currentReadiness === s.value && styles.smileySelected]}
+            style={[styles.pill, currentReadiness === s.value && styles.pillSelected]}
             onPress={() => onTap(s.value)}
             accessibilityRole="button"
             accessibilityLabel={s.label}
           >
-            <Text style={styles.emoji}>{s.emoji}</Text>
+            <MaterialCommunityIcons name={s.icon} size={30} color="#111827" />
           </Pressable>
         ))}
       </View>
@@ -43,35 +48,37 @@ export function ReadinessSmileys({ currentReadiness, onTap }: ReadinessSmileysPr
 export type { ReadinessTapPayload };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 16,
-    alignItems: 'center',
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 20,
+    marginHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  label: {
-    fontSize: 13,
-    color: '#6B7280',
-    marginBottom: 10,
-    fontWeight: '500',
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 16,
+    textAlign: 'left',
   },
   row: {
     flexDirection: 'row',
-    gap: 24,
+    gap: 12,
   },
-  smiley: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#F9FAFB',
+  pill: {
+    flex: 1,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: '#F1F1F3',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
   },
-  smileySelected: {
-    borderColor: '#111827',
-    backgroundColor: '#F3F4F6',
-  },
-  emoji: {
-    fontSize: 26,
+  pillSelected: {
+    backgroundColor: '#E5E5EA',
   },
 });
