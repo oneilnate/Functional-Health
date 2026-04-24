@@ -322,7 +322,7 @@ async function upsertPodcastTranscript(
       INSERT INTO podcasts (pod_id, transcript_json, duration_seconds)
       VALUES (
         ${podId},
-        ${transcript}::jsonb,
+        ${JSON.stringify(transcript)}::json,
         ${transcript.totalDurationSec}
       )
       ON CONFLICT (pod_id) DO UPDATE
