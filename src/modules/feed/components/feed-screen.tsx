@@ -17,7 +17,7 @@ interface FeedScreenProps {
   showDevSwitcher?: boolean;
 }
 
-export function FeedScreen({ showDevSwitcher = true }: FeedScreenProps) {
+export function FeedScreen({ showDevSwitcher = __DEV__ }: FeedScreenProps) {
   const { state, status, error, refresh, ingest, shuffleFeed, fetchWhy, shuffleCooldownUntil } =
     useFeed();
 
