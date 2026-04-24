@@ -1,0 +1,44 @@
+{
+  "name": "foodpod-api",
+  "version": "0.1.0",
+  "description": "Food Pod Prototype — Fastify API server",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "seed": "tsx src/scripts/seed.ts",
+    "smoke:db": "tsx scripts/smoke-db.ts"
+  },
+  "dependencies": {
+    "@fastify/error": "^3.4.0",
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.104.1",
+    "drizzle-orm": "^0.31.2",
+    "fastify": "^5.3.2",
+    "fastify-plugin": "^5.1.0",
+    "music-metadata": "^11.12.3",
+    "p-queue": "^9.1.2",
+    "pino": "^9.2.0",
+    "postgres": "^3.4.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "drizzle-kit": "^0.22.8",
+    "pino-pretty": "^13.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}

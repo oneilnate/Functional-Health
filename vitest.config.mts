@@ -8,7 +8,8 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./src/test-setup.ts'],
     // Exclude Playwright e2e tests — they run via playwright test, not vitest
-    exclude: ['e2e/**', 'node_modules/**'],
+    // Exclude api/ subdirectory — it has its own vitest config and pnpm workspace
+    exclude: ['e2e/**', 'node_modules/**', 'api/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json-summary', 'json', 'lcov'],

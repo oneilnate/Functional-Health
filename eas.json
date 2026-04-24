@@ -1,10 +1,19 @@
 {
   "cli": { "version": ">= 14.0.0", "appVersionSource": "remote" },
   "build": {
-    "development-simulator": {
-      "developmentClient": true,
+    "preview": {
       "distribution": "internal",
-      "ios": { "simulator": true }
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://placeholder-railway-url.railway.app",
+        "EXPO_PUBLIC_DEMO_BEARER_TOKEN": "placeholder-bearer-token"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://placeholder-railway-url.railway.app",
+        "EXPO_PUBLIC_DEMO_BEARER_TOKEN": "placeholder-bearer-token"
+      }
     }
   }
 }
