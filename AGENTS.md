@@ -52,6 +52,15 @@ The demo delivery path is **Expo Go on a real iPhone** — prospects scan a QR c
 **Agent testing note:**
 Agents can no longer drive native preview automatically — the device preview pipeline has been removed. Agent testing now runs against the **web build at [aaptiv-functional-feed.expo.app](https://aaptiv-functional-feed.expo.app)** (deployed by `deploy-web.yml`).
 
+## Expo Go PR previews
+
+Every non-draft PR also gets an Expo Go OTA preview (via `eas-update.yml` — job `pr-preview`).
+A sticky comment is posted/updated on each push containing a scannable QR code and a
+`exp://u.expo.dev/…?channel=pr-<n>` deep-link. Open Expo Go on iPhone and scan to load the
+exact JS bundle from that PR — no TestFlight, no Xcode, no native build.
+The EAS branch `pr-<n>` is automatically deleted when the PR closes.
+Draft PRs are skipped; the preview job runs only when the PR is marked ready.
+
 ---
 
 ## 3. Closed-loop workflow
