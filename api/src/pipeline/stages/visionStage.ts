@@ -182,7 +182,7 @@ export async function saveMealAnalysis(
 ): Promise<void> {
   await db.execute(
     sql`UPDATE meals
-        SET gemini_analysis  = ${JSON.stringify(analysis)}::jsonb,
+        SET gemini_analysis  = ${analysis}::jsonb,
             status           = 'analyzed',
             confidence_score = ${analysis.overall_confidence}
         WHERE id = ${mealId}`,
